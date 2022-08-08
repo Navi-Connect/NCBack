@@ -1,0 +1,16 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NCBack", "NCBack\NCBack.csproj", "{2CEBA3FD-3CCC-44D9-AC91-1C94D7E28864}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2CEBA3FD-3CCC-44D9-AC91-1C94D7E28864}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2CEBA3FD-3CCC-44D9-AC91-1C94D7E28864}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2CEBA3FD-3CCC-44D9-AC91-1C94D7E28864}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2CEBA3FD-3CCC-44D9-AC91-1C94D7E28864}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

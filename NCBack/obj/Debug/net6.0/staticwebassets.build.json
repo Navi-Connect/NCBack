@@ -1,0 +1,37 @@
+{
+  "Version": 1,
+  "Hash": "j6iX3A1oFaKNqpQY5t5s52iYd5RTBKDevJQhbGhR4/I=",
+  "Source": "NCBack",
+  "BasePath": "_content/NCBack",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [
+    {
+      "Name": "NCBack\\wwwroot",
+      "Source": "NCBack",
+      "ContentRoot": "C:\\NaviConnect\\NCBack\\NCBack\\wwwroot\\",
+      "BasePath": "_content/NCBack",
+      "Pattern": "**"
+    }
+  ],
+  "Assets": [
+    {
+      "Identity": "C:\\NaviConnect\\NCBack\\NCBack\\wwwroot\\images\\images.jpg",
+      "SourceId": "NCBack",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\NaviConnect\\NCBack\\NCBack\\wwwroot\\",
+      "BasePath": "_content/NCBack",
+      "RelativePath": "images/images.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\images.jpg"
+    }
+  ]
+}
