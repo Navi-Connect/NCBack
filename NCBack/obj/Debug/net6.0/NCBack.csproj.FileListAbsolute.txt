@@ -5,16 +5,11 @@ C:\NaviConnect\NCBack\NCBack\bin\Debug\net6.0\NCBack.deps.json
 C:\NaviConnect\NCBack\NCBack\bin\Debug\net6.0\NCBack.runtimeconfig.json
 C:\NaviConnect\NCBack\NCBack\bin\Debug\net6.0\NCBack.dll
 C:\NaviConnect\NCBack\NCBack\bin\Debug\net6.0\NCBack.pdb
-C:\NaviConnect\NCBack\NCBack\bin\Debug\net6.0\Microsoft.OpenApi.dll
-C:\NaviConnect\NCBack\NCBack\bin\Debug\net6.0\Swashbuckle.AspNetCore.Swagger.dll
-C:\NaviConnect\NCBack\NCBack\bin\Debug\net6.0\Swashbuckle.AspNetCore.SwaggerGen.dll
-C:\NaviConnect\NCBack\NCBack\bin\Debug\net6.0\Swashbuckle.AspNetCore.SwaggerUI.dll
 C:\NaviConnect\NCBack\NCBack\obj\Debug\net6.0\NCBack.csproj.AssemblyReference.cache
 C:\NaviConnect\NCBack\NCBack\obj\Debug\net6.0\NCBack.GeneratedMSBuildEditorConfig.editorconfig
 C:\NaviConnect\NCBack\NCBack\obj\Debug\net6.0\NCBack.AssemblyInfoInputs.cache
 C:\NaviConnect\NCBack\NCBack\obj\Debug\net6.0\NCBack.AssemblyInfo.cs
 C:\NaviConnect\NCBack\NCBack\obj\Debug\net6.0\NCBack.csproj.CoreCompileInputs.cache
-C:\NaviConnect\NCBack\NCBack\obj\Debug\net6.0\NCBack.MvcApplicationPartsAssemblyInfo.cs
 C:\NaviConnect\NCBack\NCBack\obj\Debug\net6.0\NCBack.MvcApplicationPartsAssemblyInfo.cache
 C:\NaviConnect\NCBack\NCBack\obj\Debug\net6.0\staticwebassets.build.json
 C:\NaviConnect\NCBack\NCBack\obj\Debug\net6.0\staticwebassets.development.json
