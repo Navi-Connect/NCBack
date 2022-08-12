@@ -53,7 +53,7 @@ else
     app.UseForwardedHeaders();
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseAuthentication();
 
