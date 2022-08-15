@@ -36,3 +36,8 @@ C:\NaviConnect\NCBack\NCBack\bin\Debug\net6.0\Npgsql.dll
 C:\NaviConnect\NCBack\NCBack\bin\Debug\net6.0\Npgsql.EntityFrameworkCore.PostgreSQL.dll
 C:\NaviConnect\NCBack\NCBack\bin\Debug\net6.0\System.IdentityModel.Tokens.Jwt.dll
 C:\NaviConnect\NCBack\NCBack\bin\Debug\net6.0\NCBack.staticwebassets.runtime.json
+C:\NaviConnect\NCBack\NCBack\bin\Debug\net6.0\Microsoft.OpenApi.dll
+C:\NaviConnect\NCBack\NCBack\bin\Debug\net6.0\Swashbuckle.AspNetCore.Swagger.dll
+C:\NaviConnect\NCBack\NCBack\bin\Debug\net6.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+C:\NaviConnect\NCBack\NCBack\bin\Debug\net6.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+C:\NaviConnect\NCBack\NCBack\obj\Debug\net6.0\NCBack.MvcApplicationPartsAssemblyInfo.cs
