@@ -1,8 +1,10 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using NCBack.Data;
+using NCBack.Models;
 using NCBack.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,6 +20,8 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddTransient<UploadFileService>();
 builder.Services.AddDbContext<DataContext>();
 
+
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -31,6 +35,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
+builder.WebHost.UseKestrel(options =>
+{
+    options.Limits.MaxRequestBodySize = Int64.MaxValue;
+});
 
 var app = builder.Build();
 
@@ -39,8 +47,9 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
-    app.UseHttpsRedirection();
+//    app.UseHttpsRedirection();
 }
+
 
 
 //app.UseHttpsRedirection();
