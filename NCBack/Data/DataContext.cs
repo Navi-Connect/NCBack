@@ -5,14 +5,11 @@ namespace NCBack.Data;
 
 public class DataContext : DbContext
 {
-    public DataContext(DbContextOptions<DataContext> options) : base(options) { }
-    
-    public DbSet<User> Users => Set<User>();
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    public DataContext(DbContextOptions<DataContext> options) : base(options)
     {
-        base.OnConfiguring(optionsBuilder);
-        optionsBuilder
-            .UseNpgsql("Server=127.0.0.1; Port=5432 ; Database=NaviConnect; User Id=postgres; Password=postgres;");
+        AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+        AppContext.SetSwitch("Npgsql.DisableDateTimeInfinityConversions", true);
     }
+    public virtual DbSet<User> Users { get; set; }
 }
+
