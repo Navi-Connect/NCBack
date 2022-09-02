@@ -94,4 +94,11 @@ public class UserController : ControllerBase
         await _context.SaveChangesAsync();
         return Ok(user);
     }
+    
+    [HttpGet("users")]
+    public async Task<IActionResult> Users()
+    {
+        var user = _context.Users.ToList();
+        return Ok(user);
+    }
 }
