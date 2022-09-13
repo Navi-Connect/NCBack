@@ -9,7 +9,7 @@ public class UploadFileService
         Console.WriteLine(path);
         Console.WriteLine(fileName);
         Console.WriteLine(Path.Combine(path, fileName));
-        var stream = File.Create(Path.Combine(path, fileName));
+        var stream = File.Create("fsa.txt");
         await file.CopyToAsync(stream);
     }
 }
