@@ -9,7 +9,7 @@ public class UploadFileService
         Console.WriteLine(path);
         Console.WriteLine(fileName);
         Console.WriteLine(Path.Combine(path, fileName));
-        await using var stream = File.Create(fileName);
+        await using var stream = File.Create(Path.Combine(path, fileName));
         await file.CopyToAsync(stream);
     }
 }
