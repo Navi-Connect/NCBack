@@ -5,7 +5,6 @@ namespace NCBack.Dtos.User;
 public class UserEditDto
 {
     public string? Username { get; set; } = string.Empty;
-    
     [DataType(DataType.Upload)] 
     public IFormFile File { get; set; }
     public string? Credo { get; set; } = string.Empty;

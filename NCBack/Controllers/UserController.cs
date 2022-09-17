@@ -44,9 +44,6 @@ public class UserController : ControllerBase
     public async Task<IActionResult> EditingProfile([FromForm] UserEditDto model)
     {
         var user = _context.Users.FirstOrDefault(u => u.Id == GetUserId());
-        
-
-        
         if (user != null)
         {
             if (user.AvatarPath != null)
@@ -65,12 +62,14 @@ public class UserController : ControllerBase
                 user.FavoritePlace = model.FavoritePlace;
                 user.MyInterests = model.MyInterests;
             }
+
             if (await _context.Users.AnyAsync(u => u.Username.ToLower() == model.Username.ToLower()))
             {
                 user.Success = false;
                 user.Message = "User already exists.";
             }
         }
+
         _context.Users.Update(user);
         await _context.SaveChangesAsync();
         return Ok(user);
@@ -80,7 +79,7 @@ public class UserController : ControllerBase
     public async Task<IActionResult> EditingPersonalInformation([FromForm] UserEditPersonalInformationDto model)
     {
         var user = _context.Users.FirstOrDefault(u => u.Id == GetUserId());
-        
+
         if (user != null)
         {
             user.City = model.City;
@@ -89,12 +88,12 @@ public class UserController : ControllerBase
             user.Lastname = model.Lastname;
             user.SurName = model.SurName;
         }
-        
+
         _context.Users.Update(user);
         await _context.SaveChangesAsync();
         return Ok(user);
     }
-    
+
     [HttpGet("users")]
     public async Task<IActionResult> Users()
     {

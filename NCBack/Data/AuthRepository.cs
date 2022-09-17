@@ -1,6 +1,5 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using NCBack.Dtos.User;
@@ -16,18 +15,22 @@ public class AuthRepository : IAuthRepository
     private readonly IConfiguration _configuration;
     private readonly IHostEnvironment _environment; //Добавляем сервис взаимодействия с файлами в рамках хоста
     private readonly UploadFileService _uploadFileService; // Добавляем сервис для получения файлов из формы
+    private readonly PushSms _pushSms;
 
-    public AuthRepository(DataContext context, 
+    public AuthRepository(
+        DataContext context, 
         IHttpContextAccessor httpContextAccessor, 
         IConfiguration configuration, 
         IHostEnvironment environment, 
-        UploadFileService uploadFileService)
+        UploadFileService uploadFileService, 
+        PushSms pushSms)
     {
         _context = context;
         _httpContextAccessor = httpContextAccessor;
         _configuration = configuration;
         _environment = environment;
         _uploadFileService = uploadFileService;
+        _pushSms = pushSms;
     }
 
     private int GetUserId() => int.Parse(_httpContextAccessor.HttpContext.User
@@ -53,40 +56,59 @@ public class AuthRepository : IAuthRepository
             user.Token = CreateToken(user);
             /*response.Data = user.Id;*/
             user.Message = "Done.";
-            
             //response.User.ToString();
         }
         
         return user;
     }
-
+    
+    public async Task<User> VerificationCode(int code)
+    {
+        var user = await _context.Users
+            .FirstOrDefaultAsync(u => u.Code.Equals(code));
+        if (code != user.Code)
+        {
+            user.Success = false;
+            user.Message = "Code not found.";
+        }
+        else
+        {
+            user.Success = true;
+            user.Message = "Done.";
+            return user;
+        }
+        return user;
+    }
+    
     public async Task<User> Register(
-        string city, string region, 
-        string username, string firstname, 
+        string city, string region, string phone,
+        string username, string firstname,
         string lastname, string surname, DateTime dateOfBirth,
         IFormFile file, string password)
     {
-
         User user = new User();
-        
+
         if (await UserExists(username))
         {
             user.Success = false;
             user.Message = "User already exists.";
             return user;
         }
-        
+
+        await _pushSms.Sms(phone);
         
         string path = Path.Combine(_environment.ContentRootPath, "wwwroot/images/");
         string photoPath = $"images/{file.FileName}";
         _uploadFileService.Upload(path, file.FileName, file);
-        
+
         CreatePasswordHash(password, out byte[] passwordHash, out byte[] passwordSalt);
 
         user = new User
         {
             City = city,
             Region = region,
+            PhoneNumber = phone,
+            Code = _pushSms.code,
             Username = username,
             FirstName = firstname,
             Lastname = lastname,
@@ -97,7 +119,6 @@ public class AuthRepository : IAuthRepository
             PasswordSalt = passwordSalt
         };
 
-        
         _context.Users.Add(user);
         await _context.SaveChangesAsync();
         user.Id = user.Id;
@@ -116,7 +137,7 @@ public class AuthRepository : IAuthRepository
     
     public async Task<User> ChangePassword(UserChangePasswordDto request)
     {
-        User user = _context.Users.FirstOrDefault(u => u.Id == GetUserId());
+        User user =  _context.Users.FirstOrDefault(u => u.Id == GetUserId());
         if (user == null)
         {
             user.Success = false;
@@ -139,6 +160,7 @@ public class AuthRepository : IAuthRepository
         }
         return user;
     }
+    
     private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
     {
         using (var hmac = new System.Security.Cryptography.HMACSHA512())
@@ -156,7 +178,7 @@ public class AuthRepository : IAuthRepository
             return computeHash.SequenceEqual(passwordHash);
         }
     }
-
+    
     private string CreateToken(User user)
     {
         List<Claim> claims = new List<Claim>
@@ -182,6 +204,4 @@ public class AuthRepository : IAuthRepository
 
         return tokenHandler.WriteToken(token);
     }
-    
-    
 }

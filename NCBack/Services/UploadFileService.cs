@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-
-namespace NCBack.Services;
+﻿namespace NCBack.Services;
 
 public class UploadFileService
 {

@@ -1,12 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using NCBack.Dtos.User;
+﻿using NCBack.Dtos.User;
 using NCBack.Models;
 
 namespace NCBack.Data;
 
 public interface IAuthRepository
 {
-    Task<User> Register(string city, string region, 
+    Task<User> VerificationCode(int code);
+    Task<User> Register( string city, string region, string phone,
         string username, string firstname, 
         string lastname, string surname, DateTime dateOfBirth,
         IFormFile file, string password);

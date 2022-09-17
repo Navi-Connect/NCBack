@@ -6,9 +6,9 @@ public class UserRegisterDto
 {
     [Required] 
     public string City { get; set; }
-
     public string? Region { get; set; } = string.Empty;
-    
+    [Required]
+    public string PhoneNumber { get; set; }
     [Required]
     public string Username { get; set; }
     [Required]
