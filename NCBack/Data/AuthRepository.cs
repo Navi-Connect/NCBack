@@ -81,7 +81,7 @@ public class AuthRepository : IAuthRepository
     }
     
     public async Task<User> Register(
-        string city, string region, string phone,
+        string city, string region, string phone, string email,
         string username, string firstname,
         string lastname, string surname, DateTime dateOfBirth,
         IFormFile file, string password)
@@ -108,6 +108,7 @@ public class AuthRepository : IAuthRepository
             City = city,
             Region = region,
             PhoneNumber = phone,
+            Email = email,
             Code = _pushSms.code,
             Username = username,
             FirstName = firstname,
@@ -158,6 +159,28 @@ public class AuthRepository : IAuthRepository
             _context.Update(user);
             await _context.SaveChangesAsync();
         }
+        return user;
+    }
+    
+    public async Task<User> ForgotPassword(string email)
+    {
+        var user = await _context.Users.FirstOrDefaultAsync(u=> u.Email == email);
+        if (user != null)
+            {
+                string newPsw = PasswordGeneratorService.Generate();
+                CreatePasswordHash(newPsw, out byte[] passwordHash, out byte[] passwordSalt);
+                user.PasswordHash = passwordHash;
+                user.PasswordSalt = passwordSalt;
+                _context.Update(user);
+                await EmailService.SendPassword(email, newPsw);
+                user.Success = true;
+                user.Message = "Done";
+                await _context.SaveChangesAsync();
+                return user;
+            }
+            else
+            user.Success = false;
+            user.Message = "Not found !!!";
         return user;
     }
     

@@ -47,3 +47,6 @@ C:\NaviConnect\NCBack\NCBack\bin\Debug\net6.0\Microsoft.Extensions.DependencyMod
 C:\NaviConnect\NCBack\NCBack\bin\Debug\net6.0\Scrutor.dll
 C:\NaviConnect\NCBack\NCBack\bin\Debug\net6.0\Swashbuckle.AspNetCore.Filters.dll
 C:\NaviConnect\NCBack\NCBack\bin\Debug\net6.0\Swashbuckle.AspNetCore.Filters.Abstractions.dll
+C:\NaviConnect\NCBack\NCBack\bin\Debug\net6.0\MailKit.dll
+C:\NaviConnect\NCBack\NCBack\bin\Debug\net6.0\MimeKit.dll
+C:\NaviConnect\NCBack\NCBack\bin\Debug\net6.0\BouncyCastle.Crypto.dll

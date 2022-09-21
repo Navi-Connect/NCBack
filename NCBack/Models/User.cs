@@ -6,6 +6,7 @@ public class User
     public string City { get; set; }
     public string? Region { get; set; } = string.Empty;
     public string PhoneNumber  { get; set; }
+    public string Email { get; set; }
     public int? Code { get; set; } 
     public string Username { get; set; }
     public string FirstName { get; set; }

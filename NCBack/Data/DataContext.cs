@@ -11,5 +11,7 @@ public class DataContext : DbContext
         AppContext.SetSwitch("Npgsql.DisableDateTimeInfinityConversions", true);
     }
     public virtual DbSet<User> Users { get; set; }
+    public virtual DbSet<News> News { get; set; }
+    public virtual DbSet<Event> Events { get; set; }
 }
 

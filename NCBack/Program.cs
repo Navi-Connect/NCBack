@@ -16,6 +16,8 @@ builder.Services.AddDbContext<DataContext>(options =>
 builder.Services.AddControllers();
 builder.Services.AddTransient<UploadFileService>();
 builder.Services.AddTransient<PushSms>();
+builder.Services.AddTransient<EmailService>();
+builder.Services.AddTransient<PasswordGeneratorService>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 

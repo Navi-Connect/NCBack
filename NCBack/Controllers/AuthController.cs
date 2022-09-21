@@ -24,6 +24,7 @@ namespace NCBack.Controllers
                 request.City,
                 request.Region,
                 request.PhoneNumber,
+                request.Email,
                 request.Username,
                 request.FirstName,
                 request.Lastname,
@@ -75,6 +76,17 @@ namespace NCBack.Controllers
                 return BadRequest(response);
             }
 
+            return Ok(response);
+        }
+        
+        [HttpPost("forgotPassword")]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordDto request)
+        {
+            var response = await _authRepo.ForgotPassword(request.Email);
+            if (!response.Success)
+            {
+                return BadRequest(response);
+            }
             return Ok(response);
         }
     }
