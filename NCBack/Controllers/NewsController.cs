@@ -56,10 +56,10 @@ public class NewsController : Controller
         return Ok(news);
     }
 
-    [HttpPut("updateNews")]
-    public async Task<ActionResult<List<News>>> UpdateNews([FromForm] NewsUpdateDto request)
+    [HttpPut("updateNews/{Id}")]
+    public async Task<ActionResult<List<News>>> UpdateNews([FromForm] NewsUpdateDto request, int? Id)
     {
-        var news = _context.News.FirstOrDefault(n => n.Id == request.Id);
+        var news = _context.News.FirstOrDefault(n => n.Id == Id);
         if (news == null)
             return BadRequest("Hero not found.");
 
@@ -72,7 +72,7 @@ public class NewsController : Controller
         }
         else
             news.Name = request.Name;
-
+        
         news.Description = request.Description;
         news.LinkVideo = request.LinkVideo;
         news.Data = DateTime.Now;

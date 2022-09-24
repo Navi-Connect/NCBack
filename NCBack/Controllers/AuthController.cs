@@ -29,7 +29,7 @@ namespace NCBack.Controllers
                 request.FirstName,
                 request.Lastname,
                 request.SurName,
-                request.DateOfBirth,
+                Convert.ToDateTime(request.DateOfBirth.ToShortDateString()),
                 request.File,
                 request.Password);
             if (!response.Success)

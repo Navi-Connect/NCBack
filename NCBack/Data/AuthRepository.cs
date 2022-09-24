@@ -114,7 +114,7 @@ public class AuthRepository : IAuthRepository
             FirstName = firstname,
             Lastname = lastname,
             SurName = surname,
-            DateOfBirth = dateOfBirth,
+            DateOfBirth = Convert.ToDateTime(dateOfBirth.ToShortDateString()),
             AvatarPath = photoPath,
             PasswordHash = passwordHash,
             PasswordSalt = passwordSalt

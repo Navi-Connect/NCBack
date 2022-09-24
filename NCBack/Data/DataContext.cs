@@ -8,7 +8,7 @@ public class DataContext : DbContext
     public DataContext(DbContextOptions<DataContext> options) : base(options)
     {
         AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
-        AppContext.SetSwitch("Npgsql.DisableDateTimeInfinityConversions", true);
+        /*AppContext.SetSwitch("Npgsql.DisableDateTimeInfinityConversions", true);*/
     }
     public virtual DbSet<User> Users { get; set; }
     public virtual DbSet<News> News { get; set; }

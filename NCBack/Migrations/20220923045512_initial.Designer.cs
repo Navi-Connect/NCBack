@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace NCBack.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20220921071928_addevent")]
-    partial class addevent
+    [Migration("20220923045512_initial")]
+    partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -32,66 +32,55 @@ namespace NCBack.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("AgeFrom")
+                    b.Property<int?>("AgeFrom")
                         .HasColumnType("integer");
 
-                    b.Property<int>("AgeTo")
+                    b.Property<int?>("AgeTo")
                         .HasColumnType("integer");
 
                     b.Property<string>("AimOfTheMeeting")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("CaltulationSum")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("CaltulationType")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("City")
-                        .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("Date")
+                    b.Property<DateTime?>("Date")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Gender")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("LanguageCommunication")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("MeatingInterests")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("MeatingName")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("MeatingPlace")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("MeetingCategory")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Region")
-                        .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<TimeSpan>("TimeFinish")
+                    b.Property<TimeSpan?>("TimeFinish")
                         .HasColumnType("interval");
 
-                    b.Property<TimeSpan>("TimeStart")
+                    b.Property<TimeSpan?>("TimeStart")
                         .HasColumnType("interval");
 
-                    b.Property<int>("UsreId")
+                    b.Property<int?>("UsreId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");

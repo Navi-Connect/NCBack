@@ -11,6 +11,35 @@ namespace NCBack.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "Events",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    AimOfTheMeeting = table.Column<string>(type: "text", nullable: true),
+                    MeetingCategory = table.Column<string>(type: "text", nullable: true),
+                    MeatingName = table.Column<string>(type: "text", nullable: true),
+                    Date = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    TimeStart = table.Column<TimeSpan>(type: "interval", nullable: true),
+                    TimeFinish = table.Column<TimeSpan>(type: "interval", nullable: true),
+                    City = table.Column<string>(type: "text", nullable: true),
+                    Region = table.Column<string>(type: "text", nullable: true),
+                    Gender = table.Column<string>(type: "text", nullable: true),
+                    AgeTo = table.Column<int>(type: "integer", nullable: true),
+                    AgeFrom = table.Column<int>(type: "integer", nullable: true),
+                    CaltulationType = table.Column<string>(type: "text", nullable: true),
+                    CaltulationSum = table.Column<string>(type: "text", nullable: true),
+                    LanguageCommunication = table.Column<string>(type: "text", nullable: true),
+                    MeatingPlace = table.Column<string>(type: "text", nullable: true),
+                    MeatingInterests = table.Column<string>(type: "text", nullable: true),
+                    UsreId = table.Column<int>(type: "integer", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Events", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "News",
                 columns: table => new
                 {
@@ -66,6 +95,9 @@ namespace NCBack.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "Events");
+
             migrationBuilder.DropTable(
                 name: "News");
 
