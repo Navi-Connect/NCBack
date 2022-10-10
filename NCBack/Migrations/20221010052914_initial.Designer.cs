@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace NCBack.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20220923045512_initial")]
+    [Migration("20221010052914_initial")]
     partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -74,16 +74,18 @@ namespace NCBack.Migrations
                     b.Property<string>("Region")
                         .HasColumnType("text");
 
-                    b.Property<TimeSpan?>("TimeFinish")
-                        .HasColumnType("interval");
+                    b.Property<DateTime?>("TimeFinish")
+                        .HasColumnType("timestamp without time zone");
 
-                    b.Property<TimeSpan?>("TimeStart")
-                        .HasColumnType("interval");
+                    b.Property<DateTime?>("TimeStart")
+                        .HasColumnType("timestamp without time zone");
 
-                    b.Property<int?>("UsreId")
+                    b.Property<int>("UserId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Events");
                 });
@@ -209,6 +211,59 @@ namespace NCBack.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("NCBack.Models.UserEvent", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("EventId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EventId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserEvent");
+                });
+
+            modelBuilder.Entity("NCBack.Models.Event", b =>
+                {
+                    b.HasOne("NCBack.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("NCBack.Models.UserEvent", b =>
+                {
+                    b.HasOne("NCBack.Models.Event", "Event")
+                        .WithMany()
+                        .HasForeignKey("EventId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("NCBack.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Event");
+
+                    b.Navigation("User");
                 });
 #pragma warning restore 612, 618
         }

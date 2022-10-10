@@ -13,5 +13,6 @@ public class DataContext : DbContext
     public virtual DbSet<User> Users { get; set; }
     public virtual DbSet<News> News { get; set; }
     public virtual DbSet<Event> Events { get; set; }
+    public virtual DbSet<UserEvent> UserEvent { get; set; }
 }
 

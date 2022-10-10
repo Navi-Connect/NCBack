@@ -11,12 +11,12 @@ public class GalleryController : Controller
     {
         _hostingEnvironment = hostingEnvironment;
     }        
-
-    // GET api/<controller>/5
-    [HttpGet("images/{id}")]
-    public IActionResult Get(string id)
+    
+    
+    [HttpGet("images/{namePhoto}")]
+    public IActionResult Get(string namePhoto)
     {
-        var path = Path.Combine(_hostingEnvironment.WebRootPath, "images", $"{id}");
+        var path = Path.Combine(_hostingEnvironment.WebRootPath, "images", $"{namePhoto}");
         var imageFileStream = System.IO.File.OpenRead(path);
         return File(imageFileStream, "image/jpeg");
     }

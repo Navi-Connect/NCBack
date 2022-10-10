@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using NCBack.Data;
 using NCBack.Dtos.Event;
 using NCBack.Models;
@@ -26,19 +27,34 @@ public class EventsControllers : Controller
     [HttpGet("events")]
     public async Task<IActionResult> Events()
     {
-        var events = _context.Events.ToList();
+        var list = (from e in _context.Events
+            from u in _context.Users
+            where e.UserId == u.Id
+            select new {e.Id, e.AimOfTheMeeting, e.MeetingCategory, e.MeatingName, 
+                e.Date , e.TimeStart, e.TimeFinish, e.City, e.Region, e.Gender,
+                e.AgeTo , e.AgeFrom , e.CaltulationType , e.CaltulationSum, e.LanguageCommunication ,
+                e.MeatingPlace , e.MeatingInterests , e.UserId ,e.User } ).ToList();
+        return Ok(list);
+    }
+
+    [HttpGet("event/{id}")]
+    public async Task<IActionResult> Event(int id)
+    {
+        var events = await _context.Events.FindAsync(id);
+        events.User = await _context.Users.FirstOrDefaultAsync(u => u.Id == events.UserId);
         return Ok(events);
     }
-    
+
+
     [Authorize]
     [HttpPost("createEvent")]
     public async Task<ActionResult<Event>> CreateEvent([FromForm] EventCreateDto request)
     {
-        var events = _context.Events.FirstOrDefault(u => u.UsreId == GetUserId());
+        var events = _context.Events.FirstOrDefault(u => u.UserId == GetUserId());
        
         events = new Event()
         {
-            UsreId = GetUserId(),
+            UserId = GetUserId(),
             MeatingName = request.MeatingName,
             AimOfTheMeeting = request.AimOfTheMeeting,
             MeetingCategory = request.MeetingCategory,
@@ -55,9 +71,9 @@ public class EventsControllers : Controller
             CaltulationSum = request.CaltulationSum,
             LanguageCommunication = request.LanguageCommunication,
             MeatingInterests = request.MeatingInterests,
+            User = _context.Users.FirstOrDefault(u => u.Id == GetUserId())
         };
         
-        events.User = _context.Users.FirstOrDefault(u => u.Id == events.UsreId);
         _context.Events.Add(events);
         await _context.SaveChangesAsync();
         return Ok(events);
@@ -72,7 +88,7 @@ public class EventsControllers : Controller
         if (events == null)
             return BadRequest("Hero not found.");
 
-        events.UsreId = GetUserId();
+        events.UserId = GetUserId();
         events.MeatingName = request.MeatingName;
         events.AimOfTheMeeting = request.AimOfTheMeeting;
         events.MeetingCategory = request.MeetingCategory;
@@ -89,8 +105,7 @@ public class EventsControllers : Controller
         events.CaltulationSum = request.CaltulationSum;
         events.LanguageCommunication = request.LanguageCommunication;
         events.MeatingInterests = request.MeatingInterests;
-
-        events.User = _context.Users.FirstOrDefault(u => u.Id == events.UsreId);
+        events.User = _context.Users.FirstOrDefault(u => u.Id == events.UserId);
 
         _context.Events.Update(events);
         await _context.SaveChangesAsync();

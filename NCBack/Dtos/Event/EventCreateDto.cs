@@ -8,10 +8,9 @@ public class EventCreateDto
     public string? MeetingCategory { get; set; }
     public string? MeatingName { get; set; }
     public DateTime? Date { get; set; } 
-    [DisplayFormat(DataFormatString = "{0:HH:mm:ss}", ApplyFormatInEditMode = true)]
-    public TimeSpan TimeStart { get; set; }
-    [DisplayFormat(DataFormatString = "{0:HH:mm:ss}", ApplyFormatInEditMode = true)]
-    public TimeSpan TimeFinish { get; set; }
+    
+    public DateTime TimeStart { get; set; }
+    public DateTime TimeFinish { get; set; }
     public string? City { get; set; }
     public string? Region { get; set; }
     public string? Gender { get; set; }

@@ -10,8 +10,8 @@ public class Event
     public string? MeetingCategory { get; set; }
     public string? MeatingName { get; set; }
     public DateTime? Date { get; set; }
-    public TimeSpan TimeStart { get; set; }
-    public TimeSpan TimeFinish { get; set; }
+    public DateTime? TimeStart { get; set; }
+    public DateTime? TimeFinish { get; set; }
     public string? City { get; set; }
     public string? Region { get; set; }
     public string? Gender { get; set; }
@@ -22,8 +22,7 @@ public class Event
     public string? LanguageCommunication { get; set; }
     public string? MeatingPlace { get; set; }
     public string? MeatingInterests{ get; set; }
-    public int? UsreId { get; set; }
-    [NotMapped]
-    public User? User { get; set; }
+    public int UserId { get; set; }
+    public User User { get; set; }
     
 }
