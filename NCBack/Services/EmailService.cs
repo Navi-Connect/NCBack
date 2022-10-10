@@ -13,18 +13,15 @@ public class EmailService
 {
     public static async Task SendMessageAsync(string email, string subject, string message)
     {
-        var emailMessage = new MimeMessage();
-        emailMessage.From.Add(new MailboxAddress("Приложения Navi Connect",
-            "busindavis@yandex.kz"));
-        emailMessage.To.Add(new MailboxAddress("", email));
-        emailMessage.Subject = subject;
-        emailMessage.Body = new BodyBuilder() { HtmlBody = message }.ToMessageBody();
-        emailMessage.Prepare(EncodingConstraint.EightBit);
-        using var client = new SmtpClient();
-        await client.ConnectAsync("smtp.yandex.ru", 25, SecureSocketOptions.StartTls);
-        await client.AuthenticateAsync("busindavis@yandex.kz", "rindoman666");
-        await client.SendAsync(emailMessage);
-        await client.DisconnectAsync(true);
+        
+        var apiKey = "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";
+        var client = new SendGridClient(apiKey);
+        var from = new EmailAddress("SupNaviConnect@gmail.com", "Navi Connect");
+        var to = new EmailAddress(email, " ");
+        var plainTextContent = "С уважением Navi Connect";
+        var htmlContent = message;
+        var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
+        await client.SendEmailAsync(msg);
     }
     
     public static async Task SendPassword(string email, string password)
