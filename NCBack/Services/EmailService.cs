@@ -15,14 +15,14 @@ public class EmailService
     {
         var emailMessage = new MimeMessage();
         emailMessage.From.Add(new MailboxAddress("Приложения Navi Connect",
-            "crystel97@ethereal.email"));
+            "busindavis@yandex.kz"));
         emailMessage.To.Add(new MailboxAddress("", email));
         emailMessage.Subject = subject;
         emailMessage.Body = new BodyBuilder() { HtmlBody = message }.ToMessageBody();
         emailMessage.Prepare(EncodingConstraint.EightBit);
         using var client = new SmtpClient();
-        await client.ConnectAsync("smtp.ethereal.email", 587, SecureSocketOptions.StartTls);
-        await client.AuthenticateAsync("crystel97@ethereal.email", "E3HSv6pm85nkkB7jYc");
+        await client.ConnectAsync("smtp.yandex.ru", 25, SecureSocketOptions.StartTls);
+        await client.AuthenticateAsync("busindavis@yandex.kz", "rindoman666");
         await client.SendAsync(emailMessage);
         await client.DisconnectAsync(true);
     }
