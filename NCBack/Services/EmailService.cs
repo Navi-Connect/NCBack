@@ -9,7 +9,7 @@ public class EmailService
     {
         var apiKey = " ";
         var client = new SendGridClient(apiKey);
-        var from = new EmailAddress("supnaviconnect@gmail.com", "Navi");
+        var from = new EmailAddress("supnaviconnect@gmail.com", "Navi Connect");
         var to = new EmailAddress(email);
         var plainTextContent = "С уважением Navi Connect";
         var htmlContent = message;
