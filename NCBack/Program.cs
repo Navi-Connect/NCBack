@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using NCBack.Services;
+using SendGrid.Extensions.DependencyInjection;
 using Swashbuckle.AspNetCore.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -52,6 +53,12 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateAudience = false
         };
     });
+
+builder.Services.AddSendGrid(option =>
+{
+    option.ApiKey = builder.Configuration.GetSection("SendGrindEmailSettings")
+        .GetValue<string>("APIkey");
+});
 
 builder.Services.AddHttpContextAccessor();
 

@@ -162,7 +162,7 @@ public class AuthRepository : IAuthRepository
         return user;
     }
     
-    public async Task<User> ForgotPassword(string email)
+    /*public async Task<User> ForgotPassword(string email)
     {
         var user = await _context.Users.FirstOrDefaultAsync(u=> u.Email == email);
         if (user != null)
@@ -182,7 +182,7 @@ public class AuthRepository : IAuthRepository
             user.Success = false;
             user.Message = "Not found !!!";
         return user;
-    }
+    }*/
     
     private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
     {

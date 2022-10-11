@@ -1,13 +1,16 @@
-﻿using SendGrid;
+﻿using Microsoft.Extensions.Options;
+using SendGrid;
 using SendGrid.Helpers.Mail;
+using NCBack.Models;
 
 namespace NCBack.Services;
 
 public class EmailService
 {
+
     public static async Task SendMessageAsync(string email, string subject, string message)
     {
-        var apiKey = " ";
+        var apiKey = "";
         var client = new SendGridClient(apiKey);
         var from = new EmailAddress("supnaviconnect@gmail.com", "Navi Connect");
         var to = new EmailAddress(email);

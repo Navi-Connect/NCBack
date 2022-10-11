@@ -53,3 +53,4 @@ C:\NaviConnect\NCBack\NCBack\bin\Debug\net6.0\BouncyCastle.Crypto.dll
 C:\NaviConnect\NCBack\NCBack\bin\Debug\net6.0\Newtonsoft.Json.dll
 C:\NaviConnect\NCBack\NCBack\bin\Debug\net6.0\SendGrid.dll
 C:\NaviConnect\NCBack\NCBack\bin\Debug\net6.0\StarkbankEcdsa.dll
+C:\NaviConnect\NCBack\NCBack\bin\Debug\net6.0\SendGrid.Extensions.DependencyInjection.dll
