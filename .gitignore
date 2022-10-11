@@ -4,4 +4,4 @@ obj/
 .idea
 *.jpg
 *.png
-*/appsettings.json
+appsettings.json
