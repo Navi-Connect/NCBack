@@ -4,5 +4,4 @@ obj/
 .idea
 *.jpg
 *.png
-*/appsettings.json
-*/.idea.NCBack
+NCBack/appsettings.json
