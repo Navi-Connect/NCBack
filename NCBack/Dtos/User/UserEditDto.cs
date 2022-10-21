@@ -9,6 +9,8 @@ public class UserEditDto
     public IFormFile File { get; set; }
     public string? Credo { get; set; } = string.Empty;
     public string? LanguageOfCommunication { get; set; } = string.Empty;
+    public string? Nationality { get; set; } = string.Empty;
+    public string? Gender { get; set; } = string.Empty;
     public string? AboutMyself { get; set; } = string.Empty;
     public string? MaritalStatus { get; set; } = string.Empty;
     public string? GetAcquaintedWith { get; set; } = string.Empty;

@@ -6,7 +6,6 @@ public class UserRegisterDto
 {
     [Required] 
     public string City { get; set; }
-    public string? Region { get; set; } = string.Empty;
     [Required]
     public string PhoneNumber { get; set; }  
     [Required]
@@ -15,11 +14,8 @@ public class UserRegisterDto
     [Required]
     public string Username { get; set; }
     [Required]
-    public string FirstName { get; set; }
-    [Required]
-    public string Lastname { get; set; }
-    public string? SurName { get; set; } = string.Empty;
- 
+    public string Fullname { get; set; }
+    
     [Required]
     public DateTime DateOfBirth { get; set; }
     

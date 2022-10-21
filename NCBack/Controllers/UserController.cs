@@ -17,16 +17,15 @@ public class UserController : ControllerBase
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IHostEnvironment _environment; //Добавляем сервис взаимодействия с файлами в рамках хоста
     private readonly UploadFileService _uploadFileService; // Добавляем сервис для получения файлов из формы
+    private readonly PushSms _pushSms;
 
-    public UserController(DataContext context,
-        IHttpContextAccessor httpContextAccessor,
-        IHostEnvironment environment,
-        UploadFileService uploadFileService)
+    public UserController(DataContext context, IHttpContextAccessor httpContextAccessor, IHostEnvironment environment, UploadFileService uploadFileService, PushSms pushSms)
     {
         _context = context;
         _httpContextAccessor = httpContextAccessor;
         _environment = environment;
         _uploadFileService = uploadFileService;
+        _pushSms = pushSms;
     }
 
     private int GetUserId() => int.Parse(_httpContextAccessor.HttpContext.User
@@ -55,6 +54,8 @@ public class UserController : ControllerBase
                 user.AvatarPath = photoPath;
                 user.Credo = model.Credo;
                 user.LanguageOfCommunication = model.LanguageOfCommunication;
+                user.Nationality = model.Nationality;
+                user.Gender = model.Gender;
                 user.AboutMyself = model.AboutMyself;
                 user.MaritalStatus = model.MaritalStatus;
                 user.IWantToLearn = model.IWantToLearn;
@@ -69,7 +70,6 @@ public class UserController : ControllerBase
                 user.Message = "User already exists.";
             }
         }
-
         _context.Users.Update(user);
         await _context.SaveChangesAsync();
         return Ok(user);
@@ -83,17 +83,32 @@ public class UserController : ControllerBase
         if (user != null)
         {
             user.City = model.City;
-            user.Region = model.Region;
-            user.FirstName = model.FirstName;
-            user.Lastname = model.Lastname;
-            user.SurName = model.SurName;
+            user.FullName = model.FullName;
         }
-
+        
         _context.Users.Update(user);
         await _context.SaveChangesAsync();
         return Ok(user);
     }
 
+    [HttpPost("EditingContactInformation")]
+    public async Task<IActionResult> EditingContactInformation([FromForm] UserEditContactDto model)
+    {
+        var user = _context.Users.FirstOrDefault(u => u.Id == GetUserId());
+        await _pushSms.Sms(model.Phone);
+        
+        if (user != null)
+        {
+            user.Email = model.Email;
+            user.PhoneNumber = model.Phone;
+            user.Code = _pushSms.code;
+        }
+        
+        _context.Users.Update(user);
+        await _context.SaveChangesAsync();
+        return Ok(user);
+    }
+    
     [HttpGet("users")]
     public async Task<IActionResult> Users()
     {

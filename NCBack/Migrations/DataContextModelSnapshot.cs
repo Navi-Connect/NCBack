@@ -151,8 +151,11 @@ namespace NCBack.Migrations
                     b.Property<string>("FavoritePlace")
                         .HasColumnType("text");
 
-                    b.Property<string>("FirstName")
+                    b.Property<string>("FullName")
                         .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Gender")
                         .HasColumnType("text");
 
                     b.Property<string>("GetAcquaintedWith")
@@ -164,10 +167,6 @@ namespace NCBack.Migrations
                     b.Property<string>("LanguageOfCommunication")
                         .HasColumnType("text");
 
-                    b.Property<string>("Lastname")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<string>("MaritalStatus")
                         .HasColumnType("text");
 
@@ -176,6 +175,9 @@ namespace NCBack.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("MyInterests")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Nationality")
                         .HasColumnType("text");
 
                     b.Property<byte[]>("PasswordHash")
@@ -190,14 +192,8 @@ namespace NCBack.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Region")
-                        .HasColumnType("text");
-
                     b.Property<bool>("Success")
                         .HasColumnType("boolean");
-
-                    b.Property<string>("SurName")
-                        .HasColumnType("text");
 
                     b.Property<string>("Token")
                         .HasColumnType("text");

@@ -51,32 +51,39 @@ public class EventsControllers : Controller
     public async Task<ActionResult<Event>> CreateEvent([FromForm] EventCreateDto request)
     {
         var events = _context.Events.FirstOrDefault(u => u.UserId == GetUserId());
-       
-        events = new Event()
-        {
-            UserId = GetUserId(),
-            MeatingName = request.MeatingName,
-            AimOfTheMeeting = request.AimOfTheMeeting,
-            MeetingCategory = request.MeetingCategory,
-            MeatingPlace = request.MeatingPlace,
-            Date = request.Date,
-            TimeStart = request.TimeStart,
-            TimeFinish = request.TimeFinish,
-            City = request.City,
-            Region = request.Region,
-            AgeTo = request.AgeTo,
-            AgeFrom = request.AgeFrom,
-            Gender = request.Gender,
-            CaltulationType = request.CaltulationType,
-            CaltulationSum = request.CaltulationSum,
-            LanguageCommunication = request.LanguageCommunication,
-            MeatingInterests = request.MeatingInterests,
-            User = _context.Users.FirstOrDefault(u => u.Id == GetUserId())
-        };
+
+        /*if (request.Date > DateTime.Now || 
+            request.TimeStart  < request.TimeFinish  
+            || request.TimeStart !> DateTime.Now)
+        {*/
+            events = new Event()
+            { 
+                UserId = GetUserId(),
+                MeatingName = request.MeatingName,
+                AimOfTheMeeting = request.AimOfTheMeeting,
+                MeetingCategory = request.MeetingCategory,
+                MeatingPlace = request.MeatingPlace,
+                Date = request.Date,
+                TimeStart = request.TimeStart,
+                TimeFinish = request.TimeFinish,
+                City = request.City,
+                Region = request.Region,
+                AgeTo = request.AgeTo,
+                AgeFrom = request.AgeFrom,
+                Gender = request.Gender,
+                CaltulationType = request.CaltulationType,
+                CaltulationSum = request.CaltulationSum,
+                LanguageCommunication = request.LanguageCommunication,
+                MeatingInterests = request.MeatingInterests,
+                User = _context.Users.FirstOrDefault(u => u.Id == GetUserId())
+            };
         
-        _context.Events.Add(events);
-        await _context.SaveChangesAsync();
-        return Ok(events);
+            _context.Events.Add(events);
+            await _context.SaveChangesAsync();
+            return Ok(events);
+        /*}
+
+        return BadRequest("Ошибка по аремении или еще что то !!! ");*/
     }
 
     [Authorize]

@@ -32,13 +32,10 @@ namespace NCBack.Controllers
         {
             var response = await _authRepo.Register(
                 request.City,
-                request.Region,
                 request.PhoneNumber,
                 request.Email,
                 request.Username,
-                request.FirstName,
-                request.Lastname,
-                request.SurName,
+                request.Fullname,
                 Convert.ToDateTime(request.DateOfBirth.ToShortDateString()),
                 request.File,
                 request.Password);

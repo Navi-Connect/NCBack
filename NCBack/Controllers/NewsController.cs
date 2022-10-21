@@ -39,7 +39,11 @@ public class NewsController : Controller
             string photoPath = $"images/{request.File.FileName}";
             _uploadFileService.Upload(path, request.File.FileName, request.File);
 
+            news.Name = request.Name;
+            news.Description = request.Description;
             news.Photo = photoPath;
+            news.Data = DateTime.Now;
+
         }
         else
             news = new News()
@@ -68,7 +72,11 @@ public class NewsController : Controller
             string path = Path.Combine(_environment.ContentRootPath, "wwwroot/images/");
             string? photoPath = $"images/{request.File.FileName}";
             _uploadFileService.Upload(path, request.File.FileName, request.File);
+            
+            news.Name = request.Name;
+            news.Description = request.Description;
             news.Photo = photoPath;
+            news.Data = DateTime.Now;
         }
         else
             news.Name = request.Name;

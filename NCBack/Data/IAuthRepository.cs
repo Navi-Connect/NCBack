@@ -6,9 +6,8 @@ namespace NCBack.Data;
 public interface IAuthRepository
 {
     Task<User> VerificationCode(int code);
-    Task<User> Register( string city, string region, string phone, string email,
-        string username, string firstname, 
-        string lastname, string surname, DateTime dateOfBirth,
+    Task<User> Register( string city, string phone, string email,
+        string username, string fullname, DateTime dateOfBirth,
         IFormFile file, string password);
     Task<User> Login(string username, string password);
     Task<bool> UserExists(string username);
