@@ -48,19 +48,22 @@ namespace NCBack.Migrations
                     b.Property<string>("City")
                         .HasColumnType("text");
 
-                    b.Property<DateTime?>("Date")
-                        .HasColumnType("timestamp without time zone");
-
                     b.Property<string>("Gender")
+                        .HasColumnType("text");
+
+                    b.Property<string>("IWant")
                         .HasColumnType("text");
 
                     b.Property<string>("LanguageCommunication")
                         .HasColumnType("text");
 
-                    b.Property<string>("MeatingInterests")
-                        .HasColumnType("text");
+                    b.Property<double?>("Latitude")
+                        .HasColumnType("double precision");
 
-                    b.Property<string>("MeatingName")
+                    b.Property<double?>("Longitude")
+                        .HasColumnType("double precision");
+
+                    b.Property<string>("MeatingInterests")
                         .HasColumnType("text");
 
                     b.Property<string>("MeatingPlace")
@@ -69,8 +72,8 @@ namespace NCBack.Migrations
                     b.Property<string>("MeetingCategory")
                         .HasColumnType("text");
 
-                    b.Property<string>("Region")
-                        .HasColumnType("text");
+                    b.Property<int?>("Status")
+                        .HasColumnType("integer");
 
                     b.Property<DateTime?>("TimeFinish")
                         .HasColumnType("timestamp without time zone");
@@ -124,9 +127,6 @@ namespace NCBack.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("AboutMyself")
-                        .HasColumnType("text");
-
                     b.Property<string>("AvatarPath")
                         .IsRequired()
                         .HasColumnType("text");
@@ -138,7 +138,7 @@ namespace NCBack.Migrations
                     b.Property<int?>("Code")
                         .HasColumnType("integer");
 
-                    b.Property<string>("Credo")
+                    b.Property<string>("CredoAboutMyself")
                         .HasColumnType("text");
 
                     b.Property<DateTime>("DateOfBirth")
@@ -150,6 +150,9 @@ namespace NCBack.Migrations
 
                     b.Property<string>("FavoritePlace")
                         .HasColumnType("text");
+
+                    b.Property<int?>("From")
+                        .HasColumnType("integer");
 
                     b.Property<string>("FullName")
                         .IsRequired()
@@ -168,6 +171,9 @@ namespace NCBack.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("MaritalStatus")
+                        .HasColumnType("text");
+
+                    b.Property<string>("MeetFor")
                         .HasColumnType("text");
 
                     b.Property<string>("Message")
@@ -192,8 +198,14 @@ namespace NCBack.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("Profession")
+                        .HasColumnType("text");
+
                     b.Property<bool>("Success")
                         .HasColumnType("boolean");
+
+                    b.Property<int?>("To")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Token")
                         .HasColumnType("text");

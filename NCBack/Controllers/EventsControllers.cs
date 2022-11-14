@@ -27,16 +27,33 @@ public class EventsControllers : Controller
     [HttpGet("events")]
     public async Task<IActionResult> Events()
     {
+        DateTime now = DateTime.Now;
         var list = (from e in _context.Events
             from u in _context.Users
             where e.UserId == u.Id
-            select new {e.Id, e.AimOfTheMeeting, e.MeetingCategory, e.MeatingName, 
-                e.Date , e.TimeStart, e.TimeFinish, e.City, e.Region, e.Gender,
+            where e.Status == Status.Expectations || e.Status == Status.Canceled
+            where e.TimeStart >= now
+            select new {e.Id, e.AimOfTheMeeting, e.MeetingCategory,
+                e.TimeStart, e.TimeFinish, e.City, e.Gender,
                 e.AgeTo , e.AgeFrom , e.CaltulationType , e.CaltulationSum, e.LanguageCommunication ,
-                e.MeatingPlace , e.MeatingInterests , e.UserId ,e.User } ).ToList();
+                e.MeatingPlace , e.MeatingInterests , e.UserId ,e.User , e.Status} ).ToList().Distinct();
         return Ok(list);
     }
 
+    [HttpGet("eventsAccepteds")]
+    public async Task<IActionResult> EventsAccepteds()
+    {
+        var list = (from e in _context.Events
+            from u in _context.Users
+            where e.UserId == u.Id
+            where e.Status == Status.Accepted
+            select new {e.Id, e.AimOfTheMeeting, e.MeetingCategory, 
+                e.TimeStart, e.TimeFinish, e.City, e.Gender,
+                e.AgeTo , e.AgeFrom , e.CaltulationType , e.CaltulationSum, e.LanguageCommunication ,
+                e.MeatingPlace , e.MeatingInterests , e.UserId ,e.User , e.Status} ).ToList().Distinct();
+        return Ok(list);
+    }
+    
     [HttpGet("event/{id}")]
     public async Task<IActionResult> Event(int id)
     {
@@ -50,40 +67,43 @@ public class EventsControllers : Controller
     [HttpPost("createEvent")]
     public async Task<ActionResult<Event>> CreateEvent([FromForm] EventCreateDto request)
     {
+        DateTime now = DateTime.Now;
         var events = _context.Events.FirstOrDefault(u => u.UserId == GetUserId());
 
-        /*if (request.Date > DateTime.Now || 
-            request.TimeStart  < request.TimeFinish  
-            || request.TimeStart !> DateTime.Now)
-        {*/
-            events = new Event()
-            { 
-                UserId = GetUserId(),
-                MeatingName = request.MeatingName,
-                AimOfTheMeeting = request.AimOfTheMeeting,
-                MeetingCategory = request.MeetingCategory,
-                MeatingPlace = request.MeatingPlace,
-                Date = request.Date,
-                TimeStart = request.TimeStart,
-                TimeFinish = request.TimeFinish,
-                City = request.City,
-                Region = request.Region,
-                AgeTo = request.AgeTo,
-                AgeFrom = request.AgeFrom,
-                Gender = request.Gender,
-                CaltulationType = request.CaltulationType,
-                CaltulationSum = request.CaltulationSum,
-                LanguageCommunication = request.LanguageCommunication,
-                MeatingInterests = request.MeatingInterests,
-                User = _context.Users.FirstOrDefault(u => u.Id == GetUserId())
-            };
-        
-            _context.Events.Add(events);
-            await _context.SaveChangesAsync();
-            return Ok(events);
-        /*}
+        if (request.TimeStart >= now)
+        {
+            if (request.TimeFinish >= request.TimeStart)
+            {
+                events = new Event()
+                {
+                    UserId = GetUserId(),
+                    AimOfTheMeeting = request.AimOfTheMeeting,
+                    MeetingCategory = request.MeetingCategory,
+                    MeatingPlace = request.MeatingPlace,
+                    IWant = request.IWant,
+                    TimeStart = request.TimeStart,
+                    TimeFinish = request.TimeFinish,
+                    City = request.City,
+                    AgeTo = request.AgeTo,
+                    AgeFrom = request.AgeFrom,
+                    Gender = request.Gender,
+                    CaltulationType = request.CaltulationType,
+                    CaltulationSum = request.CaltulationSum,
+                    LanguageCommunication = request.LanguageCommunication,
+                    MeatingInterests = request.MeatingInterests,
+                    Latitude = request.Latitude,
+                    Longitude = request.Longitude,
+                    User = _context.Users.FirstOrDefault(u => u.Id == GetUserId()),
+                    Status = Status.Expectations
+                };
 
-        return BadRequest("Ошибка по аремении или еще что то !!! ");*/
+                _context.Events.Add(events);
+                await _context.SaveChangesAsync();
+                return Ok(events);
+            }
+        }
+
+        return BadRequest("Ошибка по времении или еще что то !!! ");
     }
 
     [Authorize]
@@ -96,15 +116,13 @@ public class EventsControllers : Controller
             return BadRequest("Hero not found.");
 
         events.UserId = GetUserId();
-        events.MeatingName = request.MeatingName;
         events.AimOfTheMeeting = request.AimOfTheMeeting;
         events.MeetingCategory = request.MeetingCategory;
         events.MeatingPlace = request.MeatingPlace;
-        events.Date = request.Date;
+        events.IWant = request.IWant;
         events.TimeStart = request.TimeStart;
         events.TimeFinish = request.TimeFinish;
         events.City = request.City;
-        events.Region = request.Region;
         events.AgeTo = request.AgeTo;
         events.AgeFrom = request.AgeFrom;
         events.Gender = request.Gender;
@@ -112,6 +130,8 @@ public class EventsControllers : Controller
         events.CaltulationSum = request.CaltulationSum;
         events.LanguageCommunication = request.LanguageCommunication;
         events.MeatingInterests = request.MeatingInterests;
+        events.Latitude = request.Latitude;
+        events.Longitude = request.Longitude;
         events.User = _context.Users.FirstOrDefault(u => u.Id == events.UserId);
 
         _context.Events.Update(events);
@@ -125,7 +145,7 @@ public class EventsControllers : Controller
     {
         var events = await _context.Events.FindAsync(id);
         if (events == null)
-            return BadRequest("News not found.");
+            return BadRequest("Event not found.");
 
         _context.Events.Remove(events);
         await _context.SaveChangesAsync();

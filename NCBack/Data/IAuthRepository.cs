@@ -12,5 +12,6 @@ public interface IAuthRepository
     Task<User> Login(string username, string password);
     Task<bool> UserExists(string username);
     Task<User> ChangePassword(UserChangePasswordDto request);
+    Task<User> SMSNotReceived(string phone, int? id);
     /*Task<User> ForgotPassword(string email);*/
 }

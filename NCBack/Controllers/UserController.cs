@@ -50,24 +50,20 @@ public class UserController : ControllerBase
                 string path = Path.Combine(_environment.ContentRootPath, "wwwroot/images/");
                 string photoPath = $"images/{model.File.FileName}";
                 _uploadFileService.Upload(path, model.File.FileName, model.File);
-                user.Username = model.Username;
                 user.AvatarPath = photoPath;
-                user.Credo = model.Credo;
+                user.CredoAboutMyself = model.CredoAboutMyself;
                 user.LanguageOfCommunication = model.LanguageOfCommunication;
                 user.Nationality = model.Nationality;
-                user.Gender = model.Gender;
-                user.AboutMyself = model.AboutMyself;
+                user.Gender = model.Gender; ;
                 user.MaritalStatus = model.MaritalStatus;
                 user.IWantToLearn = model.IWantToLearn;
                 user.GetAcquaintedWith = model.GetAcquaintedWith;
+                user.MeetFor = model.MeetFor;
+                user.From = model.From;
+                user.To = model.To;
                 user.FavoritePlace = model.FavoritePlace;
                 user.MyInterests = model.MyInterests;
-            }
-
-            if (await _context.Users.AnyAsync(u => u.Username.ToLower() == model.Username.ToLower()))
-            {
-                user.Success = false;
-                user.Message = "User already exists.";
+                user.Profession = model.Profession;
             }
         }
         _context.Users.Update(user);
@@ -75,6 +71,28 @@ public class UserController : ControllerBase
         return Ok(user);
     }
 
+    [HttpPost("editUsername")]
+    public async Task<IActionResult> EditUsername(UserEditUserNameDto model)
+    {
+        var user = _context.Users.FirstOrDefault(u => u.Id == GetUserId());
+        if (model.Username != null)
+        {
+            if (await _context.Users.AnyAsync(u => u.Username.ToLower() == user.Username.ToLower()))
+            {
+                user.Success = false;
+                user.Message = "User already exists.";
+                return BadRequest("Error User already exists !!!");
+            }
+        }
+        
+        if (user != null)
+        {
+            user.Username = model.Username;
+        }
+        _context.Users.Update(user);
+        await _context.SaveChangesAsync();
+        return Ok(user);
+    }
     [HttpPost("editPersonalInformation")]
     public async Task<IActionResult> EditingPersonalInformation([FromForm] UserEditPersonalInformationDto model)
     {

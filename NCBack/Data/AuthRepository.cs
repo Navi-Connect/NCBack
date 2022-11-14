@@ -38,7 +38,6 @@ public class AuthRepository : IAuthRepository
 
     public async Task<User> Login(string username, string password)
     {
-        /*var response = new ServiceResponse<string>();*/
         var user = await _context.Users
             .FirstOrDefaultAsync(u => u.Username.ToLower().Equals(username.ToLower()));
         if (user == null)
@@ -54,9 +53,8 @@ public class AuthRepository : IAuthRepository
         else
         {
             user.Token = CreateToken(user);
-            /*response.Data = user.Id;*/
+            user.Success = true;
             user.Message = "Done.";
-            //response.User.ToString();
         }
 
         return user;
@@ -129,6 +127,23 @@ public class AuthRepository : IAuthRepository
         user.Id = user.Id;
         user.Message = "Done.";
         return user;
+    }
+
+    public async Task<User> SMSNotReceived(string phone, int? id)
+    {
+        var user = await _context.Users.FindAsync(id);
+        await _pushSms.Sms(phone);
+        if (user != null)
+        {
+            user.PhoneNumber = phone;
+            user.Code = _pushSms.code;
+            user.Message = "Done.";
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+            return user;
+        }
+
+        return null;
     }
 
     public async Task<bool> UserExists(string username)

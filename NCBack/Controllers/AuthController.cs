@@ -73,6 +73,16 @@ namespace NCBack.Controllers
             return Ok(response);
         }
 
+        [HttpPost("smsNotReceived/{id}")]
+        public async Task<ActionResult<User>> SMSNotReceived(string phone, int? id)
+        {
+            var response = await _authRepo.SMSNotReceived(phone, id);
+            if (!response.Success)
+            {
+                return BadRequest(response);
+            }
+            return Ok(response);
+        }
         [HttpPost("changePassword")]
         [Authorize]
         public async Task<ActionResult<User>> ChangePassword(UserChangePasswordDto request)
@@ -82,7 +92,7 @@ namespace NCBack.Controllers
             {
                 return BadRequest(response);
             }
-
+            
             return Ok(response);
         }
         

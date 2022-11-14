@@ -14,11 +14,10 @@ public class PushSms
             client.BaseAddress = new Uri("https://api.mobizon.kz/");
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
             // New code:
             HttpResponseMessage response = await client
                 .GetAsync(
-                    $"service/message/sendsmsmessage?recipient={phone}&text=Добро пожаловать это ваш код {code}&apiKey=kzed9bd53a7b9a42af6a9331417cd13c936c357066882224d8a6f8f6b3610afa1ea60e");
+                    $"service/message/sendsmsmessage?recipient={phone}&text=Добро пожаловать это ваш код {code}&apiKey=kz9fbea4a753eb49d37bd0249e0994fca8af387144ef14f4825a0fc0ccffac6fdc3cf4");
             if (response.IsSuccessStatusCode)
             {
                 var product = await response.Content.ReadAsStringAsync();
