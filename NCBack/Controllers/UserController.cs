@@ -38,7 +38,13 @@ public class UserController : ControllerBase
         return Ok(user);
     }
 
-
+    [HttpGet("getUserById")]
+    public async Task<IActionResult> GetUserById(int id)
+    {
+        var user = _context.Users.FirstOrDefault(u => u.Id == id);
+        return Ok(user);
+    }
+    
     [HttpPost("editProfile")]
     public async Task<IActionResult> EditingProfile([FromForm] UserEditDto model)
     {
@@ -133,4 +139,19 @@ public class UserController : ControllerBase
         var user = _context.Users.ToList();
         return Ok(user);
     }
+    
+    [HttpPost("deleteUser")]
+    public async Task<IActionResult> DeleteUser()
+    {
+        var user = await _context.Users.FirstOrDefaultAsync(p => p.Id == GetUserId());
+        
+        if (user is null)
+            return NotFound();
+
+        _context.Entry(user).State = EntityState.Deleted;
+        _context.Users.Remove(user);
+        await _context.SaveChangesAsync();
+        return Ok("Success delete user !!!");
+    }
+    
 }
