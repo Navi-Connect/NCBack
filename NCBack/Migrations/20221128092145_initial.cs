@@ -102,6 +102,32 @@ namespace NCBack.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "AccedEventUser",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    EventId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AccedEventUser", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AccedEventUser_Events_EventId",
+                        column: x => x.EventId,
+                        principalTable: "Events",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_AccedEventUser_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "UserEvent",
                 columns: table => new
                 {
@@ -128,6 +154,16 @@ namespace NCBack.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_AccedEventUser_EventId",
+                table: "AccedEventUser",
+                column: "EventId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AccedEventUser_UserId",
+                table: "AccedEventUser",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Events_UserId",
                 table: "Events",
                 column: "UserId");
@@ -145,6 +181,9 @@ namespace NCBack.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "AccedEventUser");
+
             migrationBuilder.DropTable(
                 name: "News");
 

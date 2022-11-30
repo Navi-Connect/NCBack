@@ -100,7 +100,7 @@ public class UserController : ControllerBase
         return Ok(user);
     }
     [HttpPost("editPersonalInformation")]
-    public async Task<IActionResult> EditingPersonalInformation([FromForm] UserEditPersonalInformationDto model)
+    public async Task<IActionResult> EditingPersonalInformation(UserEditPersonalInformationDto model)
     {
         var user = _context.Users.FirstOrDefault(u => u.Id == GetUserId());
 
@@ -116,7 +116,7 @@ public class UserController : ControllerBase
     }
 
     [HttpPost("EditingContactInformation")]
-    public async Task<IActionResult> EditingContactInformation([FromForm] UserEditContactDto model)
+    public async Task<IActionResult> EditingContactInformation(UserEditContactDto model)
     {
         var user = _context.Users.FirstOrDefault(u => u.Id == GetUserId());
         await _pushSms.Sms(model.Phone);

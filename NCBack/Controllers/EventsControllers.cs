@@ -24,6 +24,7 @@ public class EventsControllers : Controller
     private int GetUserId() => int.Parse(_httpContextAccessor.HttpContext.User
         .FindFirstValue(ClaimTypes.NameIdentifier));
     
+    [Authorize]
     [HttpGet("events")]
     public async Task<IActionResult> Events()
     {
@@ -36,24 +37,26 @@ public class EventsControllers : Controller
             select new {e.Id, e.AimOfTheMeeting, e.MeetingCategory,
                 e.TimeStart, e.TimeFinish, e.City, e.Gender,
                 e.AgeTo , e.AgeFrom , e.CaltulationType , e.CaltulationSum, e.LanguageCommunication ,
-                e.MeatingPlace , e.MeatingInterests , e.UserId ,e.User , e.Status} ).ToList().Distinct();
+                e.MeatingPlace , e.MeatingInterests , e.UserId ,e.User , e.Status} ).Distinct();
         return Ok(list);
     }
 
-    [HttpGet("eventsAccepteds")]
+    [Authorize]
+    [HttpGet("myEventsAccepted")]
     public async Task<IActionResult> EventsAccepteds()
     {
-        var list = (from e in _context.Events
+        var list = (from evensAccepted in _context.Events
             from u in _context.Users
-            where e.UserId == u.Id
-            where e.Status == Status.Accepted
-            select new {e.Id, e.AimOfTheMeeting, e.MeetingCategory, 
-                e.TimeStart, e.TimeFinish, e.City, e.Gender,
-                e.AgeTo , e.AgeFrom , e.CaltulationType , e.CaltulationSum, e.LanguageCommunication ,
-                e.MeatingPlace , e.MeatingInterests , e.UserId ,e.User , e.Status} ).ToList().Distinct();
+            from acceptedUser in _context.UserEvent
+            where evensAccepted.UserId == GetUserId()
+            where evensAccepted.Status == Status.Accepted
+            where acceptedUser.EventId == evensAccepted.Id
+            select new {evensAccepted, acceptedUser.UserId , acceptedUser.User}).ToList().Distinct();
+            
         return Ok(list);
     }
     
+    [Authorize]
     [HttpGet("event/{id}")]
     public async Task<IActionResult> Event(int id)
     {

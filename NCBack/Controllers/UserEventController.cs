@@ -34,7 +34,7 @@ public class UserEventController : ControllerBase
             where e.Status == Status.Expectations || e.Status == Status.Canceled
             where e.TimeStart >= now
             orderby ev
-            select new { ev.Id, ev.User, ev.Event }).Distinct();
+            select new { ev.Id, ev.User, ev.Event }).ToList().Distinct();
 
         return Ok(list);
     }
@@ -107,13 +107,78 @@ public class UserEventController : ControllerBase
             {
                 if (events.Id != null)
                 {
+                    events.UserId = GetUserId();
                     events.Status = Status.Accepted;
                     _context.Events.Update(events);
                     await _context.SaveChangesAsync();
-
+                    
                     if (users.Id != null)
                     {
-                        var userEvent = (from ev in _context.UserEvent
+                        var uE = _context.UserEvent.FirstOrDefault(u => u.UserId == userId && u.EventId == eventId);
+                        /*var uEvent = _context.UserEvent.FirstOrDefault(e => e.EventId == eventId);*/
+                        //var eUser = _context.UserEvent.FirstOrDefault(u => u.UserId == userId );
+                        
+                        if (uE != null)
+                        {
+                            _context.AccedEventUser.Add(new AccedEventUser(uE.UserId, uE.EventId));
+                            await _context.SaveChangesAsync();
+                        }
+
+                        /*if (uEvent != null)
+                        {
+                            /*if (eUser != null)
+                            {#1#
+                                _context.UserEvent.Remove(uEvent);
+                                await _context.SaveChangesAsync();
+                            /*}#1#
+                        }*/
+                        
+                        /*sing (var ctx = new UserEvent(userId, eventId))
+                        {
+                            var x = (from y in _context.UserEvent
+                                where  y.UserId == userId
+                                where  y.EventId == eventId
+                                select y).FirstOrDefault();
+                            if(x!=null)
+                            {
+                                ctx.DeleteObject(x);
+                                ctx.SaveChanges();
+                            }
+                        }*/
+                        
+                        var delobj =
+                            _context.UserEvent.Where(p => p.UserId == userId).ToList();
+                        foreach (var v in delobj)
+                        {
+                            _context.UserEvent.Remove(v);
+                            await _context.SaveChangesAsync(); 
+                        }
+                         
+                        
+                        var delobj1 =
+                            _context.UserEvent.Where(p=> p.EventId == eventId).ToList();
+                        foreach (var v in delobj1)
+                        {
+                            _context.UserEvent.Remove(v);
+                            await _context.SaveChangesAsync(); 
+                        }
+                       
+
+                        /*
+                        if (uE != null)
+                        {
+                            _context.UserEvent.ToList().RemoveAll(r =>  r.UserId == userId && r.EventId == eventId);
+                            await _context.SaveChangesAsync();
+                        }
+                        */
+                        
+                        
+                        var userEvent = (from ev in _context.AccedEventUser
+                            where ev.UserId == userId
+                            orderby ev
+                            select new { ev.Id, ev.User.PhoneNumber }).ToList().Distinct();
+                        
+                        /*var userEvent = (from ev in _context.UserEvent
                             from u in _context.Users
                             from e in _context.Events
                             where ev.UserId == userId
@@ -121,7 +186,7 @@ public class UserEventController : ControllerBase
                             where ev.User.Id == ev.UserId
                             where e.Status == Status.Accepted
                             orderby ev
-                            select new { ev.Id, ev.User, ev.Event }).ToList().Distinct();
+                            select new { ev.Id, ev.User, ev.Event }).ToList().Distinct();*/
 
                         return Ok(userEvent);
                     }
@@ -142,23 +207,20 @@ public class UserEventController : ControllerBase
         {
             if (events != null)
             {
+                events.UserId = GetUserId();
                 events.Status = Status.Canceled;
                 _context.Events.Update(events);
                 await _context.SaveChangesAsync();
 
                 if (users != null)
                 {
-
-                    var userEvent = (from ev in _context.UserEvent
-                        from u in _context.Users
-                        from e in _context.Events
-                        where ev.UserId == userId
-                        where ev.EventId == eventId
-                        where ev.User.Id == ev.UserId
-                        where e.Status == Status.Canceled
-                        orderby ev
-                        select new { ev.Id, ev.User, ev.Event }).ToList().Distinct();
-                    return Ok(userEvent);
+                    var uE = _context.UserEvent.FirstOrDefault(u => u.UserId == userId && u.EventId == eventId);
+                    
+                    if (uE != null)
+                        _context.UserEvent.Remove(uE);
+                    await _context.SaveChangesAsync();
+                    
+                    return Ok("Canceled Done !!!");
                 }
             }
         }
