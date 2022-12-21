@@ -7,8 +7,6 @@ public class UserRegisterDto
     [Required] 
     public string City { get; set; }
     [Required]
-    public string PhoneNumber { get; set; }  
-    [Required]
     [DataType(DataType.EmailAddress)]
     public string Email { get; set; }
     [Required]

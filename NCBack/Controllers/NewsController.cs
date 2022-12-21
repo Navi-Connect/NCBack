@@ -22,6 +22,13 @@ public class NewsController : Controller
         _uploadFileService = uploadFileService;
     }
 
+    [HttpGet("getNewsById")]
+    public async Task<IActionResult> GetNewsById(int id)
+    {
+        var news = _context.News.FirstOrDefault(n => n.Id == id);
+        return Ok(news);
+    }
+    
     [HttpGet("listNews")]
     public async Task<ActionResult<List<News>>> GetListNews()
     {

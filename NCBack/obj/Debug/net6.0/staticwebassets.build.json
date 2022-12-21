@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "uioCDZnlo97zld/8gYVt7sPnO43p7C2ZqRAEqz+P63I=",
+  "Hash": "Er17j2BpsUjiL0XJOzdTgFSDsxW+f1Vz0t/enIdJ9k0=",
   "Source": "NCBack",
   "BasePath": "_content/NCBack",
   "Mode": "Default",
@@ -49,6 +49,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\images\\scaled_7796c64b-b16d-4bed-8592-6bb9b544f8a0511347719798547536.jpg"
+    },
+    {
+      "Identity": "C:\\NaviConnect\\NCBack\\NCBack\\wwwroot\\images\\YvdN3Vu7-40.jpg",
+      "SourceId": "NCBack",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\NaviConnect\\NCBack\\NCBack\\wwwroot\\",
+      "BasePath": "_content/NCBack",
+      "RelativePath": "images/YvdN3Vu7-40.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\YvdN3Vu7-40.jpg"
     }
   ]
 }

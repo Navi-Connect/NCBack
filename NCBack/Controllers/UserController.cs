@@ -44,11 +44,13 @@ public class UserController : ControllerBase
         var user = _context.Users.FirstOrDefault(u => u.Id == id);
         return Ok(user);
     }
+
     
-    [HttpPost("editProfile")]
-    public async Task<IActionResult> EditingProfile([FromForm] UserEditDto model)
+    
+    [HttpPost("editPhotoProfile")]
+    public async Task<IActionResult> EditingProfile([FromForm] UserEditPhotoDto model)
     {
-        var user = _context.Users.FirstOrDefault(u => u.Id == GetUserId());
+        var user = _context.Users.FirstOrDefault(u => u.Id == GetUserId()); 
         if (user != null)
         {
             if (user.AvatarPath != null)
@@ -57,18 +59,33 @@ public class UserController : ControllerBase
                 string photoPath = $"images/{model.File.FileName}";
                 _uploadFileService.Upload(path, model.File.FileName, model.File);
                 user.AvatarPath = photoPath;
+            }
+        }
+        _context.Users.Update(user);
+        await _context.SaveChangesAsync();
+        return Ok(user);
+    }
+    
+    [HttpPost("editProfile")]
+    public async Task<IActionResult> EditingProfile([FromForm] UserEditDto model)
+    {
+        var user = _context.Users.FirstOrDefault(u => u.Id == GetUserId()); 
+        if (user != null)
+        {
+            if (user.AvatarPath != null)
+            {
                 user.CredoAboutMyself = model.CredoAboutMyself;
                 user.LanguageOfCommunication = model.LanguageOfCommunication;
                 user.Nationality = model.Nationality;
                 user.Gender = model.Gender; ;
                 user.MaritalStatus = model.MaritalStatus;
                 user.IWantToLearn = model.IWantToLearn;
+                user.PreferredPlaces = model.PreferredPlaces;
+                user.Interests = model.Interests; 
                 user.GetAcquaintedWith = model.GetAcquaintedWith;
                 user.MeetFor = model.MeetFor;
                 user.From = model.From;
                 user.To = model.To;
-                user.FavoritePlace = model.FavoritePlace;
-                user.MyInterests = model.MyInterests;
                 user.Profession = model.Profession;
             }
         }
@@ -81,24 +98,25 @@ public class UserController : ControllerBase
     public async Task<IActionResult> EditUsername(UserEditUserNameDto model)
     {
         var user = _context.Users.FirstOrDefault(u => u.Id == GetUserId());
+
+        if (await _context.Users.AnyAsync(u => u.Username.ToLower() == model.Username.ToLower()))
+        {
+            user.Success = false;
+            user.Message = "User already exists.";
+            return BadRequest("Error User already exists !!!");
+        }
+
         if (model.Username != null)
         {
-            if (await _context.Users.AnyAsync(u => u.Username.ToLower() == user.Username.ToLower()))
-            {
-                user.Success = false;
-                user.Message = "User already exists.";
-                return BadRequest("Error User already exists !!!");
-            }
-        }
-        
-        if (user != null)
-        {
             user.Username = model.Username;
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+            return Ok(user);
         }
-        _context.Users.Update(user);
-        await _context.SaveChangesAsync();
-        return Ok(user);
+
+        return BadRequest("Error !!!");
     }
+    
     [HttpPost("editPersonalInformation")]
     public async Task<IActionResult> EditingPersonalInformation(UserEditPersonalInformationDto model)
     {

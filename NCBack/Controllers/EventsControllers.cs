@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -32,12 +33,23 @@ public class EventsControllers : Controller
         var list = (from e in _context.Events
             from u in _context.Users
             where e.UserId == u.Id
+            where e.AimOfTheMeetingId == e.AimOfTheMeeting.Id
+            where e.MeetingCategoryId == e.MeetingCategory.Id
+            where e.MeatingPlaceId == e.MeatingPlace.Id
+            /*where e.MainСategories.Where(x=>! e.MyInterestsId.Contains(x.MyInterestsId)) == e.MyInterests.Select(i=>i.Id).ToList()*/
+            /*where e.MyInterests == e.MyInterests.Where(m => !e.MyInterestsId.Contains(m.Id)).ToList()*/
             where e.Status == Status.Expectations || e.Status == Status.Canceled
             where e.TimeStart >= now
-            select new {e.Id, e.AimOfTheMeeting, e.MeetingCategory,
+            select new
+            {
+                e.Id, e.AimOfTheMeeting, e.MeetingCategory, e.MeatingPlace,
                 e.TimeStart, e.TimeFinish, e.City, e.Gender,
-                e.AgeTo , e.AgeFrom , e.CaltulationType , e.CaltulationSum, e.LanguageCommunication ,
-                e.MeatingPlace , e.MeatingInterests , e.UserId ,e.User , e.Status} ).Distinct();
+                e.AgeTo, e.AgeFrom, e.CaltulationType, e.CaltulationSum, e.LanguageCommunication,
+                e.Interests, e.UserId, e.User, e.Status
+            }).Distinct();
+
+        var data = list;
+        
         return Ok(list);
     }
 
@@ -80,9 +92,9 @@ public class EventsControllers : Controller
                 events = new Event()
                 {
                     UserId = GetUserId(),
-                    AimOfTheMeeting = request.AimOfTheMeeting,
-                    MeetingCategory = request.MeetingCategory,
-                    MeatingPlace = request.MeatingPlace,
+                    AimOfTheMeetingId =  request.AimOfTheMeetingId,
+                    MeetingCategoryId = request.MeetingCategoryId,
+                    MeatingPlaceId = request.MeatingPlaceId,
                     IWant = request.IWant,
                     TimeStart = request.TimeStart,
                     TimeFinish = request.TimeFinish,
@@ -93,7 +105,7 @@ public class EventsControllers : Controller
                     CaltulationType = request.CaltulationType,
                     CaltulationSum = request.CaltulationSum,
                     LanguageCommunication = request.LanguageCommunication,
-                    MeatingInterests = request.MeatingInterests,
+                    Interests = request.Interests,
                     Latitude = request.Latitude,
                     Longitude = request.Longitude,
                     User = _context.Users.FirstOrDefault(u => u.Id == GetUserId()),
@@ -119,9 +131,9 @@ public class EventsControllers : Controller
             return BadRequest("Hero not found.");
 
         events.UserId = GetUserId();
-        events.AimOfTheMeeting = request.AimOfTheMeeting;
-        events.MeetingCategory = request.MeetingCategory;
-        events.MeatingPlace = request.MeatingPlace;
+        events.AimOfTheMeetingId = request.AimOfTheMeetingId;
+        events.MeetingCategoryId = request.MeetingCategoryId;
+        events.MeatingPlaceId = request.MeatingPlaceId;
         events.IWant = request.IWant;
         events.TimeStart = request.TimeStart;
         events.TimeFinish = request.TimeFinish;
@@ -132,7 +144,7 @@ public class EventsControllers : Controller
         events.CaltulationType = request.CaltulationType;
         events.CaltulationSum = request.CaltulationSum;
         events.LanguageCommunication = request.LanguageCommunication;
-        events.MeatingInterests = request.MeatingInterests;
+        events.Interests = request.Interests;
         events.Latitude = request.Latitude;
         events.Longitude = request.Longitude;
         events.User = _context.Users.FirstOrDefault(u => u.Id == events.UserId);

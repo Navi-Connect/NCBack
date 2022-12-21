@@ -60,31 +60,50 @@ public class AuthRepository : IAuthRepository
         return user;
     }
 
-    public async Task<User> VerificationCode(int code)
+    public async Task<User> VerificationCode(int? id, int code)
     {
-        var user = await _context.Users
-            .FirstOrDefaultAsync(u => u.Code.Equals(code));
-        if (code != user.Code)
+        var intermediateUser = await _context.IntermediateUser
+            .FirstOrDefaultAsync(u => u.Code.Equals(code) && u.Id == id);
+        User user = new User();
+        if (code != intermediateUser.Code)
         {
-            user.Success = false;
-            user.Message = "Code not found.";
+            intermediateUser.Success = false;
+            intermediateUser.Message = "Code not found.";
         }
         else
         {
-            user.Success = true;
-            user.Message = "Done.";
+            user = new User()
+            {
+                City = intermediateUser.City,
+                Email = intermediateUser.Email,
+                Username = intermediateUser.Username,
+                Code = intermediateUser.Code,
+                PhoneNumber = intermediateUser.PhoneNumber,
+                FullName = intermediateUser.FullName,
+                DateOfBirth = intermediateUser.DateOfBirth,
+                AvatarPath = intermediateUser.AvatarPath,
+                PasswordHash = intermediateUser.PasswordHash,
+                PasswordSalt = intermediateUser.PasswordSalt,
+                Message = "Very good Done !!!",
+                Success = true,
+            };
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+            
+            intermediateUser.Success = true;
+            intermediateUser.Message = "Done.";
             return user;
         }
-
+        
         return user;
     }
 
-    public async Task<User> Register(
-        string city, string phone, string email,
+    public async Task<IntermediateUser> Register(
+        string city, string email,
         string username, string fullname, DateTime dateOfBirth,
         IFormFile file, string password)
     {
-        User user = new User();
+        IntermediateUser user = new IntermediateUser();
 
         if (await EmailExists(email))
         {
@@ -100,7 +119,7 @@ public class AuthRepository : IAuthRepository
             return user;
         }
 
-        await _pushSms.Sms(phone);
+        //await _pushSms.Sms(phone);
 
         string path = Path.Combine(_environment.ContentRootPath, "wwwroot/images/");
         string photoPath = $"images/{file.FileName}";
@@ -108,10 +127,9 @@ public class AuthRepository : IAuthRepository
 
         CreatePasswordHash(password, out byte[] passwordHash, out byte[] passwordSalt);
 
-        user = new User
+        IntermediateUser intermediateUser = new IntermediateUser
         {
             City = city,
-            PhoneNumber = phone,
             Email = email,
             Code = _pushSms.code,
             Username = username,
@@ -122,25 +140,34 @@ public class AuthRepository : IAuthRepository
             PasswordSalt = passwordSalt
         };
 
-        _context.Users.Add(user);
+        _context.IntermediateUser.Add(intermediateUser);
         await _context.SaveChangesAsync();
         user.Id = user.Id;
-        user.Message = "Done.";
-        return user;
+        user.Success = true;
+        user.Message = "User in intermediate table !!!";
+        return intermediateUser;
     }
 
-    public async Task<User> SMSNotReceived(string phone, int? id)
+    public async Task<IntermediateUser> SMSNotReceived(int? id, string phone)
     {
-        var user = await _context.Users.FindAsync(id);
+        var intermediateUser = await _context.IntermediateUser.FindAsync(id);
         await _pushSms.Sms(phone);
-        if (user != null)
+        
+        
+        if (intermediateUser != null)
         {
-            user.PhoneNumber = phone;
-            user.Code = _pushSms.code;
-            user.Message = "Done.";
-            _context.Users.Update(user);
+            intermediateUser.PhoneNumber = phone;
+            intermediateUser.Code = _pushSms.code;
+            intermediateUser.Message = "Done.";
+            _context.IntermediateUser.Update(intermediateUser);
             await _context.SaveChangesAsync();
-            return user;
+            
+            
+            /*_context.Entry(intermediateUser).State = EntityState.Deleted;
+            _context.IntermediateUser.Remove(intermediateUser);
+            await _context.SaveChangesAsync();*/
+            
+            return intermediateUser;
         }
 
         return null;

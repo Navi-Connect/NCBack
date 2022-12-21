@@ -6,4 +6,5 @@ public class UserCodeDto
 {
     [Required] 
     public int VerificationCode { get; set; }
+    
 }

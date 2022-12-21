@@ -1,4 +1,6 @@
-﻿namespace NCBack.Models;
+﻿
+
+namespace NCBack.Models;
 
 public enum Status
 {
@@ -6,11 +8,16 @@ public enum Status
     Accepted,
     Canceled
 }
+
 public class Event
 {
     public int Id { get; set; }
-    public string? AimOfTheMeeting { get; set; }
-    public string? MeetingCategory { get; set; }
+    public int AimOfTheMeetingId { get; set; }
+    public AimOfTheMeeting? AimOfTheMeeting { get; set; }
+    public int MeetingCategoryId { get; set; }
+    public MeetingCategory? MeetingCategory { get; set; }
+    public int? MeatingPlaceId { get; set; }
+    public MeatingPlace? MeatingPlace { get; set; }
     public string? IWant { get; set; }
     public DateTime? TimeStart { get; set; }
     public DateTime? TimeFinish { get; set; }
@@ -21,8 +28,12 @@ public class Event
     public string? CaltulationType { get; set; }
     public string? CaltulationSum { get; set; }
     public string? LanguageCommunication { get; set; }
-    public string? MeatingPlace { get; set; }
-    public string? MeatingInterests{ get; set; }
+    public List<string>? Interests { get; set; }
+    
+    /*public List<int>? MyInterestsId { get; set; }
+    public List<MyInterests>? MyInterests { get; set; }
+    public List<int>? MainСategoriesId { get; set; }
+    public List<MainСategories>? MainСategories { get; set; }*/
     public double? Latitude { get; set; }
     public double? Longitude { get; set; }
     public int UserId { get; set; }

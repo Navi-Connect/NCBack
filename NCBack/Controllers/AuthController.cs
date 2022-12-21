@@ -32,7 +32,6 @@ namespace NCBack.Controllers
         {
             var response = await _authRepo.Register(
                 request.City,
-                request.PhoneNumber,
                 request.Email,
                 request.Username,
                 request.Fullname,
@@ -43,14 +42,14 @@ namespace NCBack.Controllers
             {
                 return BadRequest(response);
             }
-
             return Ok(response);
         }
 
-        [HttpPost("verificationCode")]
-        public async Task<ActionResult<User>> VerificationCode(UserCodeDto request)
+        [HttpPost("verificationCode/{Id}")]
+        public async Task<ActionResult<User>> VerificationCode(int Id ,UserCodeDto request)
         {
             var response = await _authRepo.VerificationCode(
+                Id,
                 request.VerificationCode
             );
             if (!response.Success)
@@ -74,9 +73,9 @@ namespace NCBack.Controllers
         }
 
         [HttpPost("smsNotReceived/{id}")]
-        public async Task<ActionResult<User>> SMSNotReceived(string phone, int? id)
+        public async Task<ActionResult<User>> SMSNotReceived(int? id, string phone)
         {
-            var response = await _authRepo.SMSNotReceived(phone, id);
+            var response = await _authRepo.SMSNotReceived(id, phone);
             if (!response.Success)
             {
                 return BadRequest(response);
