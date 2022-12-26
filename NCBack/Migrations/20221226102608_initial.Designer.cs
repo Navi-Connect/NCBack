@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace NCBack.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20221216104315_initial")]
+    [Migration("20221226102608_initial")]
     partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -257,8 +257,8 @@ namespace NCBack.Migrations
                     b.Property<List<string>>("Interests")
                         .HasColumnType("text[]");
 
-                    b.Property<string>("LanguageCommunication")
-                        .HasColumnType("text");
+                    b.Property<List<string>>("LanguageCommunication")
+                        .HasColumnType("text[]");
 
                     b.Property<double?>("Latitude")
                         .HasColumnType("double precision");
@@ -742,11 +742,10 @@ namespace NCBack.Migrations
                         .HasColumnType("text");
 
                     b.Property<List<string>>("Interests")
-                        .IsRequired()
                         .HasColumnType("text[]");
 
-                    b.Property<string>("LanguageOfCommunication")
-                        .HasColumnType("text");
+                    b.Property<List<string>>("LanguageOfCommunication")
+                        .HasColumnType("text[]");
 
                     b.Property<string>("MaritalStatus")
                         .HasColumnType("text");
@@ -773,7 +772,6 @@ namespace NCBack.Migrations
                         .HasColumnType("text");
 
                     b.Property<List<string>>("PreferredPlaces")
-                        .IsRequired()
                         .HasColumnType("text[]");
 
                     b.Property<string>("Profession")

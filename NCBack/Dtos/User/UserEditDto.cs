@@ -6,7 +6,7 @@ public class UserEditDto
 {
 
     public string? CredoAboutMyself { get; set; } = string.Empty;
-    public string? LanguageOfCommunication { get; set; } = string.Empty;
+    public List<string>? LanguageOfCommunication { get; set; } = null;
     public string? Nationality { get; set; } = string.Empty;
     public string? Gender { get; set; } = string.Empty;
     public string? MaritalStatus { get; set; } = string.Empty;

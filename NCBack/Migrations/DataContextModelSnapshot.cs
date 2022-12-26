@@ -255,8 +255,8 @@ namespace NCBack.Migrations
                     b.Property<List<string>>("Interests")
                         .HasColumnType("text[]");
 
-                    b.Property<string>("LanguageCommunication")
-                        .HasColumnType("text");
+                    b.Property<List<string>>("LanguageCommunication")
+                        .HasColumnType("text[]");
 
                     b.Property<double?>("Latitude")
                         .HasColumnType("double precision");
@@ -742,8 +742,8 @@ namespace NCBack.Migrations
                     b.Property<List<string>>("Interests")
                         .HasColumnType("text[]");
 
-                    b.Property<string>("LanguageOfCommunication")
-                        .HasColumnType("text");
+                    b.Property<List<string>>("LanguageOfCommunication")
+                        .HasColumnType("text[]");
 
                     b.Property<string>("MaritalStatus")
                         .HasColumnType("text");

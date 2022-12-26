@@ -27,7 +27,7 @@ public class Event
     public int? AgeFrom { get; set; }
     public string? CaltulationType { get; set; }
     public string? CaltulationSum { get; set; }
-    public string? LanguageCommunication { get; set; }
+    public List<string>? LanguageCommunication { get; set; }
     public List<string>? Interests { get; set; }
     
     /*public List<int>? MyInterestsId { get; set; }
