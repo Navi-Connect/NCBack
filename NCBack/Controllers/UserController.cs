@@ -19,7 +19,8 @@ public class UserController : ControllerBase
     private readonly UploadFileService _uploadFileService; // Добавляем сервис для получения файлов из формы
     private readonly PushSms _pushSms;
 
-    public UserController(DataContext context, IHttpContextAccessor httpContextAccessor, IHostEnvironment environment, UploadFileService uploadFileService, PushSms pushSms)
+    public UserController(DataContext context, IHttpContextAccessor httpContextAccessor, IHostEnvironment environment,
+        UploadFileService uploadFileService, PushSms pushSms)
     {
         _context = context;
         _httpContextAccessor = httpContextAccessor;
@@ -34,142 +35,220 @@ public class UserController : ControllerBase
     [HttpGet]
     public async Task<ActionResult> GetUser()
     {
-        var user = _context.Users.FirstOrDefault(u => u.Id == GetUserId());
-        return Ok(user);
+        try
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == GetUserId());
+            return Ok(user);
+        }
+        catch (ApplicationException e)
+        {
+            throw new ApplicationException(e.ToString());
+        }
     }
 
     [HttpGet("getUserById")]
     public async Task<IActionResult> GetUserById(int id)
     {
-        var user = _context.Users.FirstOrDefault(u => u.Id == id);
-        return Ok(user);
+        try
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
+            return Ok(user);
+        }
+        catch (ApplicationException e)
+        {
+            throw new ApplicationException(e.ToString());
+        }
+
+        BadRequest("Error");
     }
 
-    
-    
+
     [HttpPost("editPhotoProfile")]
     public async Task<IActionResult> EditingProfile([FromForm] UserEditPhotoDto model)
     {
-        var user = _context.Users.FirstOrDefault(u => u.Id == GetUserId()); 
-        if (user != null)
+        try
         {
-            if (user.AvatarPath != null)
+            var user = _context.Users.FirstOrDefault(u => u.Id == GetUserId());
+            if (user != null)
             {
-                string path = Path.Combine(_environment.ContentRootPath, "wwwroot/images/");
-                string photoPath = $"images/{model.File.FileName}";
-                _uploadFileService.Upload(path, model.File.FileName, model.File);
-                user.AvatarPath = photoPath;
+                if (user.AvatarPath != null)
+                {
+                    string path = Path.Combine(_environment.ContentRootPath, "wwwroot/images/");
+                    string photoPath = $"images/{model.File.FileName}";
+                    _uploadFileService.Upload(path, model.File.FileName, model.File);
+                    user.AvatarPath = photoPath;
+                }
             }
+
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+            return Ok(user);
         }
-        _context.Users.Update(user);
-        await _context.SaveChangesAsync();
-        return Ok(user);
+        catch (ApplicationException e)
+        {
+            throw new ApplicationException(e.ToString());
+        }
+
+        BadRequest("Error");
     }
-    
+
     [HttpPost("editProfile")]
     public async Task<IActionResult> EditingProfile([FromForm] UserEditDto model)
     {
-        var user = _context.Users.FirstOrDefault(u => u.Id == GetUserId()); 
-        if (user != null)
+        try
         {
-            if (user.AvatarPath != null)
+            var user = _context.Users.FirstOrDefault(u => u.Id == GetUserId());
+            if (user != null)
             {
-                user.CredoAboutMyself = model.CredoAboutMyself;
-                user.LanguageOfCommunication = model.LanguageOfCommunication;
-                user.Nationality = model.Nationality;
-                user.Gender = model.Gender; ;
-                user.MaritalStatus = model.MaritalStatus;
-                user.IWantToLearn = model.IWantToLearn;
-                user.PreferredPlaces = model.PreferredPlaces;
-                user.Interests = model.Interests; 
-                user.GetAcquaintedWith = model.GetAcquaintedWith;
-                user.MeetFor = model.MeetFor;
-                user.From = model.From;
-                user.To = model.To;
-                user.Profession = model.Profession;
+                if (user.AvatarPath != null)
+                {
+                    user.CredoAboutMyself = model.CredoAboutMyself;
+                    user.LanguageOfCommunication = model.LanguageOfCommunication;
+                    user.Nationality = model.Nationality;
+                    user.Gender = model.Gender;
+                    ;
+                    user.MaritalStatus = model.MaritalStatus;
+                    user.IWantToLearn = model.IWantToLearn;
+                    user.PreferredPlaces = model.PreferredPlaces;
+                    user.Interests = model.Interests;
+                    user.GetAcquaintedWith = model.GetAcquaintedWith;
+                    user.MeetFor = model.MeetFor;
+                    user.From = model.From;
+                    user.To = model.To;
+                    user.Profession = model.Profession;
+                }
             }
+
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+            return Ok(user);
         }
-        _context.Users.Update(user);
-        await _context.SaveChangesAsync();
-        return Ok(user);
+        catch (ApplicationException e)
+        {
+            throw new ApplicationException(e.ToString());
+        }
+
+        BadRequest("Error");
     }
 
     [HttpPost("editUsername")]
     public async Task<IActionResult> EditUsername(UserEditUserNameDto model)
     {
-        var user = _context.Users.FirstOrDefault(u => u.Id == GetUserId());
-
-        if (await _context.Users.AnyAsync(u => u.Username.ToLower() == model.Username.ToLower()))
+        try
         {
-            user.Success = false;
-            user.Message = "User already exists.";
-            return BadRequest("Error User already exists !!!");
+            var user = _context.Users.FirstOrDefault(u => u.Id == GetUserId());
+
+            if (await _context.Users.AnyAsync(u => u.Username.ToLower() == model.Username.ToLower()))
+            {
+                user.Success = false;
+                user.Message = "User already exists.";
+                return BadRequest("Error User already exists !!!");
+            }
+
+            if (model.Username != null)
+            {
+                user.Username = model.Username;
+                _context.Users.Update(user);
+                await _context.SaveChangesAsync();
+                return Ok(user);
+            }
+
+            return BadRequest("Error !!!");
+        }
+        catch (ApplicationException e)
+        {
+            throw new ApplicationException(e.ToString());
         }
 
-        if (model.Username != null)
+        BadRequest("Error");
+    }
+
+    [HttpPost("editPersonalInformation")]
+    public async Task<IActionResult> EditingPersonalInformation(UserEditPersonalInformationDto model)
+    {
+        try
         {
-            user.Username = model.Username;
+            var user = _context.Users.FirstOrDefault(u => u.Id == GetUserId());
+
+            if (user != null)
+            {
+                user.City = model.City;
+                user.FullName = model.FullName;
+            }
+
             _context.Users.Update(user);
             await _context.SaveChangesAsync();
             return Ok(user);
         }
-
-        return BadRequest("Error !!!");
-    }
-    
-    [HttpPost("editPersonalInformation")]
-    public async Task<IActionResult> EditingPersonalInformation(UserEditPersonalInformationDto model)
-    {
-        var user = _context.Users.FirstOrDefault(u => u.Id == GetUserId());
-
-        if (user != null)
+        catch (ApplicationException e)
         {
-            user.City = model.City;
-            user.FullName = model.FullName;
+            throw new ApplicationException(e.ToString());
         }
-        
-        _context.Users.Update(user);
-        await _context.SaveChangesAsync();
-        return Ok(user);
+
+        BadRequest("Error");
     }
 
     [HttpPost("EditingContactInformation")]
     public async Task<IActionResult> EditingContactInformation(UserEditContactDto model)
     {
-        var user = _context.Users.FirstOrDefault(u => u.Id == GetUserId());
-        await _pushSms.Sms(model.Phone);
-        
-        if (user != null)
+        try
         {
-            user.Email = model.Email;
-            user.PhoneNumber = model.Phone;
-            user.Code = _pushSms.code;
+            var user = _context.Users.FirstOrDefault(u => u.Id == GetUserId());
+            await _pushSms.Sms(model.Phone);
+
+            if (user != null)
+            {
+                user.Email = model.Email;
+                user.PhoneNumber = model.Phone;
+                user.Code = _pushSms.code;
+            }
+
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+            return Ok(user);
         }
-        
-        _context.Users.Update(user);
-        await _context.SaveChangesAsync();
-        return Ok(user);
+        catch (ApplicationException e)
+        {
+            throw new ApplicationException(e.ToString());
+        }
+
+        BadRequest("Error");
     }
-    
+
     [HttpGet("users")]
     public async Task<IActionResult> Users()
     {
-        var user = _context.Users.ToList();
-        return Ok(user);
+        try
+        {
+            var user = await _context.Users.ToListAsync();
+            return Ok(user);
+        }
+        catch (ApplicationException e)
+        {
+            throw new ApplicationException(e.ToString());
+        }
+
+        BadRequest("Error");
     }
-    
+
     [HttpPost("deleteUser")]
     public async Task<IActionResult> DeleteUser()
     {
-        var user = await _context.Users.FirstOrDefaultAsync(p => p.Id == GetUserId());
-        
-        if (user is null)
-            return NotFound();
+        try
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(p => p.Id == GetUserId());
+            if (user is null)
+                return NotFound();
+            _context.Entry(user).State = EntityState.Deleted;
+            _context.Users.Remove(user);
+            await _context.SaveChangesAsync();
+            return Ok("Success delete user !!!");
+        }
+        catch (ApplicationException e)
+        {
+            throw new ApplicationException(e.ToString());
+        }
 
-        _context.Entry(user).State = EntityState.Deleted;
-        _context.Users.Remove(user);
-        await _context.SaveChangesAsync();
-        return Ok("Success delete user !!!");
+        BadRequest("Error");
     }
-    
 }

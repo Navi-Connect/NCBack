@@ -21,10 +21,11 @@ public class EventsControllers : Controller
         _context = context;
         _httpContextAccessor = httpContextAccessor;
     }
-    
+
+
     private int GetUserId() => int.Parse(_httpContextAccessor.HttpContext.User
         .FindFirstValue(ClaimTypes.NameIdentifier));
-    
+
     [Authorize]
     [HttpGet("events")]
     public async Task<IActionResult> Events()
@@ -48,8 +49,6 @@ public class EventsControllers : Controller
                 e.Interests, e.UserId, e.User, e.Status
             }).Distinct();
 
-        var data = list;
-        
         return Ok(list);
     }
 
@@ -63,11 +62,10 @@ public class EventsControllers : Controller
             where evensAccepted.UserId == GetUserId()
             where evensAccepted.Status == Status.Accepted
             where acceptedUser.EventId == evensAccepted.Id
-            select new {evensAccepted, acceptedUser.UserId , acceptedUser.User}).ToList().Distinct();
-            
+            select new { evensAccepted, acceptedUser.UserId, acceptedUser.User }).ToList().Distinct();
         return Ok(list);
     }
-    
+
     [Authorize]
     [HttpGet("event/{id}")]
     public async Task<IActionResult> Event(int id)
@@ -92,16 +90,17 @@ public class EventsControllers : Controller
                 events = new Event()
                 {
                     UserId = GetUserId(),
-                    AimOfTheMeetingId =  request.AimOfTheMeetingId,
+                    AimOfTheMeetingId = request.AimOfTheMeetingId,
                     MeetingCategoryId = request.MeetingCategoryId,
                     MeatingPlaceId = request.MeatingPlaceId,
                     IWant = request.IWant,
                     TimeStart = request.TimeStart,
                     TimeFinish = request.TimeFinish,
-                    City = request.City,
+                    CreateAdd = DateTime.Now,
+                    CityId = request.CityId,
                     AgeTo = request.AgeTo,
                     AgeFrom = request.AgeFrom,
-                    Gender = request.Gender,
+                    GenderId = request.GenderId,
                     CaltulationType = request.CaltulationType,
                     CaltulationSum = request.CaltulationSum,
                     LanguageCommunication = request.LanguageCommunication,
@@ -125,7 +124,7 @@ public class EventsControllers : Controller
     [HttpPut("updateEvent/{id}")]
     public async Task<ActionResult<Event>> UpdateEvent([FromForm] EventUpdateDto request, int? id)
     {
-        var events =  _context.Events.FirstOrDefault(e => e.Id == id);
+        var events = _context.Events.FirstOrDefault(e => e.Id == id);
 
         if (events == null)
             return BadRequest("Hero not found.");
@@ -137,10 +136,11 @@ public class EventsControllers : Controller
         events.IWant = request.IWant;
         events.TimeStart = request.TimeStart;
         events.TimeFinish = request.TimeFinish;
-        events.City = request.City;
+        events.CreateAdd = DateTime.Now;
+        events.CityId = request.CityId;
         events.AgeTo = request.AgeTo;
         events.AgeFrom = request.AgeFrom;
-        events.Gender = request.Gender;
+        events.GenderId = request.GenderId;
         events.CaltulationType = request.CaltulationType;
         events.CaltulationSum = request.CaltulationSum;
         events.LanguageCommunication = request.LanguageCommunication;
@@ -153,7 +153,7 @@ public class EventsControllers : Controller
         await _context.SaveChangesAsync();
         return Ok(events);
     }
-    
+
     [Authorize]
     [HttpDelete("deleteEvent/{id}")]
     public async Task<ActionResult<Event>> DeleteEvent(int id)
@@ -167,5 +167,4 @@ public class EventsControllers : Controller
 
         return Ok(events);
     }
-
 }

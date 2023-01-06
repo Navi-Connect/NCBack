@@ -220,6 +220,115 @@ namespace NCBack.Migrations
                         });
                 });
 
+            modelBuilder.Entity("NCBack.Models.CityList", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CityName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CityList");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CityName = "Алматы"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CityName = "Астана"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CityName = "Конаев"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CityName = "Шымкент"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            CityName = "Караганда"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            CityName = "Тараз"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            CityName = "Семей"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            CityName = "Актобе"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            CityName = "Актау"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            CityName = "Атырау"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            CityName = "Костанай"
+                        },
+                        new
+                        {
+                            Id = 12,
+                            CityName = "Петропавловск"
+                        },
+                        new
+                        {
+                            Id = 13,
+                            CityName = "Павлодар"
+                        },
+                        new
+                        {
+                            Id = 14,
+                            CityName = "Уральск"
+                        },
+                        new
+                        {
+                            Id = 15,
+                            CityName = "Ускаман"
+                        },
+                        new
+                        {
+                            Id = 16,
+                            CityName = "Кызылорда"
+                        },
+                        new
+                        {
+                            Id = 17,
+                            CityName = "Талдыкорган"
+                        },
+                        new
+                        {
+                            Id = 18,
+                            CityName = "Кокшетау"
+                        });
+                });
+
             modelBuilder.Entity("NCBack.Models.Event", b =>
                 {
                     b.Property<int>("Id")
@@ -243,11 +352,14 @@ namespace NCBack.Migrations
                     b.Property<string>("CaltulationType")
                         .HasColumnType("text");
 
-                    b.Property<string>("City")
-                        .HasColumnType("text");
+                    b.Property<int?>("CityId")
+                        .HasColumnType("integer");
 
-                    b.Property<string>("Gender")
-                        .HasColumnType("text");
+                    b.Property<DateTime>("CreateAdd")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int?>("GenderId")
+                        .HasColumnType("integer");
 
                     b.Property<string>("IWant")
                         .HasColumnType("text");
@@ -286,6 +398,10 @@ namespace NCBack.Migrations
 
                     b.HasIndex("AimOfTheMeetingId");
 
+                    b.HasIndex("CityId");
+
+                    b.HasIndex("GenderId");
+
                     b.HasIndex("MeatingPlaceId");
 
                     b.HasIndex("MeetingCategoryId");
@@ -293,6 +409,40 @@ namespace NCBack.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Events");
+                });
+
+            modelBuilder.Entity("NCBack.Models.GenderList", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("GenderName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("GenderList");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            GenderName = "М"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            GenderName = "Ж"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            GenderName = "М/Ж"
+                        });
                 });
 
             modelBuilder.Entity("NCBack.Models.IntermediateUser", b =>
@@ -707,7 +857,6 @@ namespace NCBack.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("City")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<int?>("Code")
@@ -727,7 +876,6 @@ namespace NCBack.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("FullName")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Gender")
@@ -843,6 +991,14 @@ namespace NCBack.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("NCBack.Models.CityList", "City")
+                        .WithMany()
+                        .HasForeignKey("CityId");
+
+                    b.HasOne("NCBack.Models.GenderList", "Gender")
+                        .WithMany()
+                        .HasForeignKey("GenderId");
+
                     b.HasOne("NCBack.Models.MeatingPlace", "MeatingPlace")
                         .WithMany()
                         .HasForeignKey("MeatingPlaceId");
@@ -860,6 +1016,10 @@ namespace NCBack.Migrations
                         .IsRequired();
 
                     b.Navigation("AimOfTheMeeting");
+
+                    b.Navigation("City");
+
+                    b.Navigation("Gender");
 
                     b.Navigation("MeatingPlace");
 

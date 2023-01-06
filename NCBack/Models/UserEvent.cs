@@ -10,7 +10,6 @@ public class UserEvent
     public  Event Event { get; set; }
     
     
-
     public UserEvent(int userId, int eventId)
     {
         UserId = userId;

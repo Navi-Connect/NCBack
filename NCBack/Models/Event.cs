@@ -21,8 +21,12 @@ public class Event
     public string? IWant { get; set; }
     public DateTime? TimeStart { get; set; }
     public DateTime? TimeFinish { get; set; }
-    public string? City { get; set; }
-    public string? Gender { get; set; }
+    
+    public DateTime CreateAdd { get; set; } = DateTime.Now;
+    public int? CityId { get; set; }
+    public CityList? City { get; set; }
+    public int? GenderId { get; set; }
+    public GenderList? Gender { get; set; }
     public int? AgeTo { get; set; }
     public int? AgeFrom { get; set; }
     public string? CaltulationType { get; set; }

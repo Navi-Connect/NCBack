@@ -19,7 +19,8 @@ namespace NCBack.Controllers
         private static ISendGridClient _sendGridClient;
         private static IConfiguration _configuration;
 
-        public AuthController(IAuthRepository authRepo, DataContext context, ISendGridClient sendGridClient, IConfiguration configuration)
+        public AuthController(IAuthRepository authRepo, DataContext context, ISendGridClient sendGridClient,
+            IConfiguration configuration)
         {
             _authRepo = authRepo;
             _context = context;
@@ -42,11 +43,12 @@ namespace NCBack.Controllers
             {
                 return BadRequest(response);
             }
+
             return Ok(response);
         }
 
         [HttpPost("verificationCode/{Id}")]
-        public async Task<ActionResult<User>> VerificationCode(int Id ,UserCodeDto request)
+        public async Task<ActionResult<User>> VerificationCode(int Id, UserCodeDto request)
         {
             var response = await _authRepo.VerificationCode(
                 Id,
@@ -80,8 +82,10 @@ namespace NCBack.Controllers
             {
                 return BadRequest(response);
             }
+
             return Ok(response);
         }
+
         [HttpPost("changePassword")]
         [Authorize]
         public async Task<ActionResult<User>> ChangePassword(UserChangePasswordDto request)
@@ -91,14 +95,14 @@ namespace NCBack.Controllers
             {
                 return BadRequest(response);
             }
-            
+
             return Ok(response);
         }
-        
+
         [HttpPost("forgotPassword")]
         public async Task<IActionResult> ForgotPassword(ForgotPasswordDto request)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u=> u.Email == request.Email);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
             if (user != null)
             {
                 string newPsw = PasswordGeneratorService.Generate();
@@ -114,10 +118,11 @@ namespace NCBack.Controllers
             }
             else
                 user.Success = false;
+
             user.Message = "Not found !!!";
             return Ok(user);
         }
-        
+
         private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
         {
             using (var hmac = new System.Security.Cryptography.HMACSHA512())
@@ -126,9 +131,9 @@ namespace NCBack.Controllers
                 passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
             }
         }
+
         public static async Task SendMessageAsync(string email, string subject, string message)
         {
-
             var fromEmail = _configuration.GetSection("SendGrindEmailSettings")
                 .GetValue<string>("FromEmail");
             var fromName = _configuration.GetSection("SendGrindEmailSettings")
@@ -139,11 +144,12 @@ namespace NCBack.Controllers
                 Subject = subject,
                 HtmlContent = message
             };
-            
+
             msg.AddTo(email);
-            
+
             await _sendGridClient.SendEmailAsync(msg);
         }
+
         public static async Task SendPassword(string email, string password)
         {
             string message = $"<p>Здравствуйте!</p><p>Вы были зарегистрированы в Navi Connect </p>" +
@@ -151,6 +157,5 @@ namespace NCBack.Controllers
                              $"<p>Войти с ним можно только один раз. Как авторизуетесь, тут же поменяйте пароль. Никому его не говорите!</p>";
             await SendMessageAsync(email, "С уважением Navi Connect", message);
         }
-        
     }
 }

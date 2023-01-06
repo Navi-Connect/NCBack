@@ -19,6 +19,8 @@ public class DataContext : DbContext
     public virtual DbSet<AimOfTheMeeting> AimOfTheMeeting { get; set; } 
     public virtual DbSet<MeetingCategory> MeetingCategory { get; set; } 
     public virtual DbSet<MeatingPlace> MeatingPlace { get; set; }
+    public virtual DbSet<CityList> CityList { get; set; }
+    public virtual DbSet<GenderList> GenderList { get; set; }
     /*public virtual DbSet<MyInterests> MyInterests { get; set; }
     public virtual DbSet<MainСategories> MainСategories { get; set; }*/
     
@@ -111,6 +113,36 @@ public class DataContext : DbContext
             new { Id = 39, NameMeatingPlace = "Футбольное поле, баскетбольное поле", MeetingCategoryId =  5},
             new { Id = 40, NameMeatingPlace = "Волейбольная площадка", MeetingCategoryId =  5},
             new { Id = 41, NameMeatingPlace = "Тренажёрный зал/Фитнес клуб", MeetingCategoryId =  5}
+        );
+        
+        base.OnModelCreating(modelBuilder);
+        modelBuilder.Entity<CityList>().HasData(
+            new { Id = 1, CityName = "Алматы" },
+            new { Id = 2, CityName = "Астана" },
+            new { Id = 3, CityName = "Конаев" },
+            new { Id = 4, CityName = "Шымкент" },
+            new { Id = 5, CityName = "Караганда" },
+            new { Id = 6, CityName = "Тараз" },
+            new { Id = 7, CityName = "Семей" },
+            new { Id = 8, CityName = "Актобе" },
+            new { Id = 9, CityName = "Актау" },
+            new { Id = 10, CityName = "Атырау" },
+            new { Id = 11, CityName = "Костанай" },
+            new { Id = 12, CityName = "Петропавловск" },
+            new { Id = 13, CityName = "Павлодар" },
+            new { Id = 14, CityName = "Уральск" },
+            new { Id = 15, CityName = "Ускаман" },
+            new { Id = 16, CityName = "Кызылорда" },
+            new { Id = 17, CityName = "Талдыкорган" },
+            new { Id = 18, CityName = "Кокшетау" }
+      
+        );
+        
+        base.OnModelCreating(modelBuilder);
+        modelBuilder.Entity<GenderList>().HasData(
+            new { Id = 1, GenderName = "М" },
+            new { Id = 2, GenderName = "Ж" },
+            new { Id = 3, GenderName = "М/Ж" }
         );
         
         /*

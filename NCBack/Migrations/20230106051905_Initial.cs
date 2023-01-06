@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace NCBack.Migrations
 {
-    public partial class initial : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -22,6 +22,32 @@ namespace NCBack.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AimOfTheMeeting", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CityList",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    CityName = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CityList", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "GenderList",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    GenderName = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_GenderList", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -84,12 +110,12 @@ namespace NCBack.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    City = table.Column<string>(type: "text", nullable: false),
+                    City = table.Column<string>(type: "text", nullable: true),
                     PhoneNumber = table.Column<string>(type: "text", nullable: true),
                     Email = table.Column<string>(type: "text", nullable: false),
                     Code = table.Column<int>(type: "integer", nullable: true),
                     Username = table.Column<string>(type: "text", nullable: false),
-                    FullName = table.Column<string>(type: "text", nullable: false),
+                    FullName = table.Column<string>(type: "text", nullable: true),
                     DateOfBirth = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     AvatarPath = table.Column<string>(type: "text", nullable: false),
                     CredoAboutMyself = table.Column<string>(type: "text", nullable: true),
@@ -102,8 +128,8 @@ namespace NCBack.Migrations
                     From = table.Column<int>(type: "integer", nullable: true),
                     To = table.Column<int>(type: "integer", nullable: true),
                     IWantToLearn = table.Column<string>(type: "text", nullable: true),
-                    PreferredPlaces = table.Column<List<string>>(type: "text[]", nullable: false),
-                    Interests = table.Column<List<string>>(type: "text[]", nullable: false),
+                    PreferredPlaces = table.Column<List<string>>(type: "text[]", nullable: true),
+                    Interests = table.Column<List<string>>(type: "text[]", nullable: true),
                     Profession = table.Column<string>(type: "text", nullable: true),
                     PasswordHash = table.Column<byte[]>(type: "bytea", nullable: false),
                     PasswordSalt = table.Column<byte[]>(type: "bytea", nullable: false),
@@ -148,8 +174,9 @@ namespace NCBack.Migrations
                     IWant = table.Column<string>(type: "text", nullable: true),
                     TimeStart = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     TimeFinish = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
-                    City = table.Column<string>(type: "text", nullable: true),
-                    Gender = table.Column<string>(type: "text", nullable: true),
+                    CreateAdd = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    CityId = table.Column<int>(type: "integer", nullable: true),
+                    GenderId = table.Column<int>(type: "integer", nullable: true),
                     AgeTo = table.Column<int>(type: "integer", nullable: true),
                     AgeFrom = table.Column<int>(type: "integer", nullable: true),
                     CaltulationType = table.Column<string>(type: "text", nullable: true),
@@ -170,6 +197,16 @@ namespace NCBack.Migrations
                         principalTable: "AimOfTheMeeting",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Events_CityList_CityId",
+                        column: x => x.CityId,
+                        principalTable: "CityList",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Events_GenderList_GenderId",
+                        column: x => x.GenderId,
+                        principalTable: "GenderList",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Events_MeatingPlace_MeatingPlaceId",
                         column: x => x.MeatingPlaceId,
@@ -280,6 +317,41 @@ namespace NCBack.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "CityList",
+                columns: new[] { "Id", "CityName" },
+                values: new object[,]
+                {
+                    { 1, "Алматы" },
+                    { 2, "Астана" },
+                    { 3, "Конаев" },
+                    { 4, "Шымкент" },
+                    { 5, "Караганда" },
+                    { 6, "Тараз" },
+                    { 7, "Семей" },
+                    { 8, "Актобе" },
+                    { 9, "Актау" },
+                    { 10, "Атырау" },
+                    { 11, "Костанай" },
+                    { 12, "Петропавловск" },
+                    { 13, "Павлодар" },
+                    { 14, "Уральск" },
+                    { 15, "Ускаман" },
+                    { 16, "Кызылорда" },
+                    { 17, "Талдыкорган" },
+                    { 18, "Кокшетау" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "GenderList",
+                columns: new[] { "Id", "GenderName" },
+                values: new object[,]
+                {
+                    { 1, "М" },
+                    { 2, "Ж" },
+                    { 3, "М/Ж" }
+                });
+
+            migrationBuilder.InsertData(
                 table: "MeetingCategory",
                 columns: new[] { "Id", "NameMeetingCategory" },
                 values: new object[,]
@@ -355,6 +427,16 @@ namespace NCBack.Migrations
                 column: "AimOfTheMeetingId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Events_CityId",
+                table: "Events",
+                column: "CityId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Events_GenderId",
+                table: "Events",
+                column: "GenderId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Events_MeatingPlaceId",
                 table: "Events",
                 column: "MeatingPlaceId");
@@ -404,6 +486,12 @@ namespace NCBack.Migrations
 
             migrationBuilder.DropTable(
                 name: "AimOfTheMeeting");
+
+            migrationBuilder.DropTable(
+                name: "CityList");
+
+            migrationBuilder.DropTable(
+                name: "GenderList");
 
             migrationBuilder.DropTable(
                 name: "MeatingPlace");

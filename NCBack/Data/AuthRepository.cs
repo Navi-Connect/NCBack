@@ -89,12 +89,12 @@ public class AuthRepository : IAuthRepository
             };
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
-            
+
             intermediateUser.Success = true;
             intermediateUser.Message = "Done.";
             return user;
         }
-        
+
         return user;
     }
 
@@ -152,8 +152,8 @@ public class AuthRepository : IAuthRepository
     {
         var intermediateUser = await _context.IntermediateUser.FindAsync(id);
         await _pushSms.Sms(phone);
-        
-        
+
+
         if (intermediateUser != null)
         {
             intermediateUser.PhoneNumber = phone;
@@ -161,12 +161,12 @@ public class AuthRepository : IAuthRepository
             intermediateUser.Message = "Done.";
             _context.IntermediateUser.Update(intermediateUser);
             await _context.SaveChangesAsync();
-            
-            
+
+
             /*_context.Entry(intermediateUser).State = EntityState.Deleted;
             _context.IntermediateUser.Remove(intermediateUser);
             await _context.SaveChangesAsync();*/
-            
+
             return intermediateUser;
         }
 

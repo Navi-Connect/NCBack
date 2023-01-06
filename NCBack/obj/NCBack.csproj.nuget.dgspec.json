@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\NaviConnect\\NCBack\\NCBack\\NCBack.csproj": {}
+    "C:\\C#\\NCBack\\NCBack\\NCBack\\NCBack.csproj": {}
   },
   "projects": {
-    "C:\\NaviConnect\\NCBack\\NCBack\\NCBack.csproj": {
+    "C:\\C#\\NCBack\\NCBack\\NCBack\\NCBack.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\NaviConnect\\NCBack\\NCBack\\NCBack.csproj",
+        "projectUniqueName": "C:\\C#\\NCBack\\NCBack\\NCBack\\NCBack.csproj",
         "projectName": "NCBack",
-        "projectPath": "C:\\NaviConnect\\NCBack\\NCBack\\NCBack.csproj",
-        "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
-        "outputPath": "C:\\NaviConnect\\NCBack\\NCBack\\obj\\",
+        "projectPath": "C:\\C#\\NCBack\\NCBack\\NCBack\\NCBack.csproj",
+        "packagesPath": "C:\\Users\\zhunu\\.nuget\\packages\\",
+        "outputPath": "C:\\C#\\NCBack\\NCBack\\NCBack\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\User\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\zhunu\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -98,7 +98,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.400\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.403\\RuntimeIdentifierGraph.json"
         }
       }
     }
