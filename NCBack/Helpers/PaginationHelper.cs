@@ -7,7 +7,7 @@ namespace NCBack.Helpers
 {
     public class PaginationHelper
     {
-        public static EventPagedResponse<object> respose;
+        public static ObjectPageResponse<object> respose;
 
         /*public static EventPagedResponse <List<Event>> CreatePagedReponse(
            List<Event> pagedData, PaginationFilter validFilter,int totalRecords, IUriService uriService,  string? route)
@@ -39,7 +39,7 @@ namespace NCBack.Helpers
         //AgeTo = Возраст до
         public static object? CreatePagedReponse(object pagedData, PaginationFilter validFilter, int totalRecords, IUriService uriService, string route)
         {
-            respose = new EventPagedResponse<object>(pagedData, validFilter.PageNumber, validFilter.PageSize);
+            respose = new ObjectPageResponse<object>(pagedData, validFilter.PageNumber, validFilter.PageSize);
             var totalPages = ((double)totalRecords / (double)validFilter.PageSize);
             int roundedTotalPages = Convert.ToInt32(Math.Ceiling(totalPages));
             respose.NextPage =
@@ -62,6 +62,46 @@ namespace NCBack.Helpers
             return respose;
         }
         
+        public static ObjectPageResponse<object> CreatePagedObjectReponse(object pagedData, ObjectPaginationFilter validFilter, int totalRecords, IUriService uriService, string route)
+        {
+            var respose = new ObjectPageResponse<object>(pagedData, validFilter.PageNumber, validFilter.PageSize);
+            var totalPages = ((double)totalRecords / (double)validFilter.PageSize);
+            int roundedTotalPages = Convert.ToInt32(Math.Ceiling(totalPages));
+            respose.NextPage =
+                validFilter.PageNumber >= 1 && validFilter.PageNumber < roundedTotalPages
+                    ? uriService.GetPageUriObject(new ObjectPaginationFilter(validFilter.PageNumber + 1, validFilter.PageSize), route)
+                    : null!;
+            respose.PreviousPage =
+                validFilter.PageNumber - 1 >= 1 && validFilter.PageNumber <= roundedTotalPages
+                    ? uriService.GetPageUriObject(new ObjectPaginationFilter(validFilter.PageNumber - 1, validFilter.PageSize), route)
+                    : null!;
+            respose.FirstPage = uriService.GetPageUriObject(new ObjectPaginationFilter(1, validFilter.PageSize), route);
+            respose.LastPage = uriService.GetPageUriObject(new ObjectPaginationFilter(roundedTotalPages, validFilter.PageSize), route);
+            respose.TotalPages = roundedTotalPages;
+            respose.TotalRecords = totalRecords;
+            return respose;
+        }
+        
+        
+        /*public static ObjectPageResponse<object> CreatePagedEventReponse(object pagedData , ObjectPaginationFilter validFilter, int totalRecords, IUriService uriService, string route)
+        {
+            var respose = new ObjectPageResponse<object>(pagedData, validFilter.PageNumber, validFilter.PageSize);
+            var totalPages = ((double)totalRecords / (double)validFilter.PageSize);
+            int roundedTotalPages = Convert.ToInt32(Math.Ceiling(totalPages));
+            respose.NextPage =
+                validFilter.PageNumber >= 1 && validFilter.PageNumber < roundedTotalPages
+                    ? uriService.GetPageUriObject(new ObjectPaginationFilter(validFilter.PageNumber + 1, validFilter.PageSize), route)
+                    : null!;
+            respose.PreviousPage =
+                validFilter.PageNumber - 1 >= 1 && validFilter.PageNumber <= roundedTotalPages
+                    ? uriService.GetPageUriObject(new ObjectPaginationFilter(validFilter.PageNumber - 1, validFilter.PageSize), route)
+                    : null!;
+            respose.FirstPage = uriService.GetPageUriObject(new ObjectPaginationFilter(1, validFilter.PageSize), route);
+            respose.LastPage = uriService.GetPageUriObject(new ObjectPaginationFilter(roundedTotalPages, validFilter.PageSize), route);
+            respose.TotalPages = roundedTotalPages;
+            respose.TotalRecords = totalRecords;
+            return respose;
+        }*/
         /*public static object? CreatePagedReponseGender(object pagedData, PaginationFilter validFilter, int totalRecords, IUriService uriService, string route)
         {
             respose = new EventPagedResponse<object>(pagedData, validFilter.PageNumber, validFilter.PageSize);

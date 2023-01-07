@@ -14,7 +14,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<DataContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddHttpContextAccessor();
-
+// URI for EventsSearch
 builder.Services.AddSingleton<IUriService>(o =>
 {
     var accessor = o.GetRequiredService<IHttpContextAccessor>();

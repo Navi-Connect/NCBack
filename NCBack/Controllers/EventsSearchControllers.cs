@@ -29,25 +29,25 @@ namespace NCBack.Controllers
             DateTime now = DateTime.Now;
             /*var events = _context.Events.Find();
             var user = _context.Users.FirstOrDefault(u => u.Id == events.UserId);*/
-            var lists =
+            var lists = await
                 /*_context.Events
                 .Where(e => e.Status == Status.Expectations || e.Status == Status.Canceled)
                 .Where(e => e.UserId == user.Id)
                 .Distinct().ToList();*/
                 (from e in _context.Events
                     where e.Status == Status.Expectations || e.Status == Status.Canceled
-                    where e.TimeStart >= now
+                    //where e.TimeStart >= now
                     select new
                     {
                         e.Id, e.AimOfTheMeetingId, e.AimOfTheMeeting, e.MeetingCategory, e.MeatingPlace,
                         e.TimeStart, e.TimeFinish, e.CityId, e.City, e.GenderId, e.Gender,
                         e.AgeTo, e.AgeFrom, e.CaltulationType, e.CaltulationSum, e.LanguageCommunication,
                         e.Interests, e.UserId, e.User, e.Status
-                    }).Distinct().ToList();
+                    }).Distinct().ToListAsync();
 
             if (AimOfTheMeetingId != null)
             {
-                lists =
+                lists = await
                     /*_context.Events
                         .Where(e => e.Status == Status.Expectations || e.Status == Status.Canceled)
                         .Where(e => e.UserId == e.User.Id)
@@ -63,23 +63,23 @@ namespace NCBack.Controllers
                             e.TimeStart, e.TimeFinish, e.CityId, e.City, e.GenderId, e.Gender,
                             e.AgeTo, e.AgeFrom, e.CaltulationType, e.CaltulationSum, e.LanguageCommunication,
                             e.Interests, e.UserId, e.User, e.Status
-                        }).Distinct().ToList();
+                        }).Distinct().ToListAsync();
             }
 
             if (AimOfTheMeetingId != null && MeetingCategoryId != null)
             {
-                lists =
+                lists = await
                     (from e in _context.Events
                         where e.AimOfTheMeetingId == AimOfTheMeetingId && e.MeetingCategoryId == MeetingCategoryId
                         where e.Status == Status.Expectations || e.Status == Status.Canceled
-                        where e.TimeStart >= now
+                        //where e.TimeStart >= now
                         select new
                         {
                             e.Id, e.AimOfTheMeetingId, e.AimOfTheMeeting, e.MeetingCategory, e.MeatingPlace,
                             e.TimeStart, e.TimeFinish, e.CityId, e.City, e.GenderId, e.Gender,
                             e.AgeTo, e.AgeFrom, e.CaltulationType, e.CaltulationSum, e.LanguageCommunication,
                             e.Interests, e.UserId, e.User, e.Status
-                        }).Distinct().ToList();
+                        }).Distinct().ToListAsync();
 
                 /*_context.Events
                     .Where(e => e.Status == Status.Expectations || e.Status == Status.Canceled)

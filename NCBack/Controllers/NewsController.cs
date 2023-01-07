@@ -2,6 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using NCBack.Data;
 using NCBack.Dtos.News;
+using NCBack.Filter;
+using NCBack.Helpers;
 using NCBack.Models;
 using NCBack.Services;
 
@@ -14,10 +16,12 @@ public class NewsController : Controller
     private readonly DataContext _context;
     private readonly IHostEnvironment _environment; //Добавляем сервис взаимодействия с файлами в рамках хоста
     private readonly UploadFileService _uploadFileService; // Добавляем сервис для получения файлов из формы
+    private readonly IUriService _uriServiceNews;
 
-    public NewsController(DataContext context, IHostEnvironment environment, UploadFileService uploadFileService)
+    public NewsController(DataContext context, IHostEnvironment environment, UploadFileService uploadFileService, IUriService uriServiceNews)
     {
         _context = context;
+        _uriServiceNews = uriServiceNews;
         _environment = environment;
         _uploadFileService = uploadFileService;
     }
@@ -39,12 +43,20 @@ public class NewsController : Controller
     }
 
     [HttpGet("listNews")]
-    public async Task<ActionResult<List<News>>> GetListNews()
+    public async Task<ActionResult<List<News>>> GetListNews([FromQuery] ObjectPaginationFilter? filter)
     {
         try
         {
             var news = await _context.News.ToListAsync();
-            return Ok(news);
+            var route = Request.Path.Value;
+            var validFilter = new ObjectPaginationFilter(filter.PageNumber, filter.PageSize);
+            var pagedData = news
+                .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
+                .Take(validFilter.PageSize)
+                .ToList();
+            var totalRecords = news.Count();
+            var pagedReponse = PaginationHelper.CreatePagedObjectReponse(pagedData, validFilter, totalRecords, _uriServiceNews, route);
+            return Ok(pagedReponse);
         }
         catch (ApplicationException e)
         {

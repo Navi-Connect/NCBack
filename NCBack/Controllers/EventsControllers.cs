@@ -5,7 +5,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NCBack.Data;
 using NCBack.Dtos.Event;
+using NCBack.Filter;
+using NCBack.Helpers;
 using NCBack.Models;
+using NCBack.Services;
 
 namespace NCBack.Controllers;
 
@@ -15,20 +18,21 @@ public class EventsControllers : Controller
 {
     private readonly DataContext _context;
     private readonly IHttpContextAccessor _httpContextAccessor;
-
-    public EventsControllers(DataContext context, IHttpContextAccessor httpContextAccessor)
+    private readonly IUriService _uriService;
+    public EventsControllers(DataContext context, IHttpContextAccessor httpContextAccessor, IUriService uriService)
     {
         _context = context;
         _httpContextAccessor = httpContextAccessor;
+        _uriService = uriService;
     }
 
 
     private int GetUserId() => int.Parse(_httpContextAccessor.HttpContext.User
         .FindFirstValue(ClaimTypes.NameIdentifier));
 
-    [Authorize]
+    
     [HttpGet("events")]
-    public async Task<IActionResult> Events()
+    public async Task<IActionResult> Events([FromQuery] ObjectPaginationFilter? filter)
     {
         DateTime now = DateTime.Now;
         var list = (from e in _context.Events
@@ -40,7 +44,7 @@ public class EventsControllers : Controller
             /*where e.MainСategories.Where(x=>! e.MyInterestsId.Contains(x.MyInterestsId)) == e.MyInterests.Select(i=>i.Id).ToList()*/
             /*where e.MyInterests == e.MyInterests.Where(m => !e.MyInterestsId.Contains(m.Id)).ToList()*/
             where e.Status == Status.Expectations || e.Status == Status.Canceled
-            where e.TimeStart >= now
+            //where e.TimeStart >= now
             select new
             {
                 e.Id, e.AimOfTheMeeting, e.MeetingCategory, e.MeatingPlace,
@@ -48,8 +52,17 @@ public class EventsControllers : Controller
                 e.AgeTo, e.AgeFrom, e.CaltulationType, e.CaltulationSum, e.LanguageCommunication,
                 e.Interests, e.UserId, e.User, e.Status
             }).Distinct();
-
-        return Ok(list);
+        
+        var route = Request.Path.Value;
+        var validFilter = new ObjectPaginationFilter(filter.PageNumber, filter.PageSize);
+        var pagedData = await list
+            .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
+            .Take(validFilter.PageSize)
+            .ToListAsync();
+        var totalRecords = await list.CountAsync();
+        var pagedReponse = PaginationHelper.CreatePagedObjectReponse(pagedData, validFilter, totalRecords, _uriService, route);
+        return Ok(pagedReponse);
+        
     }
 
     [Authorize]
