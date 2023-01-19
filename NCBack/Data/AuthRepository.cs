@@ -1,4 +1,6 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+﻿
+
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -16,6 +18,8 @@ public class AuthRepository : IAuthRepository
     private readonly IHostEnvironment _environment; //Добавляем сервис взаимодействия с файлами в рамках хоста
     private readonly UploadFileService _uploadFileService; // Добавляем сервис для получения файлов из формы
     private readonly PushSms _pushSms;
+    private readonly INotificationService _notificationService;
+    private ISession _session => _httpContextAccessor.HttpContext.Session;
 
     public AuthRepository(
         DataContext context,
@@ -23,7 +27,8 @@ public class AuthRepository : IAuthRepository
         IConfiguration configuration,
         IHostEnvironment environment,
         UploadFileService uploadFileService,
-        PushSms pushSms)
+        PushSms pushSms,
+        INotificationService notificationService)
     {
         _context = context;
         _httpContextAccessor = httpContextAccessor;
@@ -31,12 +36,13 @@ public class AuthRepository : IAuthRepository
         _environment = environment;
         _uploadFileService = uploadFileService;
         _pushSms = pushSms;
+        _notificationService = notificationService;
     }
 
     private int GetUserId() => int.Parse(_httpContextAccessor.HttpContext.User
         .FindFirstValue(ClaimTypes.NameIdentifier));
 
-    public async Task<User> Login(string username, string password)
+    public async Task<User> Login(string username, string password, string? deviceId)
     {
         var user = await _context.Users
             .FirstOrDefaultAsync(u => u.Username.ToLower().Equals(username.ToLower()));
@@ -44,6 +50,7 @@ public class AuthRepository : IAuthRepository
         {
             user.Success = false;
             user.Message = "User not found.";
+            throw new ApplicationException(user.Message);
         }
         else if (!VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt))
         {
@@ -52,11 +59,19 @@ public class AuthRepository : IAuthRepository
         }
         else
         {
+            //CreateHash(deviceId, out byte[] deviceHash);
+            /*deviceId = CreateDevice(user.DeviceId);*/
+            /*_context.Users.Update(user);
+            await _context.SaveChangesAsync();*/
+            await _context.CityList.FirstAsync(c => c.Id == user.CityId);
+            if (user.GenderId != null)
+                await _context.GenderList.FirstAsync(c => c.Id == user.GenderId);
             user.Token = CreateToken(user);
+            if (deviceId != null) 
+                _session.SetString("DeviceId", deviceId);
+            user.DeviceId = _session.GetString("DeviceId");
             user.Success = true;
-            user.Message = "Done.";
         }
-
         return user;
     }
 
@@ -65,6 +80,7 @@ public class AuthRepository : IAuthRepository
         var intermediateUser = await _context.IntermediateUser
             .FirstOrDefaultAsync(u => u.Code.Equals(code) && u.Id == id);
         User user = new User();
+        
         if (code != intermediateUser.Code)
         {
             intermediateUser.Success = false;
@@ -72,24 +88,35 @@ public class AuthRepository : IAuthRepository
         }
         else
         {
+            
             user = new User()
             {
-                City = intermediateUser.City,
+                CityId = intermediateUser.CityId,
+                City = await _context.CityList.FirstAsync(c => c.Id == intermediateUser.CityId),
                 Email = intermediateUser.Email,
                 Username = intermediateUser.Username,
                 Code = intermediateUser.Code,
                 PhoneNumber = intermediateUser.PhoneNumber,
                 FullName = intermediateUser.FullName,
                 DateOfBirth = intermediateUser.DateOfBirth,
+                GenderId = intermediateUser.GenderId,
+                Gender = await _context.GenderList.FirstAsync(c => c.Id == intermediateUser.GenderId),
                 AvatarPath = intermediateUser.AvatarPath,
                 PasswordHash = intermediateUser.PasswordHash,
                 PasswordSalt = intermediateUser.PasswordSalt,
                 Message = "Very good Done !!!",
                 Success = true,
             };
+            
+            if (await UserExists(user.Username))
+            {
+                user.Success = false;
+                user.Message = "User already exists.";
+                return user;
+            }
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
-            
+
             intermediateUser.Success = true;
             intermediateUser.Message = "Done.";
             return user;
@@ -99,8 +126,8 @@ public class AuthRepository : IAuthRepository
     }
 
     public async Task<IntermediateUser> Register(
-        string city, string email,
-        string username, string fullname, DateTime dateOfBirth,
+        int cityId, string email,
+        string username, string fullname, DateTime dateOfBirth, int genderId,
         IFormFile file, string password)
     {
         IntermediateUser user = new IntermediateUser();
@@ -129,12 +156,15 @@ public class AuthRepository : IAuthRepository
 
         IntermediateUser intermediateUser = new IntermediateUser
         {
-            City = city,
+            CityId = cityId,
+            City = await _context.CityList.FirstAsync(c => c.Id == cityId),
             Email = email,
-            Code = _pushSms.code,
+            Code = 0,
             Username = username,
             FullName = fullname,
             DateOfBirth = Convert.ToDateTime(dateOfBirth.ToShortDateString()),
+            GenderId = genderId,
+            Gender = await _context.GenderList.FirstAsync(c => c.Id == genderId),
             AvatarPath = photoPath,
             PasswordHash = passwordHash,
             PasswordSalt = passwordSalt
@@ -152,21 +182,23 @@ public class AuthRepository : IAuthRepository
     {
         var intermediateUser = await _context.IntermediateUser.FindAsync(id);
         await _pushSms.Sms(phone);
-        
-        
+
+
         if (intermediateUser != null)
         {
+            await _context.CityList.FirstAsync(c => c.Id == intermediateUser.CityId);
+            await _context.GenderList.FirstAsync(c => c.Id == intermediateUser.GenderId);
             intermediateUser.PhoneNumber = phone;
             intermediateUser.Code = _pushSms.code;
             intermediateUser.Message = "Done.";
             _context.IntermediateUser.Update(intermediateUser);
             await _context.SaveChangesAsync();
-            
-            
+
+
             /*_context.Entry(intermediateUser).State = EntityState.Deleted;
             _context.IntermediateUser.Remove(intermediateUser);
             await _context.SaveChangesAsync();*/
-            
+
             return intermediateUser;
         }
 
@@ -250,6 +282,15 @@ public class AuthRepository : IAuthRepository
             passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
         }
     }
+    
+    
+    private void CreateHash(string deviceId , out byte[] deviceSalt)
+    {
+        using (var hmac = new System.Security.Cryptography.HMACSHA512())
+        {
+            deviceSalt = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(deviceId));
+        }
+    }
 
     private bool VerifyPasswordHash(string password, byte[] passwordHash, byte[] passwordSalt)
     {
@@ -258,6 +299,34 @@ public class AuthRepository : IAuthRepository
             var computeHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
             return computeHash.SequenceEqual(passwordHash);
         }
+    }
+    
+    
+    private string CreateDevice(User user)
+    {
+        
+        List<Claim> claims = new List<Claim>
+        {
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new Claim(ClaimTypes.Name, user.Username)
+        };
+
+        SymmetricSecurityKey key = new SymmetricSecurityKey(System.Text.Encoding.UTF8
+            .GetBytes(_configuration.GetSection(user.DeviceId).Value));
+
+        SigningCredentials creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
+
+        SecurityTokenDescriptor tokenDescriptor = new SecurityTokenDescriptor
+        {
+            Subject = new ClaimsIdentity(claims),
+            Expires = DateTime.Now.AddDays(1),
+            SigningCredentials = creds
+        };
+
+        JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
+        SecurityToken token = tokenHandler.CreateToken(tokenDescriptor);
+
+        return tokenHandler.WriteToken(token);
     }
 
     private string CreateToken(User user)

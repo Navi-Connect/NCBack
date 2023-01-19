@@ -6,13 +6,13 @@ namespace NCBack.Controllers;
 public class GalleryController : Controller
 {
     private readonly IHostingEnvironment _hostingEnvironment;
-    
+
     public GalleryController(IHostingEnvironment hostingEnvironment)
     {
         _hostingEnvironment = hostingEnvironment;
-    }        
-    
-    
+    }
+
+
     [HttpGet("images/{namePhoto}")]
     public IActionResult Get(string namePhoto)
     {

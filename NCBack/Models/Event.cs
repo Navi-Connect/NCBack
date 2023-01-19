@@ -9,6 +9,15 @@ public enum Status
     Canceled
 }
 
+
+
+public enum StatusUserMyEvents
+{
+    MyEventsDeActive,
+    MyEventsActive
+}
+
+
 public class Event
 {
     public int Id { get; set; }
@@ -21,8 +30,11 @@ public class Event
     public string? IWant { get; set; }
     public DateTime? TimeStart { get; set; }
     public DateTime? TimeFinish { get; set; }
-    public string? City { get; set; }
-    public string? Gender { get; set; }
+    public DateTime CreateAdd { get; set; } = DateTime.Now;
+    public int? CityId { get; set; }
+    public CityList? City { get; set; }
+    public int? GenderId { get; set; }
+    public GenderList? Gender { get; set; }
     public int? AgeTo { get; set; }
     public int? AgeFrom { get; set; }
     public string? CaltulationType { get; set; }
@@ -38,5 +50,6 @@ public class Event
     public double? Longitude { get; set; }
     public int UserId { get; set; }
     public User User { get; set; }
+    /*public StatusUserMyEvents? StatusMyEvents { get; set; } = StatusUserMyEvents.MyEventsDeActive;*/
     public Status? Status { get; set; }
 }

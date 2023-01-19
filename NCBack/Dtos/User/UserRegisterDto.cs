@@ -5,7 +5,7 @@ namespace NCBack.Dtos.User;
 public class UserRegisterDto
 {
     [Required] 
-    public string City { get; set; }
+    public int CityId { get; set; }
     [Required]
     [DataType(DataType.EmailAddress)]
     public string Email { get; set; }
@@ -16,6 +16,8 @@ public class UserRegisterDto
     
     [Required]
     public DateTime DateOfBirth { get; set; }
+    [Required]
+    public int GenderId { get; set; }
     
     [Required]
     [DataType(DataType.Upload)]

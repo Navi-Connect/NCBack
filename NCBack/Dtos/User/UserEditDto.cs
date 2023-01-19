@@ -5,10 +5,12 @@ namespace NCBack.Dtos.User;
 public class UserEditDto
 {
 
+    public int? CityId { get; set; } = null;
+    public string? FullName { get; set; } = string.Empty;
     public string? CredoAboutMyself { get; set; } = string.Empty;
     public List<string>? LanguageOfCommunication { get; set; } = null;
     public string? Nationality { get; set; } = string.Empty;
-    public string? Gender { get; set; } = string.Empty;
+    public int? GenderId { get; set; } = null;
     public string? MaritalStatus { get; set; } = string.Empty;
     public string? GetAcquaintedWith { get; set; } = string.Empty;
     public string? MeetFor { get; set; } = string.Empty;
