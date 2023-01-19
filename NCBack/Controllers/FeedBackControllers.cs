@@ -43,11 +43,11 @@ namespace NCBack.Controllers
                     .GetValue<string>("FromName");
 
 
-                var to = new EmailAddress("zhunussoffilias0216@gmail.com", "Ilyas");
+                var to = new EmailAddress("support@navi-ava.com", "Na'Vi Connect");
                 var subject = "Sending with SendGrid is Fun";
 
                 var htmlContent
-                    = $"<h3>Информация о пльзователея:</h3> Никнейм:{user.Username} ФИ:{user.FullName} \n " +
+                    = $"<h3>Информация о пльзователея:</h3> Никнейм:{user.Username} ФИО:{user.FullName} \n " +
                       $" <h3><b>Номер пользователя:</b><b>+{user.PhoneNumber} </h3></b> " +
                       $"\n <h3>Почта пользователя: <b>{user.Email}</br></b></br></h3> \n " +
                       $"<h3>Описание проблемы:</h3> <strong>{text}</strong>" +

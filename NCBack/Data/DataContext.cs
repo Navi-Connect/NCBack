@@ -21,6 +21,7 @@ public class DataContext : DbContext
     public virtual DbSet<MeatingPlace> MeatingPlace { get; set; }
     public virtual DbSet<CityList> CityList { get; set; }
     public virtual DbSet<GenderList> GenderList { get; set; }
+    public virtual DbSet<PhoneEditing> PhoneEditing { get; set; }
     /*public virtual DbSet<MyInterests> MyInterests { get; set; }
     public virtual DbSet<MainСategories> MainСategories { get; set; }*/
     

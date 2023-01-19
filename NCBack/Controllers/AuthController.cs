@@ -14,6 +14,7 @@ namespace NCBack.Controllers
     [Route("[controller]")]
     public class AuthController : ControllerBase
     {
+        
         private readonly IAuthRepository _authRepo;
         private readonly DataContext _context;
         private static ISendGridClient _sendGridClient;
@@ -26,17 +27,19 @@ namespace NCBack.Controllers
             _context = context;
             _sendGridClient = sendGridClient;
             _configuration = configuration;
+          
         }
 
         [HttpPost("register")]
         public async Task<ActionResult<User>> Register([FromForm] UserRegisterDto request)
         {
             var response = await _authRepo.Register(
-                request.City,
+                request.CityId,
                 request.Email,
                 request.Username,
                 request.Fullname,
                 Convert.ToDateTime(request.DateOfBirth.ToShortDateString()),
+                request.GenderId,
                 request.File,
                 request.Password);
             if (!response.Success)
@@ -65,7 +68,7 @@ namespace NCBack.Controllers
         [HttpPost("login")]
         public async Task<ActionResult<User>> Login(UserLoginDto request)
         {
-            var response = await _authRepo.Login(request.Username, request.Password);
+            var response = await _authRepo.Login(request.Username, request.Password, request.DeviceId);
             if (!response.Success)
             {
                 return BadRequest(response);

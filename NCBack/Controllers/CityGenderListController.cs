@@ -36,6 +36,14 @@ public class CityGenderListController : Controller
         var genderLists = _context.GenderList.ToList().Distinct();
         return Ok(genderLists);
     }
+    
+    [HttpGet("getGenderListWM")]
+    public async Task<ActionResult> GetGenderListWM()
+    {
+        var genderLists = 
+            _context.GenderList.Where(c=> c.GenderName == "М" || c.GenderName == "Ж").ToList().Distinct();
+        return Ok(genderLists);
+    }
 
     [HttpGet("getByIdGenderList/{Id}")]
     public async Task<ActionResult> GetByIdGenderList(int Id)

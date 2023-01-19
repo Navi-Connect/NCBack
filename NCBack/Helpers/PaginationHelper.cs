@@ -46,17 +46,17 @@ namespace NCBack.Helpers
                 validFilter.PageNumber >= 1 && validFilter.PageNumber < roundedTotalPages
                     ? uriService.GetPageUri(new PaginationFilter(
                         validFilter.PageNumber + 1, 
-                        validFilter.PageSize, validFilter.CityId, validFilter.GenderId, validFilter.AgeFrom, validFilter.AgeTo, validFilter.Year,validFilter.Month,validFilter.Date), route)
+                        validFilter.PageSize, validFilter.CityId, validFilter.GenderId, validFilter.Year,validFilter.Month,validFilter.Date), route)
                     : null!;
             respose.PreviousPage =
                 validFilter.PageNumber - 1 >= 1 && validFilter.PageNumber <= roundedTotalPages
                     ? uriService.GetPageUri(new PaginationFilter(
-                        validFilter.PageNumber - 1, validFilter.PageSize, validFilter.CityId, validFilter.GenderId, validFilter.AgeFrom, validFilter.AgeTo, validFilter.Year,validFilter.Month,validFilter.Date), route)
+                        validFilter.PageNumber - 1, validFilter.PageSize, validFilter.CityId, validFilter.GenderId,  validFilter.Year,validFilter.Month,validFilter.Date), route)
                     : null!;
             respose.FirstPage = uriService.GetPageUri(new PaginationFilter(
-                1, validFilter.PageSize, validFilter.CityId, validFilter.GenderId, validFilter.AgeFrom , validFilter.AgeTo, validFilter.Year,validFilter.Month,validFilter.Date), route);
+                1, validFilter.PageSize, validFilter.CityId, validFilter.GenderId,  validFilter.Year,validFilter.Month,validFilter.Date), route);
             respose.LastPage = uriService.GetPageUri(new PaginationFilter(
-                roundedTotalPages, validFilter.PageSize, validFilter.CityId, validFilter.GenderId, validFilter.AgeFrom ,validFilter.AgeTo, validFilter.Year,validFilter.Month,validFilter.Date), route);
+                roundedTotalPages, validFilter.PageSize, validFilter.CityId, validFilter.GenderId,  validFilter.Year,validFilter.Month,validFilter.Date), route);
             respose.TotalPages = roundedTotalPages;
             respose.TotalRecords = totalRecords;
             return respose;

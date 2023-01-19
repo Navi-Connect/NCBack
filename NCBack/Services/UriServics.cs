@@ -23,8 +23,8 @@ namespace NCBack.Services
             modifiedUri = QueryHelpers.AddQueryString(modifiedUri, "pageSize", filter.PageSize.ToString());
             modifiedUri = QueryHelpers.AddQueryString(modifiedUri, "CityId", filter.CityId.ToString());
             modifiedUri = QueryHelpers.AddQueryString(modifiedUri, "GenderId", filter.GenderId.ToString());
-            modifiedUri = QueryHelpers.AddQueryString(modifiedUri, "AgeFrom", filter.AgeFrom.ToString());
-            modifiedUri = QueryHelpers.AddQueryString(modifiedUri, "AgeTo", filter.AgeTo.ToString());
+            /*modifiedUri = QueryHelpers.AddQueryString(modifiedUri, "AgeFrom", filter.AgeFrom.ToString());
+            modifiedUri = QueryHelpers.AddQueryString(modifiedUri, "AgeTo", filter.AgeTo.ToString());*/
             modifiedUri =
                 QueryHelpers.AddQueryString(modifiedUri, "Time", $"{filter.Year}-{filter.Month}-{filter.Date}");
             return new Uri(modifiedUri);

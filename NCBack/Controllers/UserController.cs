@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NCBack.Data;
 using NCBack.Dtos.User;
+using NCBack.Models;
+using NCBack.NotificationModels;
 using NCBack.Services;
 
 namespace NCBack.Controllers;
@@ -18,15 +20,18 @@ public class UserController : ControllerBase
     private readonly IHostEnvironment _environment; //Добавляем сервис взаимодействия с файлами в рамках хоста
     private readonly UploadFileService _uploadFileService; // Добавляем сервис для получения файлов из формы
     private readonly PushSms _pushSms;
+    private readonly INotificationService _notificationService;
+    private ISession _session => _httpContextAccessor.HttpContext.Session;
 
     public UserController(DataContext context, IHttpContextAccessor httpContextAccessor, IHostEnvironment environment,
-        UploadFileService uploadFileService, PushSms pushSms)
+        UploadFileService uploadFileService, PushSms pushSms, INotificationService notificationService)
     {
         _context = context;
         _httpContextAccessor = httpContextAccessor;
         _environment = environment;
         _uploadFileService = uploadFileService;
         _pushSms = pushSms;
+        _notificationService = notificationService;
     }
 
     private int GetUserId() => int.Parse(_httpContextAccessor.HttpContext.User
@@ -38,6 +43,8 @@ public class UserController : ControllerBase
         try
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == GetUserId());
+            user.City = _context.CityList.FirstOrDefault(c => c.Id == user.CityId);
+            user.Gender = _context.GenderList.FirstOrDefault(g => g.Id == user.GenderId);
             return Ok(user);
         }
         catch (ApplicationException e)
@@ -52,6 +59,8 @@ public class UserController : ControllerBase
         try
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
+            user.City = _context.CityList.FirstOrDefault(c => c.Id == user.CityId);
+            user.Gender = _context.GenderList.FirstOrDefault(g => g.Id == user.GenderId);
             return Ok(user);
         }
         catch (ApplicationException e)
@@ -77,6 +86,8 @@ public class UserController : ControllerBase
                     string photoPath = $"images/{model.File.FileName}";
                     _uploadFileService.Upload(path, model.File.FileName, model.File);
                     user.AvatarPath = photoPath;
+                    user.City = _context.CityList.FirstOrDefault(c => c.Id == user.CityId);
+                    user.Gender = _context.GenderList.FirstOrDefault(g => g.Id == user.GenderId);
                 }
             }
 
@@ -102,11 +113,14 @@ public class UserController : ControllerBase
             {
                 if (user.AvatarPath != null)
                 {
+                    user.CityId = model.CityId;
+                    user.City = _context.CityList.FirstOrDefault(c => c.Id == model.CityId);
+                    user.FullName = model.FullName;
                     user.CredoAboutMyself = model.CredoAboutMyself;
                     user.LanguageOfCommunication = model.LanguageOfCommunication;
                     user.Nationality = model.Nationality;
-                    user.Gender = model.Gender;
-                    ;
+                    user.GenderId = model.GenderId;
+                    user.Gender = _context.GenderList.FirstOrDefault(g => g.Id == model.GenderId);
                     user.MaritalStatus = model.MaritalStatus;
                     user.IWantToLearn = model.IWantToLearn;
                     user.PreferredPlaces = model.PreferredPlaces;
@@ -148,6 +162,8 @@ public class UserController : ControllerBase
             if (model.Username != null)
             {
                 user.Username = model.Username;
+                user.City = _context.CityList.FirstOrDefault(c => c.Id == user.CityId);
+                user.Gender = _context.GenderList.FirstOrDefault(g => g.Id == user.GenderId);
                 _context.Users.Update(user);
                 await _context.SaveChangesAsync();
                 return Ok(user);
@@ -163,7 +179,7 @@ public class UserController : ControllerBase
         BadRequest("Error");
     }
 
-    [HttpPost("editPersonalInformation")]
+    /*[HttpPost("editPersonalInformation")]
     public async Task<IActionResult> EditingPersonalInformation(UserEditPersonalInformationDto model)
     {
         try
@@ -172,7 +188,7 @@ public class UserController : ControllerBase
 
             if (user != null)
             {
-                user.City = model.City;
+                user.CityId = model.CityId;
                 user.FullName = model.FullName;
             }
 
@@ -186,23 +202,39 @@ public class UserController : ControllerBase
         }
 
         BadRequest("Error");
-    }
+    }*/
 
-    [HttpPost("EditingContactInformation")]
-    public async Task<IActionResult> EditingContactInformation(UserEditContactDto model)
+    [HttpPost("editingContactEmail")]
+    public async Task<IActionResult> EditingContactEmail(UserEditContactEmailDto model)
     {
         try
         {
             var user = _context.Users.FirstOrDefault(u => u.Id == GetUserId());
-            await _pushSms.Sms(model.Phone);
-
+            
             if (user != null)
             {
+                if (await _context.Users.AnyAsync(u => u.Email.ToLower() == model.Email.ToLower()))
+                {
+                    user.Success = false;
+                    user.Message = "Email already exists.";
+                    return Ok(user);
+                }
+                
                 user.Email = model.Email;
-                user.PhoneNumber = model.Phone;
-                user.Code = _pushSms.code;
+                user.City = _context.CityList.FirstOrDefault(c => c.Id == user.CityId);
+                user.Gender = _context.GenderList.FirstOrDefault(g => g.Id == user.GenderId);
+               
+                NotificationModel notificationModel = new NotificationModel()
+                {
+                    UserId = GetUserId(),
+                    DeviceId = _session.GetString("DeviceId"),
+                    IsAndroiodDevice = true,
+                    Title = "Вы меняете свою электронную почту",
+                    Body = "Уважаемый пользователь! Вы меняете свою основную электронную почту. \n " +
+                           "Если это были не вы - можете отменить это действие нажав на кнопку ниже. "
+                };
+                await _notificationService.SendNotification(notificationModel);
             }
-
             _context.Users.Update(user);
             await _context.SaveChangesAsync();
             return Ok(user);
@@ -213,8 +245,83 @@ public class UserController : ControllerBase
         }
 
         BadRequest("Error");
+    }   
+    
+    [HttpPost("editingContactPhone/{Id}")]
+    public async Task<IActionResult> EditingContactPhone(int? Id, UserEditContactPhoneDto model)
+    {
+        try
+        {
+            await _pushSms.Sms(model.Phone);
+            /*var user = _context.Users.FirstOrDefault(u => u.Id == GetUserId());
+            await _pushSms.Sms(model.Phone);*/
+
+            if (model.Phone != null)
+            {
+                PhoneEditing phoneEditing = new PhoneEditing()
+                {
+                    Code = _pushSms.code,
+                    PhoneNumber = model.Phone,
+                };
+                _context.PhoneEditing.Add(phoneEditing);
+                await _context.SaveChangesAsync();
+                return Ok(phoneEditing);
+            }
+            return BadRequest("Error");
+        }
+        catch (ApplicationException e)
+        {
+            throw new ApplicationException(e.ToString());
+        }
     }
 
+    [HttpPost("verificationCodeEditing/{id}")]
+    public async Task<IActionResult> VerificationCodeEditing(int? id, int code)
+    {
+        try
+        {
+            var phoneEditing = await _context.PhoneEditing
+                .FirstOrDefaultAsync(u => u.Code.Equals(code) && u.Id == id);
+            User user = await _context.Users.FirstOrDefaultAsync(u => u.Id == GetUserId());
+            if (code != phoneEditing.Code)
+            {
+                phoneEditing.Success = false;
+                phoneEditing.Message = "Code not found.";
+            }
+            else
+            {
+                
+                user.Code = phoneEditing.Code;
+                user.PhoneNumber = phoneEditing.PhoneNumber;
+                user.Message = "Very good Done !!!";
+                user.Success = true;
+                user.City = _context.CityList.FirstOrDefault(c => c.Id == user.CityId);
+                user.Gender = _context.GenderList.FirstOrDefault(g => g.Id == user.GenderId);
+                
+                 _context.Users.Update(user);
+                await _context.SaveChangesAsync();
+                NotificationModel notificationModel = new NotificationModel()
+                {
+                    UserId = GetUserId(),
+                    DeviceId = _session.GetString("DeviceId"),
+                    IsAndroiodDevice = true,
+                    Title = "Вы меняете свой контактный номер телефона",
+                    Body = "Вход в систему будет осуществляться по новому номеру телефона, а также номер будет отображаться другим пользователям в объявлениях.\n" +
+                           "Отмена возможна только при нажатии на неё до 30 минут после запроса. "
+                };
+                await _notificationService.SendNotification(notificationModel);
+                phoneEditing.Success = true;
+                phoneEditing.Message = "Done.";
+                return Ok(user);
+            }
+            return BadRequest("Error");
+        }
+        catch (ApplicationException e)
+        {
+            throw new ApplicationException(e.ToString());
+        }
+    }
+    
     [HttpGet("users")]
     public async Task<IActionResult> Users()
     {
@@ -231,24 +338,45 @@ public class UserController : ControllerBase
         BadRequest("Error");
     }
 
-    [HttpPost("deleteUser")]
+    [HttpDelete("deleteUser")]
     public async Task<IActionResult> DeleteUser()
     {
         try
         {
             var user = await _context.Users.FirstOrDefaultAsync(p => p.Id == GetUserId());
-            if (user is null)
+            var events = await _context.Events.FirstOrDefaultAsync(e => e.UserId == GetUserId());
+            if (user is null && events is null)
+            {
                 return NotFound();
-            _context.Entry(user).State = EntityState.Deleted;
-            _context.Users.Remove(user);
-            await _context.SaveChangesAsync();
-            return Ok("Success delete user !!!");
+            }
+            if(events != null)
+            {
+                _context.Entry(events).State = EntityState.Deleted;
+                _context.Events.Remove(events);
+                await _context.SaveChangesAsync();
+            }
+            if (user != null)
+            {
+                _context.Entry(user).State = EntityState.Deleted;
+                _context.Users.Remove(user);
+                await _context.SaveChangesAsync();
+                return Ok("Success delete user and your events !!!");
+            }
+            
+            return BadRequest("Error");
         }
         catch (ApplicationException e)
         {
             throw new ApplicationException(e.ToString());
         }
-
-        BadRequest("Error");
     }
+    
+    /*public async  Task<bool> EmailExists(string email)
+    {
+        if (await _context.Users.AnyAsync(u => u.Email.ToLower() == email.ToLower()))
+        {
+            return true;
+        }
+        return false;
+    }*/
 }

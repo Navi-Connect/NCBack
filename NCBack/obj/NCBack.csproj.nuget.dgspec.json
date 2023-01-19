@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\C#\\NCBack\\NCBack\\NCBack\\NCBack.csproj": {}
+    "C:\\NaviConnect\\NCBack\\NCBack\\NCBack.csproj": {}
   },
   "projects": {
-    "C:\\C#\\NCBack\\NCBack\\NCBack\\NCBack.csproj": {
+    "C:\\NaviConnect\\NCBack\\NCBack\\NCBack.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\C#\\NCBack\\NCBack\\NCBack\\NCBack.csproj",
+        "projectUniqueName": "C:\\NaviConnect\\NCBack\\NCBack\\NCBack.csproj",
         "projectName": "NCBack",
-        "projectPath": "C:\\C#\\NCBack\\NCBack\\NCBack\\NCBack.csproj",
-        "packagesPath": "C:\\Users\\zhunu\\.nuget\\packages\\",
-        "outputPath": "C:\\C#\\NCBack\\NCBack\\NCBack\\obj\\",
+        "projectPath": "C:\\NaviConnect\\NCBack\\NCBack\\NCBack.csproj",
+        "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
+        "outputPath": "C:\\NaviConnect\\NCBack\\NCBack\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\zhunu\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\User\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -44,6 +44,10 @@
               "target": "Package",
               "version": "[11.0.0, )"
             },
+            "CorePush": {
+              "target": "Package",
+              "version": "[3.1.1, )"
+            },
             "MailKit": {
               "target": "Package",
               "version": "[3.4.1, )"
@@ -52,11 +56,21 @@
               "target": "Package",
               "version": "[6.0.5, )"
             },
+            "Microsoft.AspNetCore.Session": {
+              "target": "Package",
+              "version": "[2.2.0, )"
+            },
             "Microsoft.EntityFrameworkCore.Design": {
               "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
               "suppressParent": "All",
               "target": "Package",
               "version": "[6.0.5, )"
+            },
+            "Microsoft.NETFramework.ReferenceAssemblies": {
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[1.0.3, )",
+              "autoReferenced": true
             },
             "Npgsql.EntityFrameworkCore.PostgreSQL": {
               "target": "Package",
@@ -98,7 +112,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.403\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.400\\RuntimeIdentifierGraph.json"
         }
       }
     }

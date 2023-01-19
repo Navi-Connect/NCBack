@@ -2,9 +2,8 @@
 
 namespace NCBack.Dtos.User;
 
-public class UserEditContactDto
+public class UserEditContactEmailDto
 {
     [DataType(DataType.EmailAddress)]
     public string Email { get; set; }
-    public string Phone { get; set; }
 }

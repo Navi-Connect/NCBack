@@ -3,7 +3,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NCBack.Data;
+using NCBack.Filter;
+using NCBack.Helpers;
 using NCBack.Models;
+using NCBack.NotificationModels;
+using NCBack.Services;
 
 namespace NCBack.Controllers;
 
@@ -13,33 +17,42 @@ public class UserEventController : ControllerBase
 {
     private readonly DataContext _context;
     private readonly IHttpContextAccessor _httpContextAccessor;
-
-    public UserEventController(DataContext context, IHttpContextAccessor httpContextAccessor)
+    private readonly IUriService _uriServiceNews;
+    private readonly INotificationService _notificationService;
+    private ISession _session => _httpContextAccessor.HttpContext.Session;
+    public UserEventController(DataContext context, IHttpContextAccessor httpContextAccessor, IUriService uriServiceNews, INotificationService notificationService)
     {
         _context = context;
         _httpContextAccessor = httpContextAccessor;
+        _uriServiceNews = uriServiceNews;
+        _notificationService = notificationService;
     }
 
     private int GetUserId() => int.Parse(_httpContextAccessor.HttpContext.User
         .FindFirstValue(ClaimTypes.NameIdentifier));
 
     [Authorize]
-    [HttpGet("listRequest")]
-    public async Task<IActionResult> ListRequest()
+    [HttpGet("myOrganizerListEvents")]
+    public async Task<IActionResult> MyOrganizerListEvents([FromQuery] ObjectPaginationFilter? filter)
     {
         try
         {
-            DateTime now = DateTime.Now;
-            var list = await (from ev in _context.UserEvent
-                from u in _context.Users
-                from e in _context.Events
-                where ev.UserId == u.Id
-                where ev.User.Id == ev.UserId
-                where e.Status == Status.Expectations || e.Status == Status.Canceled
-                where e.TimeStart >= now
-                orderby ev
-                select new { ev.Id, ev.User, ev.Event }).Distinct().ToListAsync();
-
+            var list = await (from e in _context.Events
+                where e.UserId == GetUserId()
+                orderby e
+                select new { e.Id, e.AimOfTheMeetingId, e.AimOfTheMeeting, e.MeetingCategoryId, e.MeetingCategory, e.MeatingPlaceId, e.MeatingPlace,
+                    e.IWant,e.TimeStart, e.TimeFinish, e.CreateAdd, e.CityId, e.City, e.GenderId, e.Gender,
+                    e.AgeTo, e.AgeFrom, e.CaltulationType, e.CaltulationSum, e.LanguageCommunication,
+                    e.Interests, e.Latitude, e.Longitude, e.UserId, e.User, e.Status }).Distinct().ToListAsync();
+            var route = Request.Path.Value;
+            var validFilter = new ObjectPaginationFilter(filter.PageNumber, filter.PageSize);
+            var pagedData = list
+                .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
+                .Take(validFilter.PageSize)
+                .ToList();
+            var totalRecords = list.Count();
+            var pagedReponse = PaginationHelper.CreatePagedObjectReponse(pagedData, validFilter, totalRecords, _uriServiceNews, route);
+            return Ok(pagedReponse);
             return Ok(list);
         }
         catch (ApplicationException e)
@@ -52,11 +65,12 @@ public class UserEventController : ControllerBase
 
     [Authorize]
     [HttpPost("requestEvent")]
-    public async Task<IActionResult> RequestEvent(int eventId)
+    public async Task<IActionResult> RequestEvent(int eventId, [FromQuery] ObjectPaginationFilter? filter)
     {
         try
         {
             var events = _context.Events.FirstOrDefault(e => e.Id == eventId);
+            var user =await _context.Users.FirstOrDefaultAsync(u => u.Id == events.UserId);
             DateTime now = DateTime.Now;
             if (events.UserId != GetUserId())
             {
@@ -67,13 +81,35 @@ public class UserEventController : ControllerBase
                     from u in _context.Users
                     from e in _context.Events
                     where ev.UserId == GetUserId()
+                    where ev.User.StatusRequest == StatusUserRequest.Expectation
                     where ev.EventId == e.Id
+                    where ev.Event.AimOfTheMeetingId == e.AimOfTheMeeting.Id && ev.Event.MeetingCategoryId == e.MeetingCategory.Id && ev.Event.MeatingPlaceId == e.MeatingPlace.Id
                     where ev.User.Id == ev.UserId
+                    where ev.Event.City.Id == e.CityId && ev.Event.Gender.Id == e.GenderId
+                    where ev.User.CityId == u.City.Id && ev.User.GenderId == u.Gender.Id
                     where e.Status == Status.Expectations || e.Status == Status.Canceled
                     where e.TimeStart >= now
                     orderby ev
                     select new { ev.Id, ev.User, ev.Event }).Distinct();
-
+                NotificationModel notificationModel = new NotificationModel()
+                {
+                    UserId = events.UserId,
+                    DeviceId = _session.GetString("DeviceId"),
+                    IsAndroiodDevice = true,
+                    Title = "К вам поступила заявка",
+                    Body = $"На ваще обьявление"
+                };
+                await _notificationService.SendNotification(notificationModel);
+                var route = Request.Path.Value;
+                var validFilter = new ObjectPaginationFilter(filter.PageNumber, filter.PageSize);
+                var pagedData = list
+                    .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
+                    .Take(validFilter.PageSize)
+                    .ToList();
+                var totalRecords = list.Count();
+                var pagedReponse = PaginationHelper.CreatePagedObjectReponse(pagedData, validFilter, totalRecords, _uriServiceNews, route);
+                return Ok(pagedReponse);
+                
                 return Ok(list);
             }
         }
@@ -86,15 +122,28 @@ public class UserEventController : ControllerBase
     }
 
     [Authorize]
-    [HttpGet("listRequestUser")]
-    public async Task<IActionResult> ListRequestUser()
+    [HttpGet("myListRequestEventsParticipant")]
+    public async Task<IActionResult> MyListRequestEventsParticipant([FromQuery] ObjectPaginationFilter? filter)
     {
         try
         {
-            var list = await (from ev in _context.UserEvent
-                    where ev.UserId == GetUserId()
-                    select new { ev.Id, ev.User, ev.Event }
+            var list = await (from e in _context.UserEvent
+                    where e.UserId == GetUserId()
+                    select new {e.Id, e.EventId, e.Event.AimOfTheMeetingId, e.Event.AimOfTheMeeting, e.Event.MeetingCategoryId, e.Event.MeetingCategory, e.Event.MeatingPlaceId, e.Event.MeatingPlace,
+                        e.Event.IWant,e.Event.TimeStart, e.Event.TimeFinish, e.Event.CreateAdd, e.Event.CityId, e.Event.City, e.Event.GenderId, e.Event.Gender,
+                        e.Event.AgeTo, e.Event.AgeFrom, e.Event.CaltulationType, e.Event.CaltulationSum, e.Event.LanguageCommunication,
+                        e.Event.Interests, e.Event.Latitude, e.Event.Longitude, e.Event.UserId, e.Event.User, e.Event.Status}
                 ).Distinct().ToListAsync();
+            var route = Request.Path.Value;
+            var validFilter = new ObjectPaginationFilter(filter.PageNumber, filter.PageSize);
+            var pagedData = list
+                .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
+                .Take(validFilter.PageSize)
+                .ToList();
+            var totalRecords = list.Count();
+            var pagedReponse = PaginationHelper.CreatePagedObjectReponse(pagedData, validFilter, totalRecords, _uriServiceNews, route);
+            return Ok(pagedReponse);
+            
             return Ok(list);
         }
         catch (ApplicationException e)
@@ -106,18 +155,37 @@ public class UserEventController : ControllerBase
     }
 
     [Authorize]
-    [HttpGet("listRequestEvent/{id}")]
-    public async Task<IActionResult> ListRequestEvent(int id)
+    [HttpGet("listRequestOrganizerEventUsers/{id}")]
+    public async Task<IActionResult> ListRequestOrganizerEventUser(int id, [FromQuery] ObjectPaginationFilter? filter)
     {
         try
         {
             var events = _context.Events.FirstOrDefault(e => e.Id == id);
             if (events != null)
             {
-                var list = await (from ev in _context.UserEvent
-                        where ev.EventId == events.Id
-                        select new { ev.Id, ev.User, ev.Event }
+                var list = await (from e in _context.UserEvent
+                        from c in  _context.CityList
+                        from g in  _context.GenderList
+                        from a in  _context.AimOfTheMeeting
+                        from mc in  _context.MeetingCategory
+                        from mp in  _context.MeatingPlace
+                        where e.EventId == events.Id
+                        where e.Event.UserId == GetUserId()
+                        where c.Id  == e.Event.CityId && g.Id == e.Event.GenderId
+                        select new {  e.Id, e.EventId, e.Event.AimOfTheMeetingId, e.Event.AimOfTheMeeting, e.Event.MeetingCategoryId, e.Event.MeetingCategory, e.Event.MeatingPlaceId, e.Event.MeatingPlace,
+                            e.Event.IWant,e.Event.TimeStart, e.Event.TimeFinish, e.Event.CreateAdd, e.Event.CityId, e.Event.City, e.Event.GenderId, e.Event.Gender,
+                            e.Event.AgeTo, e.Event.AgeFrom, e.Event.CaltulationType, e.Event.CaltulationSum, e.Event.LanguageCommunication,
+                            e.Event.Interests, e.Event.Latitude, e.Event.Longitude, e.UserId, e.User, e.Event.Status}
                     ).Distinct().ToListAsync();
+                var route = Request.Path.Value;
+                var validFilter = new ObjectPaginationFilter(filter.PageNumber, filter.PageSize);
+                var pagedData = list
+                    .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
+                    .Take(validFilter.PageSize)
+                    .ToList();
+                var totalRecords = list.Count();
+                var pagedReponse = PaginationHelper.CreatePagedObjectReponse(pagedData, validFilter, totalRecords, _uriServiceNews, route);
+                return Ok(pagedReponse);
                 return Ok(list);
             }
 
@@ -144,6 +212,7 @@ public class UserEventController : ControllerBase
             {
                 if (events.Id != null)
                 {
+                    events.User.StatusRequest = StatusUserRequest.Empty;
                     events.UserId = GetUserId();
                     events.Status = Status.Accepted;
                     _context.Events.Update(events);
@@ -214,8 +283,9 @@ public class UserEventController : ControllerBase
 
                         var userEvent = (from ev in _context.AccedEventUser
                             where ev.UserId == userId
+                            where ev.User.StatusRequest == StatusUserRequest.Empty
                             orderby ev
-                            select new { ev.Id, ev.User.PhoneNumber }).Distinct();
+                            select new { ev.Id, ev.User.Username, ev.User.PhoneNumber }).Distinct();
 
                         /*var userEvent = (from ev in _context.UserEvent
                             from u in _context.Users
@@ -226,6 +296,16 @@ public class UserEventController : ControllerBase
                             where e.Status == Status.Accepted
                             orderby ev
                             select new { ev.Id, ev.User, ev.Event }).ToList().Distinct();*/
+                        NotificationModel notificationModel = new NotificationModel()
+                        {
+                            UserId = userId,
+                            DeviceId = _session.GetString("DeviceId"),
+                            IsAndroiodDevice = true,
+                            Title = "Поздравляем с предстоящей встречей/событием !",
+                            Body = $"Вашу заявку “РЕСТОРАН от 21/12 с 18:00 - до 21:00” подтвердили. Желаем вам отлично провести время." +
+                                   $"\n Контакты открыты в вашем профиле." 
+                        };
+                        await _notificationService.SendNotification(notificationModel);
 
                         return Ok(userEvent);
                     }
@@ -242,7 +322,6 @@ public class UserEventController : ControllerBase
         {
             throw new ApplicationException(e.ToString());
         }
-
         return BadRequest("ERROR");
     }
 
@@ -260,6 +339,7 @@ public class UserEventController : ControllerBase
                 if (events != null)
                 {
                     events.UserId = GetUserId();
+                    events.User.StatusRequest = StatusUserRequest.Empty;
                     events.Status = Status.Canceled;
                     _context.Events.Update(events);
                     await _context.SaveChangesAsync();
@@ -271,7 +351,15 @@ public class UserEventController : ControllerBase
                         if (uE != null)
                             _context.UserEvent.Remove(uE);
                         await _context.SaveChangesAsync();
-
+                        NotificationModel notificationModel = new NotificationModel()
+                        {
+                            UserId = userId,
+                            DeviceId = _session.GetString("DeviceId"),
+                            IsAndroiodDevice = true,
+                            Title = "Уважаемый Connectёр!",
+                            Body = $"{events.User.Username} выбрал другого Connectёра. У вас есть возможность !!!"
+                        };
+                        await _notificationService.SendNotification(notificationModel);
                         return Ok("Canceled Done !!!");
                     }
                 }
@@ -287,13 +375,13 @@ public class UserEventController : ControllerBase
         return BadRequest("ERROR");
     }
 
-    [Authorize]
+    /*[Authorize]
     [HttpGet("acceptedEvents")]
     public async Task<IActionResult> AcceptedEvents()
     {
         try
         {
-            var userEvent = (from ev in _context.UserEvent
+            var userEvent = (from ev in _context.UserEvent 
                 from e in _context.Events
                 where ev.UserId == GetUserId()
                 where ev.EventId == e.Id
@@ -307,9 +395,9 @@ public class UserEventController : ControllerBase
         }
 
         return BadRequest("ERROR");
-    }
+    }*/
 
-    [Authorize]
+    /*[Authorize]
     [HttpGet("canceledEvents")]
     public async Task<IActionResult> CanceledEvents()
     {
@@ -329,5 +417,75 @@ public class UserEventController : ControllerBase
         }
 
         return BadRequest("ERROR");
+    }*/
+    
+    
+    [Authorize]
+    [HttpGet("acceptOrganizerEventUsers")]
+    public async Task<IActionResult> AcceptOrganizerEventUsers([FromQuery] ObjectPaginationFilter? filter)
+    {
+        try
+        {
+            var acceptUserEvent = await (from aeu in _context.AccedEventUser
+                where aeu.Event.UserId == GetUserId()
+                where aeu.UserId == aeu.User.Id
+                select new { aeu.Id, aeu.UserId, aeu.User, aeu.EventId, aeu.Event.AimOfTheMeetingId, aeu.Event.AimOfTheMeeting, aeu.Event.MeetingCategoryId, aeu.Event.MeetingCategory, aeu.Event.MeatingPlaceId, aeu.Event.MeatingPlace,
+                    aeu.Event.IWant,aeu.Event.TimeStart, aeu.Event.TimeFinish, aeu.Event.CreateAdd, aeu.Event.CityId, aeu.Event.City, aeu.Event.GenderId, aeu.Event.Gender,
+                    aeu.Event.AgeTo, aeu.Event.AgeFrom, aeu.Event.CaltulationType, aeu.Event.CaltulationSum, aeu.Event.LanguageCommunication,
+                    aeu.Event.Interests, aeu.Event.Latitude, aeu.Event.Longitude,  aeu.Event.Status
+                }).Distinct().ToListAsync();
+            var route = Request.Path.Value;
+            var validFilter = new ObjectPaginationFilter(filter.PageNumber, filter.PageSize);
+            var pagedData = acceptUserEvent
+                .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
+                .Take(validFilter.PageSize)
+                .ToList();
+            var totalRecords = acceptUserEvent.Count();
+            var pagedReponse = PaginationHelper.CreatePagedObjectReponse(pagedData, validFilter, totalRecords, _uriServiceNews, route);
+            return Ok(pagedReponse);
+            return Ok(acceptUserEvent);
+        }
+        catch (ApplicationException e)
+        {
+            throw new ApplicationException(e.ToString());
+        }
+
+        return BadRequest("ERROR");
     }
+    
+    [Authorize]
+    [HttpGet("acceptParticipantEventUsers")]
+    public async Task<IActionResult> AcceptParticipantEventUsers([FromQuery] ObjectPaginationFilter? filter)
+    {
+        try
+        {
+            var acceptUserEvent = await (from aeu in _context.AccedEventUser
+                where aeu.UserId == GetUserId()
+                where aeu.UserId == aeu.User.Id
+                select new { aeu.Id, aeu.EventId, aeu.Event.AimOfTheMeetingId, aeu.Event.AimOfTheMeeting, aeu.Event.MeetingCategoryId, aeu.Event.MeetingCategory, aeu.Event.MeatingPlaceId, aeu.Event.MeatingPlace,
+                    aeu.Event.IWant,aeu.Event.TimeStart, aeu.Event.TimeFinish, aeu.Event.CreateAdd, aeu.Event.CityId, aeu.Event.City, aeu.Event.GenderId, aeu.Event.Gender,
+                    aeu.Event.AgeTo, aeu.Event.AgeFrom, aeu.Event.CaltulationType, aeu.Event.CaltulationSum, aeu.Event.LanguageCommunication,
+                    aeu.Event.Interests, aeu.Event.Latitude, aeu.Event.Longitude, aeu.Event.UserId, aeu.Event.User,  aeu.Event.Status
+                }).Distinct().ToListAsync();
+            var route = Request.Path.Value;
+            var validFilter = new ObjectPaginationFilter(filter.PageNumber, filter.PageSize);
+            var pagedData = acceptUserEvent
+                .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
+                .Take(validFilter.PageSize)
+                .ToList();
+            var totalRecords = acceptUserEvent.Count();
+            var pagedReponse = PaginationHelper.CreatePagedObjectReponse(pagedData, validFilter, totalRecords, _uriServiceNews, route);
+            return Ok(pagedReponse);
+            
+            return Ok(acceptUserEvent);
+            
+        }
+        catch (ApplicationException e)
+        {
+            throw new ApplicationException(e.ToString());
+        }
+
+        return BadRequest("ERROR");
+    }
+    
 }

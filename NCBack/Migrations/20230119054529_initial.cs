@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace NCBack.Migrations
 {
-    public partial class Initial : Migration
+    public partial class initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -51,30 +51,6 @@ namespace NCBack.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "IntermediateUser",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    City = table.Column<string>(type: "text", nullable: false),
-                    PhoneNumber = table.Column<string>(type: "text", nullable: true),
-                    Email = table.Column<string>(type: "text", nullable: false),
-                    Code = table.Column<int>(type: "integer", nullable: true),
-                    Username = table.Column<string>(type: "text", nullable: false),
-                    FullName = table.Column<string>(type: "text", nullable: false),
-                    DateOfBirth = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    AvatarPath = table.Column<string>(type: "text", nullable: false),
-                    PasswordHash = table.Column<byte[]>(type: "bytea", nullable: false),
-                    PasswordSalt = table.Column<byte[]>(type: "bytea", nullable: false),
-                    Success = table.Column<bool>(type: "boolean", nullable: false),
-                    Message = table.Column<string>(type: "text", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_IntermediateUser", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "MeetingCategory",
                 columns: table => new
                 {
@@ -105,12 +81,65 @@ namespace NCBack.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "PhoneEditing",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    PhoneNumber = table.Column<string>(type: "text", nullable: true),
+                    Code = table.Column<int>(type: "integer", nullable: true),
+                    Success = table.Column<bool>(type: "boolean", nullable: false),
+                    Message = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PhoneEditing", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "IntermediateUser",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    CityId = table.Column<int>(type: "integer", nullable: false),
+                    PhoneNumber = table.Column<string>(type: "text", nullable: true),
+                    Email = table.Column<string>(type: "text", nullable: false),
+                    Code = table.Column<int>(type: "integer", nullable: true),
+                    Username = table.Column<string>(type: "text", nullable: false),
+                    FullName = table.Column<string>(type: "text", nullable: false),
+                    DateOfBirth = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    GenderId = table.Column<int>(type: "integer", nullable: false),
+                    AvatarPath = table.Column<string>(type: "text", nullable: false),
+                    PasswordHash = table.Column<byte[]>(type: "bytea", nullable: false),
+                    PasswordSalt = table.Column<byte[]>(type: "bytea", nullable: false),
+                    Success = table.Column<bool>(type: "boolean", nullable: false),
+                    Message = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_IntermediateUser", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_IntermediateUser_CityList_CityId",
+                        column: x => x.CityId,
+                        principalTable: "CityList",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_IntermediateUser_GenderList_GenderId",
+                        column: x => x.GenderId,
+                        principalTable: "GenderList",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Users",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    City = table.Column<string>(type: "text", nullable: true),
+                    CityId = table.Column<int>(type: "integer", nullable: true),
                     PhoneNumber = table.Column<string>(type: "text", nullable: true),
                     Email = table.Column<string>(type: "text", nullable: false),
                     Code = table.Column<int>(type: "integer", nullable: true),
@@ -119,9 +148,9 @@ namespace NCBack.Migrations
                     DateOfBirth = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     AvatarPath = table.Column<string>(type: "text", nullable: false),
                     CredoAboutMyself = table.Column<string>(type: "text", nullable: true),
-                    LanguageOfCommunication = table.Column<string>(type: "text", nullable: true),
+                    LanguageOfCommunication = table.Column<List<string>>(type: "text[]", nullable: true),
                     Nationality = table.Column<string>(type: "text", nullable: true),
-                    Gender = table.Column<string>(type: "text", nullable: true),
+                    GenderId = table.Column<int>(type: "integer", nullable: true),
                     MaritalStatus = table.Column<string>(type: "text", nullable: true),
                     GetAcquaintedWith = table.Column<string>(type: "text", nullable: true),
                     MeetFor = table.Column<string>(type: "text", nullable: true),
@@ -131,15 +160,27 @@ namespace NCBack.Migrations
                     PreferredPlaces = table.Column<List<string>>(type: "text[]", nullable: true),
                     Interests = table.Column<List<string>>(type: "text[]", nullable: true),
                     Profession = table.Column<string>(type: "text", nullable: true),
+                    StatusRequest = table.Column<int>(type: "integer", nullable: true),
                     PasswordHash = table.Column<byte[]>(type: "bytea", nullable: false),
                     PasswordSalt = table.Column<byte[]>(type: "bytea", nullable: false),
                     Token = table.Column<string>(type: "text", nullable: true),
+                    DeviceId = table.Column<string>(type: "text", nullable: true),
                     Success = table.Column<bool>(type: "boolean", nullable: false),
                     Message = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Users_CityList_CityId",
+                        column: x => x.CityId,
+                        principalTable: "CityList",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Users_GenderList_GenderId",
+                        column: x => x.GenderId,
+                        principalTable: "GenderList",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -181,7 +222,7 @@ namespace NCBack.Migrations
                     AgeFrom = table.Column<int>(type: "integer", nullable: true),
                     CaltulationType = table.Column<string>(type: "text", nullable: true),
                     CaltulationSum = table.Column<string>(type: "text", nullable: true),
-                    LanguageCommunication = table.Column<string>(type: "text", nullable: true),
+                    LanguageCommunication = table.Column<List<string>>(type: "text[]", nullable: true),
                     Interests = table.Column<List<string>>(type: "text[]", nullable: true),
                     Latitude = table.Column<double>(type: "double precision", nullable: true),
                     Longitude = table.Column<double>(type: "double precision", nullable: true),
@@ -452,6 +493,16 @@ namespace NCBack.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_IntermediateUser_CityId",
+                table: "IntermediateUser",
+                column: "CityId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_IntermediateUser_GenderId",
+                table: "IntermediateUser",
+                column: "GenderId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_MeatingPlace_MeetingCategoryId",
                 table: "MeatingPlace",
                 column: "MeetingCategoryId");
@@ -465,6 +516,16 @@ namespace NCBack.Migrations
                 name: "IX_UserEvent_UserId",
                 table: "UserEvent",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_CityId",
+                table: "Users",
+                column: "CityId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_GenderId",
+                table: "Users",
+                column: "GenderId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -479,6 +540,9 @@ namespace NCBack.Migrations
                 name: "News");
 
             migrationBuilder.DropTable(
+                name: "PhoneEditing");
+
+            migrationBuilder.DropTable(
                 name: "UserEvent");
 
             migrationBuilder.DropTable(
@@ -488,12 +552,6 @@ namespace NCBack.Migrations
                 name: "AimOfTheMeeting");
 
             migrationBuilder.DropTable(
-                name: "CityList");
-
-            migrationBuilder.DropTable(
-                name: "GenderList");
-
-            migrationBuilder.DropTable(
                 name: "MeatingPlace");
 
             migrationBuilder.DropTable(
@@ -501,6 +559,12 @@ namespace NCBack.Migrations
 
             migrationBuilder.DropTable(
                 name: "MeetingCategory");
+
+            migrationBuilder.DropTable(
+                name: "CityList");
+
+            migrationBuilder.DropTable(
+                name: "GenderList");
         }
     }
 }

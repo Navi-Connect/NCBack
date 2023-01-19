@@ -110,3 +110,5 @@ C:\C#\NCBack\NCBack\NCBack\obj\Debug\net6.0\refint\NCBack.dll
 C:\C#\NCBack\NCBack\NCBack\obj\Debug\net6.0\NCBack.pdb
 C:\C#\NCBack\NCBack\NCBack\obj\Debug\net6.0\NCBack.genruntimeconfig.cache
 C:\C#\NCBack\NCBack\NCBack\obj\Debug\net6.0\ref\NCBack.dll
+C:\NaviConnect\NCBack\NCBack\bin\Debug\net6.0\CorePush.dll
+C:\NaviConnect\NCBack\NCBack\bin\Debug\net6.0\System.Security.Permissions.dll

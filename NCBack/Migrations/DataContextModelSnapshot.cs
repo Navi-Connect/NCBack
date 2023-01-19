@@ -367,8 +367,8 @@ namespace NCBack.Migrations
                     b.Property<List<string>>("Interests")
                         .HasColumnType("text[]");
 
-                    b.Property<string>("LanguageCommunication")
-                        .HasColumnType("text");
+                    b.Property<List<string>>("LanguageCommunication")
+                        .HasColumnType("text[]");
 
                     b.Property<double?>("Latitude")
                         .HasColumnType("double precision");
@@ -457,9 +457,8 @@ namespace NCBack.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("City")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int>("CityId")
+                        .HasColumnType("integer");
 
                     b.Property<int?>("Code")
                         .HasColumnType("integer");
@@ -474,6 +473,9 @@ namespace NCBack.Migrations
                     b.Property<string>("FullName")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<int>("GenderId")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Message")
                         .IsRequired()
@@ -498,6 +500,10 @@ namespace NCBack.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CityId");
+
+                    b.HasIndex("GenderId");
 
                     b.ToTable("IntermediateUser");
                 });
@@ -844,6 +850,32 @@ namespace NCBack.Migrations
                     b.ToTable("News");
                 });
 
+            modelBuilder.Entity("NCBack.Models.PhoneEditing", b =>
+                {
+                    b.Property<int?>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int?>("Id"));
+
+                    b.Property<int?>("Code")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("Success")
+                        .HasColumnType("boolean");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PhoneEditing");
+                });
+
             modelBuilder.Entity("NCBack.Models.User", b =>
                 {
                     b.Property<int>("Id")
@@ -856,8 +888,8 @@ namespace NCBack.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("City")
-                        .HasColumnType("text");
+                    b.Property<int?>("CityId")
+                        .HasColumnType("integer");
 
                     b.Property<int?>("Code")
                         .HasColumnType("integer");
@@ -867,6 +899,9 @@ namespace NCBack.Migrations
 
                     b.Property<DateTime>("DateOfBirth")
                         .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("DeviceId")
+                        .HasColumnType("text");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -878,8 +913,8 @@ namespace NCBack.Migrations
                     b.Property<string>("FullName")
                         .HasColumnType("text");
 
-                    b.Property<string>("Gender")
-                        .HasColumnType("text");
+                    b.Property<int?>("GenderId")
+                        .HasColumnType("integer");
 
                     b.Property<string>("GetAcquaintedWith")
                         .HasColumnType("text");
@@ -890,8 +925,8 @@ namespace NCBack.Migrations
                     b.Property<List<string>>("Interests")
                         .HasColumnType("text[]");
 
-                    b.Property<string>("LanguageOfCommunication")
-                        .HasColumnType("text");
+                    b.Property<List<string>>("LanguageOfCommunication")
+                        .HasColumnType("text[]");
 
                     b.Property<string>("MaritalStatus")
                         .HasColumnType("text");
@@ -923,6 +958,9 @@ namespace NCBack.Migrations
                     b.Property<string>("Profession")
                         .HasColumnType("text");
 
+                    b.Property<int?>("StatusRequest")
+                        .HasColumnType("integer");
+
                     b.Property<bool>("Success")
                         .HasColumnType("boolean");
 
@@ -937,6 +975,10 @@ namespace NCBack.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CityId");
+
+                    b.HasIndex("GenderId");
 
                     b.ToTable("Users");
                 });
@@ -1028,6 +1070,25 @@ namespace NCBack.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("NCBack.Models.IntermediateUser", b =>
+                {
+                    b.HasOne("NCBack.Models.CityList", "City")
+                        .WithMany()
+                        .HasForeignKey("CityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("NCBack.Models.GenderList", "Gender")
+                        .WithMany()
+                        .HasForeignKey("GenderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("City");
+
+                    b.Navigation("Gender");
+                });
+
             modelBuilder.Entity("NCBack.Models.MeatingPlace", b =>
                 {
                     b.HasOne("NCBack.Models.MeetingCategory", "MeetingCategory")
@@ -1037,6 +1098,21 @@ namespace NCBack.Migrations
                         .IsRequired();
 
                     b.Navigation("MeetingCategory");
+                });
+
+            modelBuilder.Entity("NCBack.Models.User", b =>
+                {
+                    b.HasOne("NCBack.Models.CityList", "City")
+                        .WithMany()
+                        .HasForeignKey("CityId");
+
+                    b.HasOne("NCBack.Models.GenderList", "Gender")
+                        .WithMany()
+                        .HasForeignKey("GenderId");
+
+                    b.Navigation("City");
+
+                    b.Navigation("Gender");
                 });
 
             modelBuilder.Entity("NCBack.Models.UserEvent", b =>

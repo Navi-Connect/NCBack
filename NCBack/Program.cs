@@ -1,9 +1,11 @@
-using NCBack.Data;
-
+using CorePush.Apple;
+using CorePush.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using NCBack.Data;
+using NCBack.NotificationModels;
 using NCBack.Services;
 using SendGrid.Extensions.DependencyInjection;
 using Swashbuckle.AspNetCore.Filters;
@@ -13,7 +15,17 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddDbContext<DataContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddSession(options =>  
+{  
+    options.IdleTimeout = TimeSpan.FromMinutes(10);  
+    options.Cookie.HttpOnly = true;  
+    options.Cookie.IsEssential = true;  
+});  
+
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddDistributedMemoryCache(); 
+
 // URI for EventsSearch
 builder.Services.AddSingleton<IUriService>(o =>
 {
@@ -23,6 +35,12 @@ builder.Services.AddSingleton<IUriService>(o =>
     return new UriService(uri);
 });
 
+
+
+
+builder.Services.AddTransient<INotificationService, NotificationService>();
+builder.Services.AddHttpClient<FcmSender>();
+builder.Services.AddHttpClient<ApnSender>();
 builder.Services.AddControllers();
 builder.Services.AddTransient<UploadFileService>();
 builder.Services.AddTransient<PushSms>();
@@ -30,6 +48,14 @@ builder.Services.AddTransient<EmailService>();
 builder.Services.AddTransient<PasswordGeneratorService>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
+
+
+// Configure strongly typed settings objects
+var appSettingsSection = builder.Configuration.GetSection("FcmNotification");
+builder.Services.Configure<FcmNotificationSetting>(appSettingsSection);
+
+builder.Services.Configure<MobizonNotificationSMS>(builder.Configuration.GetSection("MobizonNotification"));
+
 
 builder.Services.AddSwaggerGen(c => {
     c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme {
@@ -85,6 +111,7 @@ var app = builder.Build();
 //}
 
 
+app.UseSession();
 //app.UseHttpsRedirection();
 
 app.UseAuthentication();

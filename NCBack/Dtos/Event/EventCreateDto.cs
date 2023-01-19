@@ -19,7 +19,7 @@ public class EventCreateDto
     public int? AgeFrom { get; set; }
     public string? CaltulationType { get; set; }
     public string? CaltulationSum { get; set; }
-    public string? LanguageCommunication { get; set; }
+    public List<string>? LanguageCommunication { get; set; }
 
     public List<string> Interests { get; set; } = new List<string> { string.Empty };
 
