@@ -10,6 +10,7 @@ using NCBack.Services;
 
 namespace NCBack.Controllers;
 
+
 [Authorize]
 [ApiController]
 [Route("api/[controller]")]
