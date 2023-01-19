@@ -4,7 +4,7 @@ using NCBack.Data;
 
 namespace NCBack.Controllers;
 
-[Authorize]
+
 [ApiController]
 [Route("api/[controller]")]
 public class CityGenderListController : Controller
