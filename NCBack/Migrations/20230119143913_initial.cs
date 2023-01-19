@@ -81,6 +81,24 @@ namespace NCBack.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "NotificationModel",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    DeviceId = table.Column<string>(type: "text", nullable: true),
+                    IsAndroiodDevice = table.Column<bool>(type: "boolean", nullable: false),
+                    Title = table.Column<string>(type: "text", nullable: false),
+                    Body = table.Column<string>(type: "text", nullable: false),
+                    DateTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_NotificationModel", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "PhoneEditing",
                 columns: table => new
                 {
@@ -538,6 +556,9 @@ namespace NCBack.Migrations
 
             migrationBuilder.DropTable(
                 name: "News");
+
+            migrationBuilder.DropTable(
+                name: "NotificationModel");
 
             migrationBuilder.DropTable(
                 name: "PhoneEditing");
