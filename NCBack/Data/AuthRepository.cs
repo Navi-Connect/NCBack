@@ -72,7 +72,6 @@ public class AuthRepository : IAuthRepository
             user.DeviceId = _session.GetString("DeviceId");
             user.Success = true;
         }
-
         return user;
     }
 
