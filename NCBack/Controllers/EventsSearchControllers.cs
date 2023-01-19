@@ -46,7 +46,7 @@ namespace NCBack.Controllers
                 .Distinct().ToList();*/
                 (from e in _context.Events
                     where e.Status == Status.Expectations || e.Status == Status.Canceled
-                    //where e.TimeStart >= now
+                    where e.TimeStart >= now
                     select new
                     { 
                         e.Id, e.AimOfTheMeetingId, e.AimOfTheMeeting, e.MeetingCategoryId, e.MeetingCategory, e.MeatingPlaceId, e.MeatingPlace,
@@ -65,8 +65,8 @@ namespace NCBack.Controllers
                         .Distinct().ToList();*/
                     (from e in _context.Events
                         where e.AimOfTheMeetingId == AimOfTheMeetingId
-                        where e.Status == Status.Expectations || e.Status == Status.Canceled
-                        //where e.TimeStart >= now
+                        where e.Status == Status.Expectations || e.Status == Status.Canceled 
+                        where e.TimeStart >= now
                         select new
                         {
                             e.Id, e.AimOfTheMeetingId, e.AimOfTheMeeting, e.MeetingCategoryId, e.MeetingCategory, e.MeatingPlaceId, e.MeatingPlace,
@@ -82,7 +82,7 @@ namespace NCBack.Controllers
                     (from e in _context.Events
                         where e.AimOfTheMeetingId == AimOfTheMeetingId && e.MeetingCategoryId == MeetingCategoryId
                         where e.Status == Status.Expectations || e.Status == Status.Canceled
-                        //where e.TimeStart >= now
+                        where e.TimeStart >= now
                         select new
                         {
                             e.Id, e.AimOfTheMeetingId, e.AimOfTheMeeting, e.MeetingCategoryId, e.MeetingCategory, e.MeatingPlaceId, e.MeatingPlace,
@@ -155,6 +155,7 @@ namespace NCBack.Controllers
                 var pagedData = lists
                     .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
                     .Take(validFilter.PageSize).ToList();
+                pagedData.Reverse();
                 var totalRecords = await _context.Events.CountAsync();
                 var pagedReponse =
                     PaginationHelper.CreatePagedReponse(pagedData, validFilter, totalRecords, _uriService, route);
@@ -174,6 +175,7 @@ namespace NCBack.Controllers
                     .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
                     .Take(validFilter.PageSize)
                     .ToList();
+                pagedData.Reverse();
                 var totalRecords = events.Count();
                 var pagedReponse =
                     PaginationHelper.CreatePagedReponse(pagedData, validFilter, totalRecords, _uriService, route);
@@ -211,6 +213,7 @@ namespace NCBack.Controllers
                     .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
                     .Take(validFilter.PageSize)
                     .ToList();
+                pagedData.Reverse();
                 var totalRecords = events.Count();
                 var pagedReponse =
                     PaginationHelper.CreatePagedReponse(pagedData, validFilter, totalRecords, _uriService, route);
@@ -291,6 +294,7 @@ namespace NCBack.Controllers
                     .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
                     .Take(validFilter.PageSize)
                     .ToList();
+                pagedData.Reverse();
                 var totalRecords = await _context.Events.Where(
                     e => e.GenderId == filter.GenderId).CountAsync();
                 var pagedReponse =
@@ -313,6 +317,7 @@ namespace NCBack.Controllers
                     .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
                     .Take(validFilter.PageSize)
                     .ToList();
+                pagedData.Reverse();
                 var totalRecords = events.Count();
                 var pagedReponse =
                     PaginationHelper.CreatePagedReponse(pagedData, validFilter, totalRecords, _uriService, route);
@@ -333,6 +338,7 @@ namespace NCBack.Controllers
                     .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
                     .Take(validFilter.PageSize)
                     .ToList();
+                pagedData.Reverse();
                 var totalRecords = events.Count();
                 var pagedReponse =
                     PaginationHelper.CreatePagedReponse(pagedData, validFilter, totalRecords, _uriService, route);
@@ -354,6 +360,7 @@ namespace NCBack.Controllers
                     .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
                     .Take(validFilter.PageSize)
                     .ToList();
+                pagedData.Reverse();
                 var totalRecords = events.Count();
                 var pagedReponse =
                     PaginationHelper.CreatePagedReponse(pagedData, validFilter, totalRecords, _uriService, route);
@@ -501,6 +508,7 @@ namespace NCBack.Controllers
                     .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
                     .Take(validFilter.PageSize)
                     .ToList();
+                pagedData.Reverse();
                 var totalRecords = events.Count();
                 var pagedReponse =
                     PaginationHelper.CreatePagedReponse(pagedData, validFilter, totalRecords, _uriService, route);
@@ -657,6 +665,7 @@ namespace NCBack.Controllers
                     .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
                     .Take(validFilter.PageSize)
                     .ToList();
+                pagedData.Reverse();
                 var totalRecords = events.Count();
                 var pagedReponse =
                     PaginationHelper.CreatePagedReponse(pagedData, validFilter, totalRecords, _uriService, route);

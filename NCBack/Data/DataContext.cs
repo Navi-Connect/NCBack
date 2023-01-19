@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NCBack.Models;
+using NCBack.NotificationModels;
 
 namespace NCBack.Data;
 
@@ -22,6 +23,8 @@ public class DataContext : DbContext
     public virtual DbSet<CityList> CityList { get; set; }
     public virtual DbSet<GenderList> GenderList { get; set; }
     public virtual DbSet<PhoneEditing> PhoneEditing { get; set; }
+
+    public virtual DbSet<NotificationModel> NotificationModel { get; set; }
     /*public virtual DbSet<MyInterests> MyInterests { get; set; }
     public virtual DbSet<MainСategories> MainСategories { get; set; }*/
     

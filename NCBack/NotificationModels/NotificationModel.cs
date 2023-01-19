@@ -4,11 +4,13 @@ namespace NCBack.NotificationModels;
 
 public class NotificationModel
 {
+    [JsonProperty("Id")]
+    public int Id { get; set; }  
     [JsonProperty("UserId")]
-    public int UserId { get; set; }   
-    
+    public int UserId { get; set; }
+
     [JsonProperty("deviceId")]
-    public string? DeviceId { get; set; }
+    public string? DeviceId { get; set; } = null;
 
     [JsonProperty("isAndroiodDevice")]
     public bool IsAndroiodDevice { get; set; }
@@ -18,6 +20,21 @@ public class NotificationModel
 
     [JsonProperty("body")]
     public string Body { get; set; }
+    [JsonProperty("date")]
+    public DateTime DateTime { get; set; } = DateTime.Now;
+
+    public NotificationModel(int id, int userId, bool isAndroiodDevice, string title, string body, DateTime dateTime)
+    {
+        Id = id;
+        UserId = userId;
+        IsAndroiodDevice = isAndroiodDevice;
+        Title = title;
+        Body = body;
+        DateTime = dateTime;
+    } 
+    public NotificationModel()
+    {
+    }
 }
 
 public class GoogleNotification

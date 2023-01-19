@@ -59,17 +59,17 @@ public class AuthRepository : IAuthRepository
         }
         else
         {
-            //CreateHash(deviceId, out byte[] deviceHash);
-            /*deviceId = CreateDevice(user.DeviceId);*/
-            /*_context.Users.Update(user);
-            await _context.SaveChangesAsync();*/
+            if (deviceId != null)
+            {
+                user.DeviceId = PasswordGeneratorService.ToHesh(deviceId);
+                _context.Users.Update(user);
+                await _context.SaveChangesAsync();
+            }
+            
             await _context.CityList.FirstAsync(c => c.Id == user.CityId);
             if (user.GenderId != null)
                 await _context.GenderList.FirstAsync(c => c.Id == user.GenderId);
             user.Token = CreateToken(user);
-            if (deviceId != null) 
-                _session.SetString("DeviceId", deviceId);
-            user.DeviceId = _session.GetString("DeviceId");
             user.Success = true;
         }
         return user;
@@ -283,14 +283,6 @@ public class AuthRepository : IAuthRepository
         }
     }
     
-    
-    private void CreateHash(string deviceId , out byte[] deviceSalt)
-    {
-        using (var hmac = new System.Security.Cryptography.HMACSHA512())
-        {
-            deviceSalt = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(deviceId));
-        }
-    }
 
     private bool VerifyPasswordHash(string password, byte[] passwordHash, byte[] passwordSalt)
     {
@@ -301,33 +293,6 @@ public class AuthRepository : IAuthRepository
         }
     }
     
-    
-    private string CreateDevice(User user)
-    {
-        
-        List<Claim> claims = new List<Claim>
-        {
-            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new Claim(ClaimTypes.Name, user.Username)
-        };
-
-        SymmetricSecurityKey key = new SymmetricSecurityKey(System.Text.Encoding.UTF8
-            .GetBytes(_configuration.GetSection(user.DeviceId).Value));
-
-        SigningCredentials creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
-
-        SecurityTokenDescriptor tokenDescriptor = new SecurityTokenDescriptor
-        {
-            Subject = new ClaimsIdentity(claims),
-            Expires = DateTime.Now.AddDays(1),
-            SigningCredentials = creds
-        };
-
-        JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
-        SecurityToken token = tokenHandler.CreateToken(tokenDescriptor);
-
-        return tokenHandler.WriteToken(token);
-    }
 
     private string CreateToken(User user)
     {

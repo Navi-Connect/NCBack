@@ -44,7 +44,7 @@ public class EventsControllers : Controller
             /*where e.MainСategories.Where(x=>! e.MyInterestsId.Contains(x.MyInterestsId)) == e.MyInterests.Select(i=>i.Id).ToList()*/
             /*where e.MyInterests == e.MyInterests.Where(m => !e.MyInterestsId.Contains(m.Id)).ToList()*/
             where e.Status == Status.Expectations || e.Status == Status.Canceled
-            //where e.TimeStart >= now
+            where e.TimeStart >= now
             select new
             {
                 e.Id, e.AimOfTheMeeting, e.MeetingCategory, e.MeatingPlace,
@@ -59,6 +59,7 @@ public class EventsControllers : Controller
             .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
             .Take(validFilter.PageSize)
             .ToListAsync();
+        pagedData.Reverse();
         var totalRecords = await list.CountAsync();
         var pagedReponse = PaginationHelper.CreatePagedObjectReponse(pagedData, validFilter, totalRecords, _uriService, route);
         return Ok(pagedReponse);

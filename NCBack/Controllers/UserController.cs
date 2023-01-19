@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NCBack.Data;
 using NCBack.Dtos.User;
+using NCBack.Filter;
+using NCBack.Helpers;
 using NCBack.Models;
 using NCBack.NotificationModels;
 using NCBack.Services;
@@ -22,10 +24,11 @@ public class UserController : ControllerBase
     private readonly UploadFileService _uploadFileService; // Добавляем сервис для получения файлов из формы
     private readonly PushSms _pushSms;
     private readonly INotificationService _notificationService;
+    private readonly IUriService _uriServiceNews;
     private ISession _session => _httpContextAccessor.HttpContext.Session;
 
     public UserController(DataContext context, IHttpContextAccessor httpContextAccessor, IHostEnvironment environment,
-        UploadFileService uploadFileService, PushSms pushSms, INotificationService notificationService)
+        UploadFileService uploadFileService, PushSms pushSms, INotificationService notificationService, IUriService uriServiceNews)
     {
         _context = context;
         _httpContextAccessor = httpContextAccessor;
@@ -33,12 +36,36 @@ public class UserController : ControllerBase
         _uploadFileService = uploadFileService;
         _pushSms = pushSms;
         _notificationService = notificationService;
+        _uriServiceNews = uriServiceNews;
     }
 
     private int GetUserId() => int.Parse(_httpContextAccessor.HttpContext.User
         .FindFirstValue(ClaimTypes.NameIdentifier));
 
-    [HttpGet]
+    [HttpGet("getNotificationsList")]
+    public async Task<ActionResult> GetNotificationsList([FromQuery] ObjectPaginationFilter? filter)
+    {
+        try
+        {
+            var notification = await _context.NotificationModel.Where(n => n.UserId == GetUserId()).Distinct().ToArrayAsync();
+            var route = Request.Path.Value;
+            var validFilter = new ObjectPaginationFilter(filter.PageNumber, filter.PageSize);
+            var pagedData = notification
+                .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
+                .Take(validFilter.PageSize)
+                .ToList();
+            pagedData.Reverse();
+            var totalRecords = notification.Count();
+            var pagedReponse = PaginationHelper.CreatePagedObjectReponse(pagedData, validFilter, totalRecords, _uriServiceNews, route);
+            return Ok(pagedReponse);
+        }
+        catch (ApplicationException e)
+        {
+            throw new ApplicationException(e.ToString());
+        }
+    }
+    
+    [HttpGet("getUser")]
     public async Task<ActionResult> GetUser()
     {
         try
@@ -228,13 +255,16 @@ public class UserController : ControllerBase
                 NotificationModel notificationModel = new NotificationModel()
                 {
                     UserId = GetUserId(),
-                    DeviceId = _session.GetString("DeviceId"),
+                    DeviceId = PasswordGeneratorService.OffHesh(user.DeviceId),
                     IsAndroiodDevice = true,
                     Title = "Вы меняете свою электронную почту",
                     Body = "Уважаемый пользователь! Вы меняете свою основную электронную почту. \n " +
-                           "Если это были не вы - можете отменить это действие нажав на кнопку ниже. "
+                           "Если это были не вы - можете отменить это действие нажав на кнопку ниже. ",
+                    DateTime =  DateTime.Now
                 };
                 await _notificationService.SendNotification(notificationModel);
+                _context.NotificationModel.Add(new NotificationModel(notificationModel.Id, notificationModel.UserId,notificationModel.IsAndroiodDevice ,notificationModel.Title, notificationModel.Body, notificationModel.DateTime));
+                await _context.SaveChangesAsync();
             }
             _context.Users.Update(user);
             await _context.SaveChangesAsync();
@@ -304,13 +334,16 @@ public class UserController : ControllerBase
                 NotificationModel notificationModel = new NotificationModel()
                 {
                     UserId = GetUserId(),
-                    DeviceId = _session.GetString("DeviceId"),
+                    DeviceId = PasswordGeneratorService.OffHesh(user.DeviceId),
                     IsAndroiodDevice = true,
                     Title = "Вы меняете свой контактный номер телефона",
                     Body = "Вход в систему будет осуществляться по новому номеру телефона, а также номер будет отображаться другим пользователям в объявлениях.\n" +
-                           "Отмена возможна только при нажатии на неё до 30 минут после запроса. "
+                           "Отмена возможна только при нажатии на неё до 30 минут после запроса. ",
+                    DateTime =  DateTime.Now
                 };
                 await _notificationService.SendNotification(notificationModel);
+                _context.NotificationModel.Add(new NotificationModel(notificationModel.Id, notificationModel.UserId,notificationModel.IsAndroiodDevice ,notificationModel.Title, notificationModel.Body, notificationModel.DateTime));
+                await _context.SaveChangesAsync();
                 phoneEditing.Success = true;
                 phoneEditing.Message = "Done.";
                 return Ok(user);
