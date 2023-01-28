@@ -82,6 +82,7 @@ public class NewsController : Controller
                 news.Name = request.Name;
                 news.Description = request.Description;
                 news.Photo = photoPath;
+                news.LinkWebSites = request.LinkWebSites;
                 news.Data = DateTime.Now;
             }
             else
@@ -90,6 +91,7 @@ public class NewsController : Controller
                     Name = request.Name,
                     Description = request.Description,
                     LinkVideo = request.LinkVideo,
+                    LinkWebSites = request.LinkWebSites,
                     Data = DateTime.Now
                 };
 
@@ -124,6 +126,7 @@ public class NewsController : Controller
                 news.Name = request.Name;
                 news.Description = request.Description;
                 news.Photo = photoPath;
+                news.LinkWebSites = request.LinkWebSites;
                 news.Data = DateTime.Now;
             }
             else
@@ -131,6 +134,7 @@ public class NewsController : Controller
 
             news.Description = request.Description;
             news.LinkVideo = request.LinkVideo;
+            news.LinkWebSites = request.LinkWebSites;
             news.Data = DateTime.Now;
 
             await _context.SaveChangesAsync();

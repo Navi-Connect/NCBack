@@ -92,7 +92,7 @@ public class EventsControllers : Controller
             await _context.MeatingPlace.FirstOrDefaultAsync(m => m.Id == events.MeatingPlaceId);
             await _context.CityList.FirstOrDefaultAsync(c => c.Id == events.CityId);
             await _context.GenderList.FirstOrDefaultAsync(g => g.Id == events.GenderId);
-            events.User = await _context.Users.FirstOrDefaultAsync(u => u.Id == GetUserId());
+            events.User = await _context.Users.FirstOrDefaultAsync(u => u.Id == events.UserId);
             events.User.Gender = await _context.GenderList.FirstOrDefaultAsync(u => u.Id == events.User.GenderId);
             return Ok(events);
         }

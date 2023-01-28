@@ -116,9 +116,18 @@ public class AuthRepository : IAuthRepository
             }
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
-
+            
             intermediateUser.Success = true;
             intermediateUser.Message = "Done.";
+            
+            var delUsr =
+                _context.IntermediateUser.Where(u => u.Id == id).ToList();
+            foreach (var usr in delUsr)
+            {
+                _context.IntermediateUser.Remove(usr);
+                await _context.SaveChangesAsync();
+            }
+            
             return user;
         }
         
@@ -181,8 +190,15 @@ public class AuthRepository : IAuthRepository
     public async Task<IntermediateUser> SMSNotReceived(int? id, string phone)
     {
         var intermediateUser = await _context.IntermediateUser.FindAsync(id);
+        
+        if (await PhoneExists(phone))
+        {
+            intermediateUser.Success = false;
+            intermediateUser.Message = "Phone already exists.";
+            return intermediateUser;
+        }
+        
         await _pushSms.Sms(phone);
-
 
         if (intermediateUser != null)
         {
@@ -224,7 +240,16 @@ public class AuthRepository : IAuthRepository
 
         return false;
     }
+    
+    public async Task<bool> PhoneExists(string phone)
+    {
+        if (await _context.Users.AnyAsync(u => u.PhoneNumber.ToLower() == phone.ToLower()))
+        {
+            return true;
+        }
 
+        return false;
+    }
     public async Task<User> ChangePassword(UserChangePasswordDto request)
     {
         User user = _context.Users.FirstOrDefault(u => u.Id == GetUserId());

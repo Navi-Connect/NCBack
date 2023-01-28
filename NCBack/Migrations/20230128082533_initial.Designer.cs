@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace NCBack.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230119143913_initial")]
+    [Migration("20230128082533_initial")]
     partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -536,247 +536,391 @@ namespace NCBack.Migrations
                         {
                             Id = 1,
                             MeetingCategoryId = 1,
-                            NameMeatingPlace = "Отель, Гостиница"
+                            NameMeatingPlace = "Кафе"
                         },
                         new
                         {
                             Id = 2,
                             MeetingCategoryId = 1,
-                            NameMeatingPlace = "Кофейня, Чайхана"
+                            NameMeatingPlace = "Ресторан"
                         },
                         new
                         {
                             Id = 3,
                             MeetingCategoryId = 1,
-                            NameMeatingPlace = "Ресторан, Кафе"
+                            NameMeatingPlace = "Кофейня"
                         },
                         new
                         {
                             Id = 4,
                             MeetingCategoryId = 1,
-                            NameMeatingPlace = "Вилла, Коттедж, Дача"
+                            NameMeatingPlace = "ТРЦ"
                         },
                         new
                         {
                             Id = 5,
                             MeetingCategoryId = 1,
-                            NameMeatingPlace = "Трц, Трк"
+                            NameMeatingPlace = "Пицерия"
                         },
                         new
                         {
                             Id = 6,
                             MeetingCategoryId = 1,
-                            NameMeatingPlace = "Лаундж бар, Паб, Пивной бар"
+                            NameMeatingPlace = "Суши бар"
                         },
                         new
                         {
                             Id = 7,
                             MeetingCategoryId = 1,
-                            NameMeatingPlace = "Квартира, Апартаменты, Пентхауз"
+                            NameMeatingPlace = "Фастфуд"
                         },
                         new
                         {
                             Id = 8,
                             MeetingCategoryId = 1,
-                            NameMeatingPlace = "Ночной клуб, Диско бар"
+                            NameMeatingPlace = "Паб"
                         },
                         new
                         {
                             Id = 9,
                             MeetingCategoryId = 1,
-                            NameMeatingPlace = "Пицерия, Суши бар"
+                            NameMeatingPlace = "Пивной бар"
                         },
                         new
                         {
                             Id = 10,
                             MeetingCategoryId = 1,
-                            NameMeatingPlace = "Фастфуд, Столовая"
+                            NameMeatingPlace = "Стендап"
                         },
                         new
                         {
                             Id = 11,
                             MeetingCategoryId = 1,
-                            NameMeatingPlace = "Стенд Ап/Комеди клуб"
+                            NameMeatingPlace = "Лаундж бар"
                         },
                         new
                         {
                             Id = 12,
                             MeetingCategoryId = 1,
-                            NameMeatingPlace = "Вип ресторан"
+                            NameMeatingPlace = "Ночной клуб"
                         },
                         new
                         {
                             Id = 13,
-                            MeetingCategoryId = 2,
-                            NameMeatingPlace = "Горы, Достопримечательности"
+                            MeetingCategoryId = 1,
+                            NameMeatingPlace = "Отель"
                         },
                         new
                         {
                             Id = 14,
-                            MeetingCategoryId = 2,
-                            NameMeatingPlace = "На свежем воздухе, Пешая прогулка"
+                            MeetingCategoryId = 1,
+                            NameMeatingPlace = "Гостиница"
                         },
                         new
                         {
                             Id = 15,
-                            MeetingCategoryId = 2,
-                            NameMeatingPlace = "На лавочке, В парке"
+                            MeetingCategoryId = 1,
+                            NameMeatingPlace = "Квартира"
                         },
                         new
                         {
                             Id = 16,
-                            MeetingCategoryId = 2,
-                            NameMeatingPlace = "Речка, Озёро"
+                            MeetingCategoryId = 1,
+                            NameMeatingPlace = "Коттедж"
                         },
                         new
                         {
                             Id = 17,
-                            MeetingCategoryId = 2,
-                            NameMeatingPlace = "Поход, Пикник, Кемпинг"
+                            MeetingCategoryId = 1,
+                            NameMeatingPlace = "Дача"
                         },
                         new
                         {
                             Id = 18,
-                            MeetingCategoryId = 3,
-                            NameMeatingPlace = "Детский игровый зал, детская площадка"
+                            MeetingCategoryId = 2,
+                            NameMeatingPlace = "Горы"
                         },
                         new
                         {
                             Id = 19,
-                            MeetingCategoryId = 3,
-                            NameMeatingPlace = "Компьютерный клуб, PS клуб"
+                            MeetingCategoryId = 2,
+                            NameMeatingPlace = "На свежем воздухе"
                         },
                         new
                         {
                             Id = 20,
-                            MeetingCategoryId = 3,
-                            NameMeatingPlace = "Боулинг центр, бильярдная"
+                            MeetingCategoryId = 2,
+                            NameMeatingPlace = "Пешая прогулка"
                         },
                         new
                         {
                             Id = 21,
-                            MeetingCategoryId = 3,
-                            NameMeatingPlace = "Каток, Скейт/Ролл дром"
+                            MeetingCategoryId = 2,
+                            NameMeatingPlace = "На лавочке"
                         },
                         new
                         {
                             Id = 22,
-                            MeetingCategoryId = 3,
-                            NameMeatingPlace = "Кинотеатр, Театр"
+                            MeetingCategoryId = 2,
+                            NameMeatingPlace = "В парке"
                         },
                         new
                         {
                             Id = 23,
-                            MeetingCategoryId = 3,
-                            NameMeatingPlace = "Выставка и Музей"
+                            MeetingCategoryId = 2,
+                            NameMeatingPlace = "Речка"
                         },
                         new
                         {
                             Id = 24,
-                            MeetingCategoryId = 3,
-                            NameMeatingPlace = "Дискотека, Караоке, Танц клуб"
+                            MeetingCategoryId = 2,
+                            NameMeatingPlace = "Озеро"
                         },
                         new
                         {
                             Id = 25,
                             MeetingCategoryId = 3,
-                            NameMeatingPlace = "Аквапарк, Лунапарк, Атракционы"
+                            NameMeatingPlace = "Детский игровая зона"
                         },
                         new
                         {
                             Id = 26,
-                            MeetingCategoryId = 4,
-                            NameMeatingPlace = "Онлайн комп. и моб. игры"
+                            MeetingCategoryId = 3,
+                            NameMeatingPlace = "Компьютерный клуб "
                         },
                         new
                         {
                             Id = 27,
-                            MeetingCategoryId = 4,
-                            NameMeatingPlace = "Шахматы, шашки, нарды"
+                            MeetingCategoryId = 3,
+                            NameMeatingPlace = "PS клуб"
                         },
                         new
                         {
                             Id = 28,
-                            MeetingCategoryId = 4,
-                            NameMeatingPlace = "Монополия, мафия"
+                            MeetingCategoryId = 3,
+                            NameMeatingPlace = "Боулинг центр"
                         },
                         new
                         {
                             Id = 29,
-                            MeetingCategoryId = 4,
-                            NameMeatingPlace = "Антикафе, Квеструм"
+                            MeetingCategoryId = 3,
+                            NameMeatingPlace = "Бильярдная"
                         },
                         new
                         {
                             Id = 30,
-                            MeetingCategoryId = 4,
-                            NameMeatingPlace = "Пеинтбол центр, Тир, Полигон"
+                            MeetingCategoryId = 3,
+                            NameMeatingPlace = "Ледовый Каток"
                         },
                         new
                         {
                             Id = 31,
-                            MeetingCategoryId = 4,
-                            NameMeatingPlace = "Шопинг и совместные покупки"
+                            MeetingCategoryId = 3,
+                            NameMeatingPlace = "Скейт/Ролл дром"
                         },
                         new
                         {
                             Id = 32,
-                            MeetingCategoryId = 4,
-                            NameMeatingPlace = "Зоопарк, Ботанический сад"
+                            MeetingCategoryId = 3,
+                            NameMeatingPlace = "Кинотеатр"
                         },
                         new
                         {
                             Id = 33,
-                            MeetingCategoryId = 4,
-                            NameMeatingPlace = "Баня, Хамам, Сауна"
+                            MeetingCategoryId = 3,
+                            NameMeatingPlace = "Театр"
                         },
                         new
                         {
                             Id = 34,
-                            MeetingCategoryId = 4,
-                            NameMeatingPlace = "Бассеин, Пляж"
+                            MeetingCategoryId = 3,
+                            NameMeatingPlace = "Выставка и Музей"
                         },
                         new
                         {
                             Id = 35,
-                            MeetingCategoryId = 4,
-                            NameMeatingPlace = "Салон СПА, салон красоты, барбер шоп"
+                            MeetingCategoryId = 3,
+                            NameMeatingPlace = "Дискотека"
                         },
                         new
                         {
                             Id = 36,
-                            MeetingCategoryId = 4,
-                            NameMeatingPlace = "Курорт, Санаторий, Зона отдыха"
+                            MeetingCategoryId = 3,
+                            NameMeatingPlace = "Караоке"
                         },
                         new
                         {
                             Id = 37,
-                            MeetingCategoryId = 4,
-                            NameMeatingPlace = "Центр массажа"
+                            MeetingCategoryId = 3,
+                            NameMeatingPlace = "Аквапарк"
                         },
                         new
                         {
                             Id = 38,
-                            MeetingCategoryId = 5,
-                            NameMeatingPlace = "Теннисный корт/зал"
+                            MeetingCategoryId = 3,
+                            NameMeatingPlace = "Атракционы"
                         },
                         new
                         {
                             Id = 39,
-                            MeetingCategoryId = 5,
-                            NameMeatingPlace = "Футбольное поле, баскетбольное поле"
+                            MeetingCategoryId = 3,
+                            NameMeatingPlace = "Зоопарк"
                         },
                         new
                         {
                             Id = 40,
+                            MeetingCategoryId = 3,
+                            NameMeatingPlace = "Ботанический сад"
+                        },
+                        new
+                        {
+                            Id = 41,
+                            MeetingCategoryId = 3,
+                            NameMeatingPlace = "Шахматы"
+                        },
+                        new
+                        {
+                            Id = 42,
+                            MeetingCategoryId = 3,
+                            NameMeatingPlace = "Нарды"
+                        },
+                        new
+                        {
+                            Id = 43,
+                            MeetingCategoryId = 3,
+                            NameMeatingPlace = "Монополия"
+                        },
+                        new
+                        {
+                            Id = 44,
+                            MeetingCategoryId = 3,
+                            NameMeatingPlace = "Мафия"
+                        },
+                        new
+                        {
+                            Id = 45,
+                            MeetingCategoryId = 3,
+                            NameMeatingPlace = "Антикафе"
+                        },
+                        new
+                        {
+                            Id = 46,
+                            MeetingCategoryId = 3,
+                            NameMeatingPlace = "Квеструм"
+                        },
+                        new
+                        {
+                            Id = 47,
+                            MeetingCategoryId = 3,
+                            NameMeatingPlace = "Пеинтбол центр"
+                        },
+                        new
+                        {
+                            Id = 48,
+                            MeetingCategoryId = 3,
+                            NameMeatingPlace = "Тир"
+                        },
+                        new
+                        {
+                            Id = 49,
+                            MeetingCategoryId = 3,
+                            NameMeatingPlace = "Шопинг"
+                        },
+                        new
+                        {
+                            Id = 50,
+                            MeetingCategoryId = 4,
+                            NameMeatingPlace = "Баня"
+                        },
+                        new
+                        {
+                            Id = 51,
+                            MeetingCategoryId = 4,
+                            NameMeatingPlace = "Сауна"
+                        },
+                        new
+                        {
+                            Id = 52,
+                            MeetingCategoryId = 4,
+                            NameMeatingPlace = "Бассеин"
+                        },
+                        new
+                        {
+                            Id = 53,
+                            MeetingCategoryId = 4,
+                            NameMeatingPlace = "СПА салон"
+                        },
+                        new
+                        {
+                            Id = 54,
+                            MeetingCategoryId = 4,
+                            NameMeatingPlace = "Салон красоты"
+                        },
+                        new
+                        {
+                            Id = 55,
+                            MeetingCategoryId = 4,
+                            NameMeatingPlace = "Барбер шоп"
+                        },
+                        new
+                        {
+                            Id = 56,
+                            MeetingCategoryId = 4,
+                            NameMeatingPlace = "Санаторий"
+                        },
+                        new
+                        {
+                            Id = 57,
+                            MeetingCategoryId = 4,
+                            NameMeatingPlace = "Зона отдыха"
+                        },
+                        new
+                        {
+                            Id = 58,
+                            MeetingCategoryId = 4,
+                            NameMeatingPlace = "Массажный центр"
+                        },
+                        new
+                        {
+                            Id = 59,
+                            MeetingCategoryId = 5,
+                            NameMeatingPlace = "Теннисный корт"
+                        },
+                        new
+                        {
+                            Id = 60,
+                            MeetingCategoryId = 5,
+                            NameMeatingPlace = "Настольный теннис"
+                        },
+                        new
+                        {
+                            Id = 61,
+                            MeetingCategoryId = 5,
+                            NameMeatingPlace = "Футбольное поле"
+                        },
+                        new
+                        {
+                            Id = 62,
+                            MeetingCategoryId = 5,
+                            NameMeatingPlace = "Баскетбольное поле"
+                        },
+                        new
+                        {
+                            Id = 63,
                             MeetingCategoryId = 5,
                             NameMeatingPlace = "Волейбольная площадка"
                         },
                         new
                         {
-                            Id = 41,
+                            Id = 64,
                             MeetingCategoryId = 5,
-                            NameMeatingPlace = "Тренажёрный зал/Фитнес клуб"
+                            NameMeatingPlace = "Тренажёрный зал"
+                        },
+                        new
+                        {
+                            Id = 65,
+                            MeetingCategoryId = 5,
+                            NameMeatingPlace = "Фитнес клуб"
                         });
                 });
 
@@ -839,6 +983,9 @@ namespace NCBack.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("LinkVideo")
+                        .HasColumnType("text");
+
+                    b.Property<string>("LinkWebSites")
                         .HasColumnType("text");
 
                     b.Property<string>("Name")
@@ -960,9 +1107,6 @@ namespace NCBack.Migrations
                     b.Property<string>("Profession")
                         .HasColumnType("text");
 
-                    b.Property<int?>("StatusRequest")
-                        .HasColumnType("integer");
-
                     b.Property<bool>("Success")
                         .HasColumnType("boolean");
 
@@ -974,6 +1118,9 @@ namespace NCBack.Migrations
 
                     b.Property<string>("Username")
                         .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Сhildren")
                         .HasColumnType("text");
 
                     b.HasKey("Id");

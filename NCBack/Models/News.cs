@@ -9,6 +9,7 @@ namespace NCBack.Models
         public string? Description { get; set; } = String.Empty;
         public string? LinkVideo { get; set; } = String.Empty;
         public string? Photo { get; set; } = String.Empty;
+        public string? LinkWebSites { get; set; } = String.Empty;
         public DateTime Data { get; set; } = DateTime.Now;
     }
 }

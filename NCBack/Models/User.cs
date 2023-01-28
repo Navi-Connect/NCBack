@@ -2,12 +2,12 @@
 
 namespace NCBack.Models;
 
-public enum StatusUserRequest
+/*public enum StatusUserRequest
 {
     Empty,
     Expectation,
     Accepted,
-}
+}*/
 public class User
 {
     public int Id { get; set; }
@@ -20,17 +20,18 @@ public class User
     public string? FullName { get; set; }
     public DateTime DateOfBirth { get; set; }
     public string AvatarPath { get; set; }
-    public string? CredoAboutMyself { get; set; } = string.Empty;
+    public string? CredoAboutMyself { get; set; } = null;
     public List<string>? LanguageOfCommunication { get; set; } = null;
-    public string? Nationality { get; set; } = string.Empty;
+    public string? Nationality { get; set; } = null;
     public int? GenderId { get; set; }
     public GenderList? Gender { get; set; }
-    public string? MaritalStatus { get; set; } = string.Empty;
-    public string? GetAcquaintedWith { get; set; } = string.Empty;
-    public string? MeetFor { get; set; } = string.Empty;
+    public string? MaritalStatus { get; set; } = null;
+    public string? Сhildren { get; set; } = null;
+    public string? GetAcquaintedWith { get; set; } = null;
+    public string? MeetFor { get; set; } = null;
     public int? From { get; set; } = null;
     public int? To { get; set; } = null;
-    public string? IWantToLearn { get; set; } = string.Empty;
+    public string? IWantToLearn { get; set; } = null;
     /*public int? MeetingCategoryId { get; set; }
     public MeetingCategory? MeetingCategory { get; set; }
     public int? MeatingPlaceId { get; set; }
@@ -41,12 +42,11 @@ public class User
     public List<MyInterests>? MyInterests { get; set; }
     public List<int>? MainСategoriesId { get; set; }
     public List<MainСategories>? MainСategories { get; set; }*/
-    public string? Profession { get; set; } = string.Empty;
-    public StatusUserRequest? StatusRequest { get; set; } = StatusUserRequest.Empty;
+    public string? Profession { get; set; } = null;
     public byte[] PasswordHash { get; set; } 
     public byte[] PasswordSalt { get; set; }
     public string? Token { get; set; }
-    public string? DeviceId { get; set; } = null;
+    public string? DeviceId { get; set; }
     public bool Success { get; set; } = true;
     public string Message { get; set; } = string.Empty;
 }

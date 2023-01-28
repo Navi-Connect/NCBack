@@ -42,6 +42,26 @@ public class UserController : ControllerBase
     private int GetUserId() => int.Parse(_httpContextAccessor.HttpContext.User
         .FindFirstValue(ClaimTypes.NameIdentifier));
 
+    [HttpGet("getNotificationById")]
+    public async Task<ActionResult> GetNotificationById(int id)
+    {
+        try
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == GetUserId());
+            var notification = await _context.NotificationModel
+                .FirstOrDefaultAsync(n => user != null && n.Id == id && n.UserId == user.Id);
+            if (notification != null)
+            {
+                return Ok(notification);
+            }
+            return BadRequest("Erorr not fount notification !!!");
+        }
+        catch (ApplicationException e)
+        {
+            throw new ApplicationException(e.ToString());
+        }
+    }
+    
     [HttpGet("getNotificationsList")]
     public async Task<ActionResult> GetNotificationsList([FromQuery] ObjectPaginationFilter? filter)
     {
@@ -63,6 +83,27 @@ public class UserController : ControllerBase
         {
             throw new ApplicationException(e.ToString());
         }
+    }
+    
+    [HttpDelete("deleteNotification/{id}")]
+    public async Task<ActionResult<List<News>>> DeleteNotification(int id)
+    {
+        try
+        {
+            var notification = await _context.NotificationModel.FindAsync(id);
+            if (notification != null)
+            {
+                _context.NotificationModel.Remove(notification);
+                await _context.SaveChangesAsync();
+                return Ok(notification);
+            }
+        }
+        catch (ApplicationException e)
+        {
+            throw new ApplicationException(e.ToString());
+        }
+
+        return BadRequest("System errors !!!");
     }
     
     [HttpGet("getUser")]
@@ -150,8 +191,8 @@ public class UserController : ControllerBase
                     user.GenderId = model.GenderId;
                     user.Gender = _context.GenderList.FirstOrDefault(g => g.Id == model.GenderId);
                     user.MaritalStatus = model.MaritalStatus;
+                    user.Сhildren = model.Сhildren;
                     user.IWantToLearn = model.IWantToLearn;
-                    user.PreferredPlaces = model.PreferredPlaces;
                     user.Interests = model.Interests;
                     user.GetAcquaintedWith = model.GetAcquaintedWith;
                     user.MeetFor = model.MeetFor;
@@ -284,9 +325,7 @@ public class UserController : ControllerBase
         try
         {
             await _pushSms.Sms(model.Phone);
-            /*var user = _context.Users.FirstOrDefault(u => u.Id == GetUserId());
-            await _pushSms.Sms(model.Phone);*/
-
+            
             if (model.Phone != null)
             {
                 PhoneEditing phoneEditing = new PhoneEditing()
@@ -347,6 +386,34 @@ public class UserController : ControllerBase
                 phoneEditing.Success = true;
                 phoneEditing.Message = "Done.";
                 return Ok(user);
+            }
+            return BadRequest("Error");
+        }
+        catch (ApplicationException e)
+        {
+            throw new ApplicationException(e.ToString());
+        }
+    }
+    
+    
+    [HttpPost("editingContactPhoneSendAgain/{Id}")]
+    public async Task<IActionResult> EditingContactPhoneSendAgain(int? Id, UserEditContactPhoneDto model)
+    {
+        try
+        {
+            await _pushSms.Sms(model.Phone);
+            
+            if (model.Phone != null)
+            {
+                PhoneEditing phoneEditing = new PhoneEditing()
+                {
+                    Id = Id,
+                    Code = _pushSms.code,
+                    PhoneNumber = model.Phone,
+                };
+                _context.PhoneEditing.Update(phoneEditing);
+                await _context.SaveChangesAsync();
+                return Ok(phoneEditing);
             }
             return BadRequest("Error");
         }

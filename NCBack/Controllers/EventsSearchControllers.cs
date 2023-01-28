@@ -46,13 +46,16 @@ namespace NCBack.Controllers
                 .Distinct().ToList();*/
                 (from e in _context.Events
                     where e.Status == Status.Expectations || e.Status == Status.Canceled
-                    where e.TimeStart >= now
+                    //where c.Id  == e.Event.CityId && g.Id == e.Event.GenderId
+                   where e.TimeStart >= now
+                    where  e.User.Gender.Id == e.User.GenderId
                     select new
                     { 
                         e.Id, e.AimOfTheMeetingId, e.AimOfTheMeeting, e.MeetingCategoryId, e.MeetingCategory, e.MeatingPlaceId, e.MeatingPlace,
                         e.IWant,e.TimeStart, e.TimeFinish, e.CreateAdd, e.CityId, e.City, e.GenderId, e.Gender,
                         e.AgeTo, e.AgeFrom, e.CaltulationType, e.CaltulationSum, e.LanguageCommunication,
-                        e.Interests, e.Latitude, e.Longitude, e.UserId, e.User, e.Status
+                        e.Interests, e.Latitude, e.Longitude, e.Status ,
+                        e.UserId, e.User.Gender.GenderName, e.User
                     }).Distinct().ToListAsync();
 
             if (AimOfTheMeetingId != null)
@@ -65,14 +68,16 @@ namespace NCBack.Controllers
                         .Distinct().ToList();*/
                     (from e in _context.Events
                         where e.AimOfTheMeetingId == AimOfTheMeetingId
-                        where e.Status == Status.Expectations || e.Status == Status.Canceled 
+                        where e.Status == Status.Expectations || e.Status == Status.Canceled
                         where e.TimeStart >= now
+                        where  e.User.Gender.Id == e.User.GenderId
                         select new
                         {
                             e.Id, e.AimOfTheMeetingId, e.AimOfTheMeeting, e.MeetingCategoryId, e.MeetingCategory, e.MeatingPlaceId, e.MeatingPlace,
                             e.IWant,e.TimeStart, e.TimeFinish, e.CreateAdd, e.CityId, e.City, e.GenderId, e.Gender,
                             e.AgeTo, e.AgeFrom, e.CaltulationType, e.CaltulationSum, e.LanguageCommunication,
-                            e.Interests, e.Latitude, e.Longitude, e.UserId, e.User, e.Status
+                            e.Interests, e.Latitude, e.Longitude, e.Status ,
+                            e.UserId, e.User.Gender.GenderName, e.User
                         }).Distinct().ToListAsync();
             }
 
@@ -83,12 +88,13 @@ namespace NCBack.Controllers
                         where e.AimOfTheMeetingId == AimOfTheMeetingId && e.MeetingCategoryId == MeetingCategoryId
                         where e.Status == Status.Expectations || e.Status == Status.Canceled
                         where e.TimeStart >= now
+                        where  e.User.Gender.Id == e.User.GenderId
                         select new
                         {
                             e.Id, e.AimOfTheMeetingId, e.AimOfTheMeeting, e.MeetingCategoryId, e.MeetingCategory, e.MeatingPlaceId, e.MeatingPlace,
                             e.IWant,e.TimeStart, e.TimeFinish, e.CreateAdd, e.CityId, e.City, e.GenderId, e.Gender,
                             e.AgeTo, e.AgeFrom, e.CaltulationType, e.CaltulationSum, e.LanguageCommunication,
-                            e.Interests, e.Latitude, e.Longitude, e.UserId, e.User, e.Status
+                            e.Interests, e.Latitude, e.Longitude, e.Status , e.UserId, e.User.Gender.GenderName, e.User
                         }).Distinct().ToListAsync();
 
                 /*_context.Events
@@ -205,7 +211,7 @@ namespace NCBack.Controllers
                 (filter.Year == null && filter.Month == null && filter.Date == null))
             {
                 var events = lists.Where(e => e.CityId == filter.CityId 
-                                              && e.GenderId == filter.GenderId && e.Gender.GenderName == "М/Ж").ToList();
+                                              && e.User.GenderId == filter.GenderId || e.Gender.GenderName == "М/Ж").ToList();
                 var route = Request.Path.Value;
                 var validFilter = new PaginationFilter(filter.PageNumber, filter.PageSize, filter.CityId,
                     filter.GenderId, filter.Year, filter.Month, filter.Date);
@@ -285,8 +291,8 @@ namespace NCBack.Controllers
                 (filter.Year == null && filter.Month == null && filter.Date == null))
             {
                 var events = lists.Where(
-                    e => e.User.GenderId == filter.GenderId && e.GenderId == user.GenderId 
-                                                            && e.Gender.GenderName == "М/Ж").ToList();
+                    e => e.User.GenderId == filter.GenderId 
+                        && e.GenderId == user.GenderId || e.Gender.GenderName == "М/Ж").ToList();
                 var route = Request.Path.Value;
                 var validFilter = new PaginationFilter(filter.PageNumber, filter.PageSize, filter.CityId,
                     filter.GenderId, filter.Year, filter.Month, filter.Date);
@@ -295,8 +301,7 @@ namespace NCBack.Controllers
                     .Take(validFilter.PageSize)
                     .ToList();
                 pagedData.Reverse();
-                var totalRecords = await _context.Events.Where(
-                    e => e.GenderId == filter.GenderId).CountAsync();
+                var totalRecords = events.Count();
                 var pagedReponse =
                     PaginationHelper.CreatePagedReponse(pagedData, validFilter, totalRecords, _uriService, route);
                 return Ok(pagedReponse);
@@ -352,7 +357,7 @@ namespace NCBack.Controllers
                 var events = lists.Where(
                     e => e.TimeStart.Value.Date.ToString("yyyy-M-d") == $"{filter.Year}-{filter.Month}-{filter.Date}" &&
                          e.CityId == filter.CityId && e.User.GenderId == filter.GenderId 
-                         && e.GenderId == user.GenderId && e.Gender.GenderName == "М/Ж").ToList();
+                         && e.GenderId == user.GenderId || e.Gender.GenderName == "М/Ж").ToList();
                 var route = Request.Path.Value;
                 var validFilter = new PaginationFilter(filter.PageNumber, filter.PageSize, filter.CityId,
                     filter.GenderId, filter.Year, filter.Month, filter.Date);
@@ -500,7 +505,7 @@ namespace NCBack.Controllers
             {
                 var events = lists.Where(
                     e => e.TimeStart.Value.Date.ToString("yyyy-M-d") == $"{filter.Year}-{filter.Month}-{filter.Date}" &&
-                         e.User.GenderId == filter.GenderId && e.GenderId == user.GenderId && e.Gender.GenderName == "М/Ж");
+                        e.User.GenderId == filter.GenderId && e.GenderId == user.GenderId || e.Gender.GenderName == "М/Ж");
                 var route = Request.Path.Value;
                 var validFilter = new PaginationFilter(filter.PageNumber, filter.PageSize, filter.CityId,
                     filter.GenderId, filter.Year, filter.Month, filter.Date);
