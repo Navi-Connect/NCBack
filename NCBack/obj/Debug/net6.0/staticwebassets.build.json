@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "OLeOx7zzYONP9Pzju8lAFZ8PpqWxy1+0dWNH7TQy3gk=",
+  "Hash": "5QnZ8cS7/ca5banr/ifT/4womhlvYfro1Q19kPy4egU=",
   "Source": "NCBack",
   "BasePath": "_content/NCBack",
   "Mode": "Default",
@@ -49,23 +49,6 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\images\\IMG_7279.HEIC"
-    },
-    {
-      "Identity": "C:\\NaviConnect\\NCBack\\NCBack\\wwwroot\\images\\msg646074334-230071.jpg",
-      "SourceId": "NCBack",
-      "SourceType": "Discovered",
-      "ContentRoot": "C:\\NaviConnect\\NCBack\\NCBack\\wwwroot\\",
-      "BasePath": "_content/NCBack",
-      "RelativePath": "images/msg646074334-230071.jpg",
-      "AssetKind": "All",
-      "AssetMode": "All",
-      "AssetRole": "Primary",
-      "RelatedAsset": "",
-      "AssetTraitName": "",
-      "AssetTraitValue": "",
-      "CopyToOutputDirectory": "Never",
-      "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\images\\msg646074334-230071.jpg"
     },
     {
       "Identity": "C:\\NaviConnect\\NCBack\\NCBack\\wwwroot\\images\\scaled_7796c64b-b16d-4bed-8592-6bb9b544f8a0511347719798547536.jpg",

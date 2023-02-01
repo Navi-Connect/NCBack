@@ -76,26 +76,29 @@ public class UserEventController : ControllerBase
         
         if (userEvent != null)
         {
-            return Ok("Вы уже откликнулись на это событя !!!");
+            return BadRequest("Вы уже откликнулись на это событя !!!");
         }
         
         try
         {
             var events = _context.Events.FirstOrDefault(e => e.Id == eventId);
-            var user =await _context.Users.FirstOrDefaultAsync(u => u.Id == events.UserId);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == events.UserId);
            
             if (events.UserId != GetUserId())
             {
                 _context.UserEvent.Add(new UserEvent(GetUserId(), events.Id));
                 await _context.SaveChangesAsync();
 
+                var mPlace = _context.MeatingPlace.FirstOrDefault(p => p.Id == events.MeatingPlaceId);
+                
                 NotificationModel notificationModel = new NotificationModel()
                 {
                     UserId = events.UserId,
                     DeviceId = PasswordGeneratorService.OffHesh(events.User.DeviceId),
                     IsAndroiodDevice = true,
                     Title = "К вам поступила заявка",
-                    Body = $"На ваще обьявление",
+                    Body = $"на ваше объявление: \n" +
+                           $"{mPlace.NameMeatingPlace} от {events.TimeStart.Value.Date.ToString("dd/MM")} с {events.TimeStart.Value.ToString("HH:mm")} по {events.TimeStart.Value.Date.ToString("dd/MM")} до {events.TimeFinish.Value.ToString("HH:mm")}.",
                     DateTime =  DateTime.Now
                 };
                 
@@ -354,14 +357,20 @@ public class UserEventController : ControllerBase
                             where e.Status == Status.Accepted
                             orderby ev
                             select new { ev.Id, ev.User, ev.Event }).ToList().Distinct();*/
+                        
+                        var mPlace = _context.MeatingPlace.FirstOrDefault(p => p.Id == events.MeatingPlaceId);
+                        
                         NotificationModel notificationModel = new NotificationModel()
                         {
                             UserId = userId,
                             DeviceId = PasswordGeneratorService.OffHesh(users.DeviceId),
                             IsAndroiodDevice = true,
-                            Title = "Поздравляем с предстоящей встречей/событием !",
-                            Body = $"Вашу заявку “РЕСТОРАН от 21/12 с 18:00 - до 21:00” подтвердили. Желаем вам отлично провести время." +
-                                   $"\n Контакты открыты в вашем профиле." ,
+                            Title = "Поздравляем",
+                            Body = $"с предстоящей встречей/событием \n " +
+                                   $"{mPlace.NameMeatingPlace} от {events.TimeStart.Value.Date.ToString("dd/MM")} с {events.TimeStart.Value.ToString("HH:mm")} по {events.TimeStart.Value.Date.ToString("dd/MM")} до {events.TimeFinish.Value.ToString("HH:mm")}. \n" +
+                                   $"Желаем вам приятной встречи. \n" +
+                                   $"Контакты Организатора открыты внутри Профиля \n" +
+                                   $"в: “Участник > Одобренные”.." ,
                             DateTime =  DateTime.Now
                         };
                         await _notificationService.SendNotification(notificationModel);
@@ -408,21 +417,39 @@ public class UserEventController : ControllerBase
                         var uE = _context.UserEvent.FirstOrDefault(u => u.UserId == userId && u.EventId == eventId);
 
                         if (uE != null)
+                        {
                             _context.UserEvent.Remove(uE);
-                        await _context.SaveChangesAsync();
+                            await _context.SaveChangesAsync();
+                        }
+
+                        
+                        var userName = _context.Users.FirstOrDefault(u => u.Id == events.UserId);
+                        var mPlace = _context.MeatingPlace.FirstOrDefault(p => p.Id == events.MeatingPlaceId);
+                        
                         NotificationModel notificationModel = new NotificationModel()
                         {
                             UserId = userId,
                             DeviceId = PasswordGeneratorService.OffHesh(users.DeviceId),
                             IsAndroiodDevice = true,
-                            Title = "Уважаемый Connectёр!",
-                            Body = $"{events.User.Username} выбрал другого Connectёра. У вас есть возможность !!!",
+                            Title = "Ваша заявка отклонена",
+                            Body = $"К сожалению {userName.Username}  f  v не отреагировал на \n " + 
+                                   $"вашу заявку по объявлению \n" +
+                                   $"{mPlace.NameMeatingPlace} от {events.TimeStart.Value.Date.ToString("dd/MM")} с {events.TimeStart.Value.ToString("HH:mm")} по {events.TimeStart.Value.Date.ToString("dd/MM")} до {events.TimeFinish.Value.ToString("HH:mm")}. \n" +
+                                   $"У вас есть возможность Создать своё \n" +
+                                   $"объявление или Подать заявку другому Connectёру. \n" +
+                                   $"К сведению \n" +
+                                   $"Возможно у вас не заполен профиль \n" +
+                                   $"Максимально заполненный профиль даёт \n" +
+                                   $"больше премуществ! Сделайте 'ревизию' себя \n" +
+                                   $"Удачи, уважемый Connecter! ",
                             DateTime =  DateTime.Now
                         };
+                        
                         await _notificationService.SendNotification(notificationModel);
                         _context.NotificationModel.Add(new NotificationModel(notificationModel.Id, notificationModel.UserId,notificationModel.IsAndroiodDevice ,notificationModel.Title, notificationModel.Body, notificationModel.DateTime));
                         await _context.SaveChangesAsync();
-                        return Ok("Canceled Done !!!");
+                        
+                        return Ok("Успешно отклонено !!!");
                     }
                 }
             }
@@ -491,10 +518,10 @@ public class UserEventController : ControllerBase
             var acceptUserEvent = await (from aeu in _context.AccedEventUser
                 where aeu.Event.UserId == GetUserId()
                 where aeu.UserId == aeu.User.Id
-                select new { aeu.Id, aeu.UserId, aeu.User.Gender.GenderName, aeu.User, aeu.EventId, aeu.Event.AimOfTheMeetingId, aeu.Event.AimOfTheMeeting, aeu.Event.MeetingCategoryId, aeu.Event.MeetingCategory, aeu.Event.MeatingPlaceId, aeu.Event.MeatingPlace,
+                select new { aeu.Id, aeu.UserId, aeu.User.Username, aeu.User.PhoneNumber, aeu.EventId, aeu.Event.AimOfTheMeetingId, aeu.Event.AimOfTheMeeting, aeu.Event.MeetingCategoryId, aeu.Event.MeetingCategory, aeu.Event.MeatingPlaceId, aeu.Event.MeatingPlace,
                     aeu.Event.IWant,aeu.Event.TimeStart, aeu.Event.TimeFinish, aeu.Event.CreateAdd, aeu.Event.CityId, aeu.Event.City, aeu.Event.GenderId, aeu.Event.Gender,
                     aeu.Event.AgeTo, aeu.Event.AgeFrom, aeu.Event.CaltulationType, aeu.Event.CaltulationSum, aeu.Event.LanguageCommunication,
-                    aeu.Event.Interests, aeu.Event.Latitude, aeu.Event.Longitude,  aeu.Event.Status
+                    aeu.Event.Interests, aeu.Event.Latitude, aeu.Event.Longitude, aeu.Event.User.Gender.GenderName, aeu.Event.User, aeu.Event.Status
                 }).Distinct().ToListAsync();
             var route = Request.Path.Value;
             var validFilter = new ObjectPaginationFilter(filter.PageNumber, filter.PageSize);

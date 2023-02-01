@@ -299,8 +299,9 @@ public class UserController : ControllerBase
                     DeviceId = PasswordGeneratorService.OffHesh(user.DeviceId),
                     IsAndroiodDevice = true,
                     Title = "Вы меняете свою электронную почту",
-                    Body = "Уважаемый пользователь! Вы меняете свою основную электронную почту. \n " +
-                           "Если это были не вы - можете отменить это действие нажав на кнопку ниже. ",
+                    Body = "Уважаемый пользователь! \n" +
+                           "Вы сменили ваш адрес электронной почты \n" +
+                           "на новый.",
                     DateTime =  DateTime.Now
                 };
                 await _notificationService.SendNotification(notificationModel);
@@ -375,9 +376,10 @@ public class UserController : ControllerBase
                     UserId = GetUserId(),
                     DeviceId = PasswordGeneratorService.OffHesh(user.DeviceId),
                     IsAndroiodDevice = true,
-                    Title = "Вы меняете свой контактный номер телефона",
-                    Body = "Вход в систему будет осуществляться по новому номеру телефона, а также номер будет отображаться другим пользователям в объявлениях.\n" +
-                           "Отмена возможна только при нажатии на неё до 30 минут после запроса. ",
+                    Title = "Вы успешно сменили номер телефона",
+                    Body = "Поздравляем со сменой номера телефона. \n" +
+                           "Этот номер будет отображаться другим \n" +
+                           "пользователям в объявлениях при Connect.",
                     DateTime =  DateTime.Now
                 };
                 await _notificationService.SendNotification(notificationModel);
