@@ -232,8 +232,8 @@ public class UserEventController : ControllerBase
                         from mp in  _context.MeatingPlace
                         where e.EventId == events.Id
                         where e.Event.UserId == GetUserId()
-                        where c.Id  == e.Event.CityId && g.Id == e.Event.GenderId
-                        where e.User.Gender.Id == g.Id && e.User.City.Id == c.Id
+                        where c.Id  == e.Event.City.Id && g.Id == e.Event.Gender.Id
+                       // where e.User.Gender.Id == g.Id && e.User.City.Id == c.Id
                         select new {  e.Id, e.EventId, e.Event.AimOfTheMeetingId, e.Event.AimOfTheMeeting, e.Event.MeetingCategoryId, e.Event.MeetingCategory, e.Event.MeatingPlaceId, e.Event.MeatingPlace,
                             e.Event.IWant,e.Event.TimeStart, e.Event.TimeFinish, e.Event.CreateAdd, e.Event.CityId, e.Event.City, e.Event.GenderId, e.Event.Gender,
                             e.Event.AgeTo, e.Event.AgeFrom, e.Event.CaltulationType, e.Event.CaltulationSum, e.Event.LanguageCommunication,
