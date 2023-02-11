@@ -46,11 +46,10 @@ public class AuthRepository : IAuthRepository
     {
         var user = await _context.Users
             .FirstOrDefaultAsync(u => u.Username.ToLower().Equals(username.ToLower()));
-        if (user == null)
+        if (user.Username == null)
         {
             user.Success = false;
             user.Message = "User not found.";
-            throw new ApplicationException(user.Message);
         }
         else if (!VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt))
         {

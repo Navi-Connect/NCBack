@@ -37,9 +37,9 @@ public class DataContext : DbContext
             new { Id = 2, NameAimOfTheMeeting = "Поиск друга/Собеседника" },
             new { Id = 3, NameAimOfTheMeeting = "Свидания и поиск второй половинки" }, 
             new { Id = 4, NameAimOfTheMeeting = "Для родителей (Прогулка с детьми)" },
-            new { Id = 5, NameAimOfTheMeeting = "Обсуждение идеи/бизнеса (брейншторм)" }, 
+            new { Id = 5, NameAimOfTheMeeting = "Встреча мусульман" }, 
             new { Id = 6, NameAimOfTheMeeting = "Обсуждение фильма/сериала/книги" },
-            new { Id = 7, NameAimOfTheMeeting = "Совместная выпивка" }, 
+            new { Id = 7, NameAimOfTheMeeting = "Совместный активные отдых" }, 
             new { Id = 8, NameAimOfTheMeeting = "Совместные тренировки" },
             new { Id = 9, NameAimOfTheMeeting = "Обсуждение разных проблем" }, 
             new { Id = 10, NameAimOfTheMeeting = "Саморазвитие, обучение" },
@@ -62,8 +62,8 @@ public class DataContext : DbContext
             new { Id = 27, NameAimOfTheMeeting = "Только девушки" }, 
             new { Id = 28, NameAimOfTheMeeting = "Встреча туристов/Иностранцев" },
             new { Id = 29, NameAimOfTheMeeting = "Встреча болельщиков/Фанатов" }, 
-            new { Id = 30, NameAimOfTheMeeting = "Совместный активные отдых" },
-            new { Id = 31, NameAimOfTheMeeting = "Встреча мусульман" }
+            new { Id = 30, NameAimOfTheMeeting = "Совместная выпивка" },
+            new { Id = 31, NameAimOfTheMeeting = "Обсуждение идеи/бизнеса (брейншторм)" }
         );
         base.OnModelCreating(modelBuilder);
         modelBuilder.Entity<MeetingCategory>().HasData(
@@ -169,8 +169,7 @@ public class DataContext : DbContext
         base.OnModelCreating(modelBuilder);
         modelBuilder.Entity<GenderList>().HasData(
             new { Id = 1, GenderName = "М" },
-            new { Id = 2, GenderName = "Ж" },
-            new { Id = 3, GenderName = "М/Ж" }
+            new { Id = 2, GenderName = "Ж" }
         );
         
         /*

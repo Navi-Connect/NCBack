@@ -23,7 +23,9 @@ public class NotificationModel
     [JsonProperty("date")]
     public DateTime DateTime { get; set; } = DateTime.Now;
 
-    public NotificationModel(int id, int userId, bool isAndroiodDevice, string title, string body, DateTime dateTime)
+    public Boolean Status { get; set; } = false;
+
+    public NotificationModel(int id, int userId, bool isAndroiodDevice, string title, string body, DateTime dateTime, Boolean status)
     {
         Id = id;
         UserId = userId;
@@ -31,6 +33,7 @@ public class NotificationModel
         Title = title;
         Body = body;
         DateTime = dateTime;
+        Status = status;
     } 
     public NotificationModel()
     {

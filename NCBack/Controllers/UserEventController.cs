@@ -45,13 +45,13 @@ public class UserEventController : ControllerBase
                     e.IWant,e.TimeStart, e.TimeFinish, e.CreateAdd, e.CityId, e.City, e.GenderId, e.Gender,
                     e.AgeTo, e.AgeFrom, e.CaltulationType, e.CaltulationSum, e.LanguageCommunication,
                     e.Interests, e.Latitude, e.Longitude, e.UserId, e.User.Gender.GenderName, e.User, e.Status }).Distinct().ToListAsync();
+            list.Reverse();
             var route = Request.Path.Value;
             var validFilter = new ObjectPaginationFilter(filter.PageNumber, filter.PageSize);
             var pagedData = list
                 .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
                 .Take(validFilter.PageSize)
                 .ToList();
-            pagedData.Reverse();
             var totalRecords = list.Count();
             var pagedReponse = PaginationHelper.CreatePagedObjectReponse(pagedData, validFilter, totalRecords, _uriServiceNews, route);
             return Ok(pagedReponse);
@@ -99,11 +99,12 @@ public class UserEventController : ControllerBase
                     Title = "К вам поступила заявка",
                     Body = $"на ваше объявление: \n" +
                            $"{mPlace.NameMeatingPlace} от {events.TimeStart.Value.Date.ToString("dd/MM")} с {events.TimeStart.Value.ToString("HH:mm")} по {events.TimeStart.Value.Date.ToString("dd/MM")} до {events.TimeFinish.Value.ToString("HH:mm")}.",
-                    DateTime =  DateTime.Now
+                    DateTime =  DateTime.Now,
+                    Status = false
                 };
                 
                 await _notificationService.SendNotification(notificationModel);
-                _context.NotificationModel.Add(new NotificationModel(notificationModel.Id, notificationModel.UserId,notificationModel.IsAndroiodDevice ,notificationModel.Title, notificationModel.Body, notificationModel.DateTime));
+                _context.NotificationModel.Add(new NotificationModel(notificationModel.Id, notificationModel.UserId,notificationModel.IsAndroiodDevice ,notificationModel.Title, notificationModel.Body, notificationModel.DateTime,notificationModel.Status));
                 await _context.SaveChangesAsync();
                 
                 return Ok("Вы успешно отправили заявку !!!");
@@ -194,13 +195,13 @@ public class UserEventController : ControllerBase
                         e.Event.AgeTo, e.Event.AgeFrom, e.Event.CaltulationType, e.Event.CaltulationSum, e.Event.LanguageCommunication,
                         e.Event.Interests, e.Event.Latitude, e.Event.Longitude, e.Event.UserId, e.Event.User.Gender.GenderName, e.Event.User, e.Event.Status}
                 ).Distinct().ToListAsync();
+            list.Reverse();
             var route = Request.Path.Value;
             var validFilter = new ObjectPaginationFilter(filter.PageNumber, filter.PageSize);
             var pagedData = list
                 .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
                 .Take(validFilter.PageSize)
                 .ToList();
-            pagedData.Reverse();
             var totalRecords = list.Count();
             var pagedReponse = PaginationHelper.CreatePagedObjectReponse(pagedData, validFilter, totalRecords, _uriServiceNews, route);
             return Ok(pagedReponse);
@@ -239,17 +240,16 @@ public class UserEventController : ControllerBase
                             e.Event.AgeTo, e.Event.AgeFrom, e.Event.CaltulationType, e.Event.CaltulationSum, e.Event.LanguageCommunication,
                             e.Event.Interests, e.Event.Latitude, e.Event.Longitude, e.UserId, e.User.Gender.GenderName,  e.User, e.Event.Status}
                     ).Distinct().ToListAsync();
+                list.Reverse();
                 var route = Request.Path.Value;
                 var validFilter = new ObjectPaginationFilter(filter.PageNumber, filter.PageSize);
                 var pagedData = list
                     .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
                     .Take(validFilter.PageSize)
                     .ToList();
-                pagedData.Reverse();
                 var totalRecords = list.Count();
                 var pagedReponse = PaginationHelper.CreatePagedObjectReponse(pagedData, validFilter, totalRecords, _uriServiceNews, route);
                 return Ok(pagedReponse);
-                return Ok(list);
             }
 
             return BadRequest("ERROR");
@@ -366,15 +366,16 @@ public class UserEventController : ControllerBase
                             DeviceId = PasswordGeneratorService.OffHesh(users.DeviceId),
                             IsAndroiodDevice = true,
                             Title = "Поздравляем",
-                            Body = $"с предстоящей встречей/событием \n " +
+                            Body = $"C предстоящей встречей/событием \n " +
                                    $"{mPlace.NameMeatingPlace} от {events.TimeStart.Value.Date.ToString("dd/MM")} с {events.TimeStart.Value.ToString("HH:mm")} по {events.TimeStart.Value.Date.ToString("dd/MM")} до {events.TimeFinish.Value.ToString("HH:mm")}. \n" +
                                    $"Желаем вам приятной встречи. \n" +
                                    $"Контакты Организатора открыты внутри Профиля \n" +
                                    $"в: “Участник > Одобренные”.." ,
-                            DateTime =  DateTime.Now
+                            DateTime =  DateTime.Now,
+                            Status = false
                         };
                         await _notificationService.SendNotification(notificationModel);
-                        _context.NotificationModel.Add(new NotificationModel(notificationModel.Id, notificationModel.UserId,notificationModel.IsAndroiodDevice ,notificationModel.Title, notificationModel.Body, notificationModel.DateTime));
+                        _context.NotificationModel.Add(new NotificationModel(notificationModel.Id, notificationModel.UserId,notificationModel.IsAndroiodDevice ,notificationModel.Title, notificationModel.Body, notificationModel.DateTime, notificationModel.Status));
                         await _context.SaveChangesAsync();
                         return Ok(userEvent);
                     }
@@ -432,7 +433,7 @@ public class UserEventController : ControllerBase
                             DeviceId = PasswordGeneratorService.OffHesh(users.DeviceId),
                             IsAndroiodDevice = true,
                             Title = "Ваша заявка отклонена",
-                            Body = $"К сожалению {userName.Username}  f  v не отреагировал на \n " + 
+                            Body = $"К сожалению {userName.Username} не отреагировал на \n " + 
                                    $"вашу заявку по объявлению \n" +
                                    $"{mPlace.NameMeatingPlace} от {events.TimeStart.Value.Date.ToString("dd/MM")} с {events.TimeStart.Value.ToString("HH:mm")} по {events.TimeStart.Value.Date.ToString("dd/MM")} до {events.TimeFinish.Value.ToString("HH:mm")}. \n" +
                                    $"У вас есть возможность Создать своё \n" +
@@ -442,11 +443,12 @@ public class UserEventController : ControllerBase
                                    $"Максимально заполненный профиль даёт \n" +
                                    $"больше премуществ! Сделайте 'ревизию' себя \n" +
                                    $"Удачи, уважемый Connecter! ",
-                            DateTime =  DateTime.Now
+                            DateTime =  DateTime.Now,
+                            Status = false
                         };
                         
                         await _notificationService.SendNotification(notificationModel);
-                        _context.NotificationModel.Add(new NotificationModel(notificationModel.Id, notificationModel.UserId,notificationModel.IsAndroiodDevice ,notificationModel.Title, notificationModel.Body, notificationModel.DateTime));
+                        _context.NotificationModel.Add(new NotificationModel(notificationModel.Id, notificationModel.UserId,notificationModel.IsAndroiodDevice ,notificationModel.Title, notificationModel.Body, notificationModel.DateTime, notificationModel.Status));
                         await _context.SaveChangesAsync();
                         
                         return Ok("Успешно отклонено !!!");
@@ -523,17 +525,16 @@ public class UserEventController : ControllerBase
                     aeu.Event.AgeTo, aeu.Event.AgeFrom, aeu.Event.CaltulationType, aeu.Event.CaltulationSum, aeu.Event.LanguageCommunication,
                     aeu.Event.Interests, aeu.Event.Latitude, aeu.Event.Longitude, aeu.Event.User.Gender.GenderName, aeu.Event.User, aeu.Event.Status
                 }).Distinct().ToListAsync();
+            acceptUserEvent.Reverse();
             var route = Request.Path.Value;
             var validFilter = new ObjectPaginationFilter(filter.PageNumber, filter.PageSize);
             var pagedData = acceptUserEvent
                 .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
                 .Take(validFilter.PageSize)
                 .ToList();
-            pagedData.Reverse();
             var totalRecords = acceptUserEvent.Count();
             var pagedReponse = PaginationHelper.CreatePagedObjectReponse(pagedData, validFilter, totalRecords, _uriServiceNews, route);
             return Ok(pagedReponse);
-            return Ok(acceptUserEvent);
         }
         catch (ApplicationException e)
         {
@@ -557,17 +558,16 @@ public class UserEventController : ControllerBase
                     aeu.Event.AgeTo, aeu.Event.AgeFrom, aeu.Event.CaltulationType, aeu.Event.CaltulationSum, aeu.Event.LanguageCommunication,
                     aeu.Event.Interests, aeu.Event.Latitude, aeu.Event.Longitude, aeu.Event.UserId, aeu.Event.User.Gender.GenderName, aeu.Event.User,  aeu.Event.Status
                 }).Distinct().ToListAsync();
+            acceptUserEvent.Reverse();
             var route = Request.Path.Value;
             var validFilter = new ObjectPaginationFilter(filter.PageNumber, filter.PageSize);
             var pagedData = acceptUserEvent
                 .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
                 .Take(validFilter.PageSize)
                 .ToList();
-            pagedData.Reverse();
             var totalRecords = acceptUserEvent.Count();
             var pagedReponse = PaginationHelper.CreatePagedObjectReponse(pagedData, validFilter, totalRecords, _uriServiceNews, route);
             return Ok(pagedReponse);
-            return Ok(acceptUserEvent);
         }
         catch (ApplicationException e)
         {

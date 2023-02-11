@@ -33,97 +33,138 @@ namespace NCBack.Controllers
         [HttpPost("register")]
         public async Task<ActionResult<User>> Register([FromForm] UserRegisterDto request)
         {
-            var response = await _authRepo.Register(
-                request.CityId,
-                request.Email,
-                request.Username,
-                request.Fullname,
-                Convert.ToDateTime(request.DateOfBirth.ToShortDateString()),
-                request.GenderId,
-                request.File,
-                request.Password);
-            if (!response.Success)
+            try
             {
-                return BadRequest(response);
-            }
+                var response = await _authRepo.Register(
+                    request.CityId,
+                    request.Email,
+                    request.Username,
+                    request.Fullname,
+                    Convert.ToDateTime(request.DateOfBirth.ToShortDateString()),
+                    request.GenderId,
+                    request.File,
+                    request.Password);
+                if (!response.Success)
+                {
+                    return BadRequest(response);
+                }
 
-            return Ok(response);
+                return Ok(response);
+            }
+            catch (Exception e)
+            {
+                return BadRequest("Что то пошло не так при регистраци !!!");
+            }
         }
 
         [HttpPost("verificationCode/{Id}")]
         public async Task<ActionResult<User>> VerificationCode(int Id, UserCodeDto request)
         {
-            var response = await _authRepo.VerificationCode(
-                Id,
-                request.VerificationCode
-            );
-            if (!response.Success)
+            try
             {
-                return BadRequest(response);
-            }
+                var response = await _authRepo.VerificationCode(
+                    Id,
+                    request.VerificationCode
+                );
+                if (response.Success != true)
+                {
+                    return BadRequest(response);
+                }
 
-            return Ok(response);
+                return Ok(response);
+            }
+            catch (Exception e)
+            {
+                return BadRequest("Не правильный код подтверждения !!!");
+            }
         }
 
         [HttpPost("login")]
         public async Task<ActionResult<User>> Login(UserLoginDto request)
         {
-            var response = await _authRepo.Login(request.Username, request.Password, request.DeviceId);
-            if (!response.Success)
+            try
             {
-                return BadRequest(response);
+                var response = await _authRepo.Login(request.Username, request.Password, request.DeviceId);
+                if (!response.Success)
+                {
+                    return BadRequest(response);
+                }
+                return Ok(response);
             }
-
-            return Ok(response);
+            catch (Exception e)
+            {
+                return BadRequest("Не правильный логин или пароль !!!");
+            }
         }
 
         [HttpPost("smsNotReceived/{id}")]
         public async Task<ActionResult<User>> SMSNotReceived(int? id, string phone)
         {
-            var response = await _authRepo.SMSNotReceived(id, phone);
-            if (!response.Success)
+            try
             {
-                return BadRequest(response);
-            }
+                var response = await _authRepo.SMSNotReceived(id, phone);
+                if (!response.Success)
+                {
+                    return BadRequest(response);
+                }
 
-            return Ok(response);
+                return Ok(response);
+            }
+            catch (Exception e)
+            {
+                return BadRequest("Вы вели не правильный номер телефона !!!");
+            }
         }
 
         [HttpPost("changePassword")]
         [Authorize]
         public async Task<ActionResult<User>> ChangePassword(UserChangePasswordDto request)
         {
-            var response = await _authRepo.ChangePassword(request);
-            if (!response.Success)
+            try
             {
-                return BadRequest(response);
-            }
+                var response = await _authRepo.ChangePassword(request);
+                if (response.Success != true)
+                {
+                    return BadRequest(response);
+                }
 
-            return Ok(response);
+                return Ok(response);
+            }
+            catch (Exception e)
+            {
+                return BadRequest("При смена пороля вы сделалий ошибку !!!");
+            }
         }
 
         [HttpPost("forgotPassword")]
         public async Task<IActionResult> ForgotPassword(ForgotPasswordDto request)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
-            if (user != null)
+            try
             {
-                string newPsw = PasswordGeneratorService.Generate();
-                CreatePasswordHash(newPsw, out byte[] passwordHash, out byte[] passwordSalt);
-                user.PasswordHash = passwordHash;
-                user.PasswordSalt = passwordSalt;
-                _context.Update(user);
-                await SendPassword(request.Email, newPsw);
-                user.Success = true;
-                user.Message = "Done";
-                await _context.SaveChangesAsync();
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
+                if (user != null)
+                {
+                    string newPsw = PasswordGeneratorService.Generate();
+                    CreatePasswordHash(newPsw, out byte[] passwordHash, out byte[] passwordSalt);
+                    user.PasswordHash = passwordHash;
+                    user.PasswordSalt = passwordSalt;
+                    _context.Update(user);
+                    await SendPassword(request.Email, newPsw);
+                    user.Success = true;
+                    user.Message = "Done";
+                    await _context.SaveChangesAsync();
+                    return Ok(user);
+                }
+                else
+                    user.Success = false;
+
+                user.Message = "Not found !!!";
                 return Ok(user);
             }
-            else
-                user.Success = false;
-
-            user.Message = "Not found !!!";
-            return Ok(user);
+            catch (Exception e)
+            {
+                return BadRequest("Вы вели не правильную почту !!!");
+            }
         }
 
         private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)

@@ -52,13 +52,14 @@ public class UserController : ControllerBase
                 .FirstOrDefaultAsync(n => user != null && n.Id == id && n.UserId == user.Id);
             if (notification != null)
             {
+                notification.Status = true;
                 return Ok(notification);
             }
             return BadRequest("Erorr not fount notification !!!");
         }
         catch (ApplicationException e)
         {
-            throw new ApplicationException(e.ToString());
+            return BadRequest("Erorr not fount notification !!!");
         }
     }
     
@@ -81,7 +82,7 @@ public class UserController : ControllerBase
         }
         catch (ApplicationException e)
         {
-            throw new ApplicationException(e.ToString());
+            return BadRequest("Error 400!!!");
         }
     }
     
@@ -100,7 +101,7 @@ public class UserController : ControllerBase
         }
         catch (ApplicationException e)
         {
-            throw new ApplicationException(e.ToString());
+            return BadRequest("Error 400!!!");
         }
 
         return BadRequest("System errors !!!");
@@ -134,7 +135,7 @@ public class UserController : ControllerBase
         }
         catch (ApplicationException e)
         {
-            throw new ApplicationException(e.ToString());
+            return BadRequest("Error 400!!!");
         }
 
         BadRequest("Error");
@@ -166,7 +167,7 @@ public class UserController : ControllerBase
         }
         catch (ApplicationException e)
         {
-            throw new ApplicationException(e.ToString());
+            return BadRequest("Error 400!!!");
         }
 
         BadRequest("Error");
@@ -208,7 +209,7 @@ public class UserController : ControllerBase
         }
         catch (ApplicationException e)
         {
-            throw new ApplicationException(e.ToString());
+            return BadRequest("Error 400!!!");
         }
 
         BadRequest("Error");
@@ -242,7 +243,7 @@ public class UserController : ControllerBase
         }
         catch (ApplicationException e)
         {
-            throw new ApplicationException(e.ToString());
+            return BadRequest("Error 400!!!");
         }
 
         BadRequest("Error");
@@ -302,10 +303,11 @@ public class UserController : ControllerBase
                     Body = "Уважаемый пользователь! \n" +
                            "Вы сменили ваш адрес электронной почты \n" +
                            "на новый.",
-                    DateTime =  DateTime.Now
+                    DateTime =  DateTime.Now,
+                    Status = false
                 };
                 await _notificationService.SendNotification(notificationModel);
-                _context.NotificationModel.Add(new NotificationModel(notificationModel.Id, notificationModel.UserId,notificationModel.IsAndroiodDevice ,notificationModel.Title, notificationModel.Body, notificationModel.DateTime));
+                _context.NotificationModel.Add(new NotificationModel(notificationModel.Id, notificationModel.UserId,notificationModel.IsAndroiodDevice ,notificationModel.Title, notificationModel.Body, notificationModel.DateTime, notificationModel.Status));
                 await _context.SaveChangesAsync();
             }
             _context.Users.Update(user);
@@ -314,7 +316,7 @@ public class UserController : ControllerBase
         }
         catch (ApplicationException e)
         {
-            throw new ApplicationException(e.ToString());
+            return BadRequest("Error 400!!!");
         }
 
         BadRequest("Error");
@@ -342,7 +344,7 @@ public class UserController : ControllerBase
         }
         catch (ApplicationException e)
         {
-            throw new ApplicationException(e.ToString());
+            return BadRequest("Error 400!!!");
         }
     }
 
@@ -380,10 +382,11 @@ public class UserController : ControllerBase
                     Body = "Поздравляем со сменой номера телефона. \n" +
                            "Этот номер будет отображаться другим \n" +
                            "пользователям в объявлениях при Connect.",
-                    DateTime =  DateTime.Now
+                    DateTime =  DateTime.Now,
+                    Status = false
                 };
                 await _notificationService.SendNotification(notificationModel);
-                _context.NotificationModel.Add(new NotificationModel(notificationModel.Id, notificationModel.UserId,notificationModel.IsAndroiodDevice ,notificationModel.Title, notificationModel.Body, notificationModel.DateTime));
+                _context.NotificationModel.Add(new NotificationModel(notificationModel.Id, notificationModel.UserId,notificationModel.IsAndroiodDevice ,notificationModel.Title, notificationModel.Body, notificationModel.DateTime, notificationModel.Status));
                 await _context.SaveChangesAsync();
                 phoneEditing.Success = true;
                 phoneEditing.Message = "Done.";
@@ -393,7 +396,7 @@ public class UserController : ControllerBase
         }
         catch (ApplicationException e)
         {
-            throw new ApplicationException(e.ToString());
+            return BadRequest("Error 400!!!");
         }
     }
     
@@ -421,7 +424,7 @@ public class UserController : ControllerBase
         }
         catch (ApplicationException e)
         {
-            throw new ApplicationException(e.ToString());
+            return BadRequest("Error 400!!!");
         }
     }
     
@@ -470,7 +473,7 @@ public class UserController : ControllerBase
         }
         catch (ApplicationException e)
         {
-            throw new ApplicationException(e.ToString());
+            return BadRequest("Error 400!!!");
         }
     }
     

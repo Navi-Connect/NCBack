@@ -57,7 +57,8 @@ namespace NCBack.Controllers
                         e.Interests, e.Latitude, e.Longitude, e.Status ,
                         e.UserId, e.User.Gender.GenderName, e.User
                     }).Distinct().ToListAsync();
-
+            lists.Reverse();
+            
             if (AimOfTheMeetingId != null)
             {
                 lists = await
@@ -161,7 +162,6 @@ namespace NCBack.Controllers
                 var pagedData = lists
                     .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
                     .Take(validFilter.PageSize).ToList();
-                pagedData.Reverse();
                 var totalRecords = await _context.Events.CountAsync();
                 var pagedReponse =
                     PaginationHelper.CreatePagedReponse(pagedData, validFilter, totalRecords, _uriService, route);
@@ -181,7 +181,6 @@ namespace NCBack.Controllers
                     .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
                     .Take(validFilter.PageSize)
                     .ToList();
-                pagedData.Reverse();
                 var totalRecords = events.Count();
                 var pagedReponse =
                     PaginationHelper.CreatePagedReponse(pagedData, validFilter, totalRecords, _uriService, route);
@@ -211,7 +210,7 @@ namespace NCBack.Controllers
                 (filter.Year == null && filter.Month == null && filter.Date == null))
             {
                 var events = lists.Where(e => e.CityId == filter.CityId 
-                                              && e.User.GenderId == filter.GenderId || e.Gender.GenderName == "М/Ж").ToList();
+                                              && e.User.GenderId == filter.GenderId).ToList();
                 var route = Request.Path.Value;
                 var validFilter = new PaginationFilter(filter.PageNumber, filter.PageSize, filter.CityId,
                     filter.GenderId, filter.Year, filter.Month, filter.Date);
@@ -219,7 +218,6 @@ namespace NCBack.Controllers
                     .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
                     .Take(validFilter.PageSize)
                     .ToList();
-                pagedData.Reverse();
                 var totalRecords = events.Count();
                 var pagedReponse =
                     PaginationHelper.CreatePagedReponse(pagedData, validFilter, totalRecords, _uriService, route);
@@ -292,7 +290,7 @@ namespace NCBack.Controllers
             {
                 var events = lists.Where(
                     e => e.User.GenderId == filter.GenderId 
-                        && e.GenderId == user.GenderId || e.Gender.GenderName == "М/Ж").ToList();
+                        && e.GenderId == user.GenderId).ToList();
                 var route = Request.Path.Value;
                 var validFilter = new PaginationFilter(filter.PageNumber, filter.PageSize, filter.CityId,
                     filter.GenderId, filter.Year, filter.Month, filter.Date);
@@ -300,7 +298,6 @@ namespace NCBack.Controllers
                     .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
                     .Take(validFilter.PageSize)
                     .ToList();
-                pagedData.Reverse();
                 var totalRecords = events.Count();
                 var pagedReponse =
                     PaginationHelper.CreatePagedReponse(pagedData, validFilter, totalRecords, _uriService, route);
@@ -322,7 +319,6 @@ namespace NCBack.Controllers
                     .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
                     .Take(validFilter.PageSize)
                     .ToList();
-                pagedData.Reverse();
                 var totalRecords = events.Count();
                 var pagedReponse =
                     PaginationHelper.CreatePagedReponse(pagedData, validFilter, totalRecords, _uriService, route);
@@ -343,7 +339,6 @@ namespace NCBack.Controllers
                     .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
                     .Take(validFilter.PageSize)
                     .ToList();
-                pagedData.Reverse();
                 var totalRecords = events.Count();
                 var pagedReponse =
                     PaginationHelper.CreatePagedReponse(pagedData, validFilter, totalRecords, _uriService, route);
@@ -357,7 +352,7 @@ namespace NCBack.Controllers
                 var events = lists.Where(
                     e => e.TimeStart.Value.Date.ToString("yyyy-M-d") == $"{filter.Year}-{filter.Month}-{filter.Date}" &&
                          e.CityId == filter.CityId && e.User.GenderId == filter.GenderId 
-                         && e.GenderId == user.GenderId || e.Gender.GenderName == "М/Ж").ToList();
+                         && e.GenderId == user.GenderId).ToList();
                 var route = Request.Path.Value;
                 var validFilter = new PaginationFilter(filter.PageNumber, filter.PageSize, filter.CityId,
                     filter.GenderId, filter.Year, filter.Month, filter.Date);
@@ -365,7 +360,6 @@ namespace NCBack.Controllers
                     .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
                     .Take(validFilter.PageSize)
                     .ToList();
-                pagedData.Reverse();
                 var totalRecords = events.Count();
                 var pagedReponse =
                     PaginationHelper.CreatePagedReponse(pagedData, validFilter, totalRecords, _uriService, route);
@@ -505,7 +499,7 @@ namespace NCBack.Controllers
             {
                 var events = lists.Where(
                     e => e.TimeStart.Value.Date.ToString("yyyy-M-d") == $"{filter.Year}-{filter.Month}-{filter.Date}" &&
-                        e.User.GenderId == filter.GenderId && e.GenderId == user.GenderId || e.Gender.GenderName == "М/Ж");
+                        e.User.GenderId == filter.GenderId && e.GenderId == user.GenderId);
                 var route = Request.Path.Value;
                 var validFilter = new PaginationFilter(filter.PageNumber, filter.PageSize, filter.CityId,
                     filter.GenderId, filter.Year, filter.Month, filter.Date);
@@ -513,7 +507,6 @@ namespace NCBack.Controllers
                     .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
                     .Take(validFilter.PageSize)
                     .ToList();
-                pagedData.Reverse();
                 var totalRecords = events.Count();
                 var pagedReponse =
                     PaginationHelper.CreatePagedReponse(pagedData, validFilter, totalRecords, _uriService, route);
@@ -662,7 +655,7 @@ namespace NCBack.Controllers
             {
                 var events = lists.Where(
                     e => e.CityId == filter.CityId && e.User.GenderId == filter.GenderId && e.GenderId == user.GenderId 
-                         && e.Gender.GenderName == "М/Ж" && e.TimeStart.Value.Date.ToString("yyyy-M-d") == $"{filter.Year}-{filter.Month}-{filter.Date}").ToList();
+                          && e.TimeStart.Value.Date.ToString("yyyy-M-d") == $"{filter.Year}-{filter.Month}-{filter.Date}").ToList();
                 var route = Request.Path.Value;
                 var validFilter = new PaginationFilter(filter.PageNumber, filter.PageSize, filter.CityId,
                     filter.GenderId, filter.Year, filter.Month, filter.Date);
@@ -670,7 +663,6 @@ namespace NCBack.Controllers
                     .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
                     .Take(validFilter.PageSize)
                     .ToList();
-                pagedData.Reverse();
                 var totalRecords = events.Count();
                 var pagedReponse =
                     PaginationHelper.CreatePagedReponse(pagedData, validFilter, totalRecords, _uriService, route);

@@ -92,7 +92,8 @@ namespace NCBack.Migrations
                     IsAndroiodDevice = table.Column<bool>(type: "boolean", nullable: false),
                     Title = table.Column<string>(type: "text", nullable: false),
                     Body = table.Column<string>(type: "text", nullable: false),
-                    DateTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
+                    DateTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    Status = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -347,9 +348,9 @@ namespace NCBack.Migrations
                     { 2, "Поиск друга/Собеседника" },
                     { 3, "Свидания и поиск второй половинки" },
                     { 4, "Для родителей (Прогулка с детьми)" },
-                    { 5, "Обсуждение идеи/бизнеса (брейншторм)" },
+                    { 5, "Встреча мусульман" },
                     { 6, "Обсуждение фильма/сериала/книги" },
-                    { 7, "Совместная выпивка" },
+                    { 7, "Совместный активные отдых" },
                     { 8, "Совместные тренировки" },
                     { 9, "Обсуждение разных проблем" },
                     { 10, "Саморазвитие, обучение" },
@@ -372,8 +373,8 @@ namespace NCBack.Migrations
                     { 27, "Только девушки" },
                     { 28, "Встреча туристов/Иностранцев" },
                     { 29, "Встреча болельщиков/Фанатов" },
-                    { 30, "Совместный активные отдых" },
-                    { 31, "Встреча мусульман" }
+                    { 30, "Совместная выпивка" },
+                    { 31, "Обсуждение идеи/бизнеса (брейншторм)" }
                 });
 
             migrationBuilder.InsertData(
@@ -407,8 +408,7 @@ namespace NCBack.Migrations
                 values: new object[,]
                 {
                     { 1, "М" },
-                    { 2, "Ж" },
-                    { 3, "М/Ж" }
+                    { 2, "Ж" }
                 });
 
             migrationBuilder.InsertData(

@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace NCBack.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230128082533_initial")]
+    [Migration("20230211091559_initial")]
     partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -88,7 +88,7 @@ namespace NCBack.Migrations
                         new
                         {
                             Id = 5,
-                            NameAimOfTheMeeting = "Обсуждение идеи/бизнеса (брейншторм)"
+                            NameAimOfTheMeeting = "Встреча мусульман"
                         },
                         new
                         {
@@ -98,7 +98,7 @@ namespace NCBack.Migrations
                         new
                         {
                             Id = 7,
-                            NameAimOfTheMeeting = "Совместная выпивка"
+                            NameAimOfTheMeeting = "Совместный активные отдых"
                         },
                         new
                         {
@@ -213,12 +213,12 @@ namespace NCBack.Migrations
                         new
                         {
                             Id = 30,
-                            NameAimOfTheMeeting = "Совместный активные отдых"
+                            NameAimOfTheMeeting = "Совместная выпивка"
                         },
                         new
                         {
                             Id = 31,
-                            NameAimOfTheMeeting = "Встреча мусульман"
+                            NameAimOfTheMeeting = "Обсуждение идеи/бизнеса (брейншторм)"
                         });
                 });
 
@@ -439,11 +439,6 @@ namespace NCBack.Migrations
                         {
                             Id = 2,
                             GenderName = "Ж"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            GenderName = "М/Ж"
                         });
                 });
 
@@ -1174,6 +1169,9 @@ namespace NCBack.Migrations
                         .HasColumnType("text");
 
                     b.Property<bool>("IsAndroiodDevice")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("Status")
                         .HasColumnType("boolean");
 
                     b.Property<string>("Title")

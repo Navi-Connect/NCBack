@@ -48,13 +48,13 @@ public class NewsController : Controller
         try
         {
             var news = await _context.News.ToListAsync();
+            news.Reverse();
             var route = Request.Path.Value;
             var validFilter = new ObjectPaginationFilter(filter.PageNumber, filter.PageSize);
             var pagedData = news
                 .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
                 .Take(validFilter.PageSize)
                 .ToList();
-            pagedData.Reverse();
             var totalRecords = news.Count();
             var pagedReponse = PaginationHelper.CreatePagedObjectReponse(pagedData, validFilter, totalRecords, _uriServiceNews, route);
             return Ok(pagedReponse);
