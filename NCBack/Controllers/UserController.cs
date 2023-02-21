@@ -53,6 +53,8 @@ public class UserController : ControllerBase
             if (notification != null)
             {
                 notification.Status = true;
+                _context.NotificationModel.Update(notification);
+                await _context.SaveChangesAsync();
                 return Ok(notification);
             }
             return BadRequest("Erorr not fount notification !!!");
