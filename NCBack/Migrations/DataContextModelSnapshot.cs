@@ -1133,8 +1133,14 @@ namespace NCBack.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime>("CreateAt")
+                        .HasColumnType("timestamp without time zone");
+
                     b.Property<int>("EventId")
                         .HasColumnType("integer");
+
+                    b.Property<DateTime>("TimeResult")
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<int>("UserId")
                         .HasColumnType("integer");

@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace NCBack.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230211091559_initial")]
+    [Migration("20230223101340_initial")]
     partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -1135,8 +1135,14 @@ namespace NCBack.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime>("CreateAt")
+                        .HasColumnType("timestamp without time zone");
+
                     b.Property<int>("EventId")
                         .HasColumnType("integer");
+
+                    b.Property<DateTime>("TimeResult")
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
