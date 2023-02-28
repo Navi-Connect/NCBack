@@ -87,7 +87,7 @@ public class UserEventController : ControllerBase
             
             if (events.UserId != GetUserId())
             {
-                    DateTime date = DateTime.Now;
+                  
                    _context.UserEvent.Add(new UserEvent(GetUserId(), events.Id));
                     await _context.SaveChangesAsync();
 
@@ -101,8 +101,7 @@ public class UserEventController : ControllerBase
                             IsAndroiodDevice = true,
                             Title = "К вам поступила заявка",
                             Body = $"на ваше объявление: \n" +
-                                   $"{mPlace.NameMeatingPlace} от {events.TimeStart.Value.Date.ToString("dd/MM")} с {events.TimeStart.Value.ToString("HH:mm")} по {events.TimeStart.Value.Date.ToString("dd/MM")} до {events.TimeFinish.Value.ToString("HH:mm")}. \n" +
-                                   $"Вам нужно принять решение, в течении 1 часа с {date.ToString("HH:mm")} до {date.AddHours(1).ToString("HH:mm")} ",
+                                   $"{mPlace.NameMeatingPlace} от {events.TimeStart.Value.Date.ToString("dd/MM")} с {events.TimeStart.Value.ToString("HH:mm")} по {events.TimeStart.Value.Date.ToString("dd/MM")} до {events.TimeFinish.Value.ToString("HH:mm")}. ",
                             DateTime = DateTime.Now,
                             Status = false
                         };
@@ -234,13 +233,13 @@ public class UserEventController : ControllerBase
             if (events != null)
             {
             
-                    // получаем текущее время
+                    /*// получаем текущее время
                     DateTime now = DateTime.Now;
                     
-                    var userEvent = await _context.UserEvent.ToListAsync();
+                    var userEvent = await _context.UserEvent.ToListAsync();*/
 
 
-                    foreach (var ue in userEvent)
+                    /*foreach (var ue in userEvent)
                     {
 
                         // проверяем, превышает ли разница заданное время для удаления
@@ -249,9 +248,9 @@ public class UserEventController : ControllerBase
                             // удаляем пользователя из базы данных
                             _context.UserEvent.Remove(ue);
                         }
-                    }
-                    // сохраняем изменения в базе данных
-                    await _context.SaveChangesAsync();
+                    }*/
+                    /*// сохраняем изменения в базе данных
+                    await _context.SaveChangesAsync();*/
                     
                      var list = await (from e in _context.UserEvent
                         from c in  _context.CityList
@@ -266,8 +265,7 @@ public class UserEventController : ControllerBase
                         select new {  e.Id, e.EventId, e.Event.AimOfTheMeetingId, e.Event.AimOfTheMeeting, e.Event.MeetingCategoryId, e.Event.MeetingCategory, e.Event.MeatingPlaceId, e.Event.MeatingPlace,
                             e.Event.IWant,e.Event.TimeStart, e.Event.TimeFinish, e.Event.CreateAdd, e.Event.CityId, e.Event.City, e.Event.GenderId, e.Event.Gender,
                             e.Event.AgeTo, e.Event.AgeFrom, e.Event.CaltulationType, e.Event.CaltulationSum, e.Event.LanguageCommunication,
-                            e.Event.Interests, e.Event.Latitude, e.Event.Longitude, e.UserId, e.User.Gender.GenderName, CreateAt = e.CreateAt.ToString("HH:mm"),
-                            TimeResult = e.TimeResult.ToString("HH:mm"), e.User, e.Event.Status}
+                            e.Event.Interests, e.Event.Latitude, e.Event.Longitude, e.UserId, e.User.Gender.GenderName, e.User, e.Event.Status}
                     ).Distinct().ToListAsync();
                 list.Reverse();
                 
@@ -326,9 +324,11 @@ public class UserEventController : ControllerBase
                         {
                             _context.AccedEventUser.Add(new AccedEventUser(uE.UserId, uE.EventId));
                             await _context.SaveChangesAsync();
+                            _context.UserEvent.Remove(uE);
+                            await _context.SaveChangesAsync();
                         }
                         else
-                            BadRequest("Not mathes U and E");
+                            BadRequest("ERROR");
 
                         /*if (uEvent != null)
                         {
@@ -351,14 +351,16 @@ public class UserEventController : ControllerBase
                                 ctx.SaveChanges();
                             }
                         }*/
-
-                        var delobj =
+                        
+                        
+                       
+                        /*var delobj =
                             _context.UserEvent.Where(p => p.UserId == userId).ToList();
                         foreach (var v in delobj)
                         {
                             _context.UserEvent.Remove(v);
                             await _context.SaveChangesAsync();
-                        }
+                        }*/
 
 
                         var delobj1 =
@@ -417,10 +419,10 @@ public class UserEventController : ControllerBase
                         return Ok(userEvent);
                     }
 
-                    return BadRequest("no user");
+                    return BadRequest("ERROR");
                 }
 
-                return BadRequest("no Event");
+                return BadRequest("ERROR");
             }
 
             return BadRequest("ERROR");
