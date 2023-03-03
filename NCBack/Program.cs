@@ -1,3 +1,4 @@
+using System.Reflection;
 using CorePush.Apple;
 using CorePush.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -8,9 +9,20 @@ using NCBack.Data;
 using NCBack.NotificationModels;
 using NCBack.Services;
 using SendGrid.Extensions.DependencyInjection;
+using Serilog;
+using Serilog.Exceptions;
+using Serilog.Sinks.Elasticsearch;
 using Swashbuckle.AspNetCore.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Host.UseSerilog((context, config) =>
+{
+    /*ConfigureLogs();*/
+    var connections = context.Configuration.GetConnectionString("SecondConnection");
+    config.WriteTo.PostgreSQL(connections, "DbLoggerOptions", needAutoCreateTable: true)
+        .MinimumLevel.Information()
+        .WriteTo.Console();
+});
 
 // Add services to the container.
 builder.Services.AddDbContext<DataContext>(options =>
@@ -121,7 +133,47 @@ app.MapControllers();
 
 app.Run();
 
+#region helperLogs
+void ConfigureLogs()
+{
+    
+    //GET the environment which the app is running on  
+    var evn = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 
+    // Get the configuration
+    var configuration = new ConfigurationBuilder()
+        .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+        .Build();
+
+    //CREATE Logger
+    if (evn != null)
+        Log.Logger = new LoggerConfiguration()
+            .Enrich.FromLogContext()
+            .Enrich.WithExceptionDetails() //Add details exception
+            .WriteTo.Debug()
+            .WriteTo.Console()
+            .MinimumLevel.Information()
+            
+            /*.WriteTo.File("Logs/Example.txt",
+                outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}")*/
+            .WriteTo.Elasticsearch(ConfigureEls(configuration, evn))
+            .CreateLogger();
+}
+
+ElasticsearchSinkOptions ConfigureEls(IConfigurationRoot configuration, string env)
+{
+    return new ElasticsearchSinkOptions(new Uri(configuration["ElasticConfiguration:Uri"]))
+    {
+      
+        AutoRegisterTemplate = true,
+        IndexFormat =
+            $"{Assembly.GetExecutingAssembly().GetName().Name?.ToLower()}-{env.ToLower().Replace(".", "-")}-{DateTime.UtcNow:YYYY-MM}"
+    };
+    
+}
+
+
+#endregion
 
 
 /*

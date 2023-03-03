@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\NCBack\\NCBack\\NCBack\\NCBack.csproj": {}
+    "C:\\C#\\NAVI\\NCBack\\NCBack\\NCBack.csproj": {}
   },
   "projects": {
-    "C:\\NCBack\\NCBack\\NCBack\\NCBack.csproj": {
+    "C:\\C#\\NAVI\\NCBack\\NCBack\\NCBack.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\NCBack\\NCBack\\NCBack\\NCBack.csproj",
+        "projectUniqueName": "C:\\C#\\NAVI\\NCBack\\NCBack\\NCBack.csproj",
         "projectName": "NCBack",
-        "projectPath": "C:\\NCBack\\NCBack\\NCBack\\NCBack.csproj",
-        "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
-        "outputPath": "C:\\NCBack\\NCBack\\NCBack\\obj\\",
+        "projectPath": "C:\\C#\\NAVI\\NCBack\\NCBack\\NCBack.csproj",
+        "packagesPath": "C:\\Users\\1\\.nuget\\packages\\",
+        "outputPath": "C:\\C#\\NAVI\\NCBack\\NCBack\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\User\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\1\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -78,6 +78,30 @@
               "target": "Package",
               "version": "[1.0.1, )"
             },
+            "Serilog.AspNetCore": {
+              "target": "Package",
+              "version": "[6.1.1-dev-00295, )"
+            },
+            "Serilog.Enrichers.Environment": {
+              "target": "Package",
+              "version": "[2.3.0-dev-00792, )"
+            },
+            "Serilog.Exceptions": {
+              "target": "Package",
+              "version": "[8.4.0, )"
+            },
+            "Serilog.Sinks.Debug": {
+              "target": "Package",
+              "version": "[2.0.0, )"
+            },
+            "Serilog.Sinks.Elasticsearch": {
+              "target": "Package",
+              "version": "[9.0.0, )"
+            },
+            "Serilog.Sinks.PostgreSQL": {
+              "target": "Package",
+              "version": "[2.3.0, )"
+            },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
               "version": "[6.2.3, )"
@@ -106,7 +130,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.400\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.100\\RuntimeIdentifierGraph.json"
         }
       }
     }
