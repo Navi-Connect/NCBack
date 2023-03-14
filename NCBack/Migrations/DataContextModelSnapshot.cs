@@ -1018,6 +1018,29 @@ namespace NCBack.Migrations
                     b.ToTable("PhoneEditing");
                 });
 
+            modelBuilder.Entity("NCBack.Models.RefreshToken", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("ExpirationDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("RefreshToken");
+                });
+
             modelBuilder.Entity("NCBack.Models.User", b =>
                 {
                     b.Property<int>("Id")
@@ -1106,9 +1129,6 @@ namespace NCBack.Migrations
                     b.Property<int?>("To")
                         .HasColumnType("integer");
 
-                    b.Property<string>("Token")
-                        .HasColumnType("text");
-
                     b.Property<string>("Username")
                         .IsRequired()
                         .HasColumnType("text");
@@ -1133,8 +1153,14 @@ namespace NCBack.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime>("CreateAt")
+                        .HasColumnType("timestamp without time zone");
+
                     b.Property<int>("EventId")
                         .HasColumnType("integer");
+
+                    b.Property<DateTime>("TimeResult")
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<int>("UserId")
                         .HasColumnType("integer");

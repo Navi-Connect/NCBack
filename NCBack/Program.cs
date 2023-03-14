@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Text;
 using CorePush.Apple;
 using CorePush.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -6,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using NCBack.Data;
+using NCBack.Models;
 using NCBack.NotificationModels;
 using NCBack.Services;
 using SendGrid.Extensions.DependencyInjection;
@@ -89,18 +91,48 @@ builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
 
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+
+
+
+
+builder.Services.Configure<TokenSetting>(builder.Configuration.GetSection("TokenSetting"));
+
+/*builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8
-                .GetBytes(builder.Configuration.GetSection("AppSettings:Token").Value)),
+                .GetBytes(builder.Configuration.GetSection("TokenSetting").Value)),
             ValidateIssuer = false,
             ValidateAudience = false
         };
+    });*/
+
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        var tokenSettings = builder.Configuration.GetSection("TokenSetting")
+            .Get<TokenSetting>();
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidIssuer = tokenSettings.Issuer,
+            ValidateIssuer = true,
+            
+            ValidAudience = tokenSettings.Audience,
+            ValidateAudience = true,
+            
+            ValidateIssuerSigningKey = true,
+            
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(tokenSettings.SecretKey)),
+            
+            ClockSkew = TimeSpan.Zero
+        };
     });
+    
 
 builder.Services.AddSendGrid(option =>
 {

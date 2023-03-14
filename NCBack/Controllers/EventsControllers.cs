@@ -65,21 +65,7 @@ public class EventsControllers : Controller
         return Ok(pagedReponse);
         
     }
-
-    /*[Authorize]
-    [HttpGet("myEventsAccepted")]
-    public async Task<IActionResult> EventsAccepteds()
-    {
-        var list = (from evensAccepted in _context.Events
-            from u in _context.Users
-            from acceptedUser in _context.UserEvent
-            where evensAccepted.UserId == GetUserId()
-            where evensAccepted.Status == Status.Accepted
-            where acceptedUser.EventId == evensAccepted.Id
-            select new { evensAccepted, acceptedUser.UserId, acceptedUser.User }).ToList().Distinct();
-        return Ok(list);
-    }*/
-
+    
     [Authorize]
     [HttpGet("event/{id}")]
     public async Task<IActionResult> Event(int id)
@@ -98,8 +84,7 @@ public class EventsControllers : Controller
         }
         return BadRequest("Error !!!");
     }
-
-
+    
     [Authorize]
     [HttpPost("createEvent")]
     public async Task<ActionResult<Event>> CreateEvent([FromForm] EventCreateDto request)

@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\C#\\NAVI\\NCBack\\NCBack\\NCBack.csproj": {}
+    "C:\\NaviConnect\\NCBack\\NCBack\\NCBack.csproj": {}
   },
   "projects": {
-    "C:\\C#\\NAVI\\NCBack\\NCBack\\NCBack.csproj": {
+    "C:\\NaviConnect\\NCBack\\NCBack\\NCBack.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\C#\\NAVI\\NCBack\\NCBack\\NCBack.csproj",
+        "projectUniqueName": "C:\\NaviConnect\\NCBack\\NCBack\\NCBack.csproj",
         "projectName": "NCBack",
-        "projectPath": "C:\\C#\\NAVI\\NCBack\\NCBack\\NCBack.csproj",
-        "packagesPath": "C:\\Users\\1\\.nuget\\packages\\",
-        "outputPath": "C:\\C#\\NAVI\\NCBack\\NCBack\\obj\\",
+        "projectPath": "C:\\NaviConnect\\NCBack\\NCBack\\NCBack.csproj",
+        "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
+        "outputPath": "C:\\NaviConnect\\NCBack\\NCBack\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\1\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\User\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -109,6 +109,10 @@
             "Swashbuckle.AspNetCore.Filters": {
               "target": "Package",
               "version": "[7.0.3, )"
+            },
+            "System.IdentityModel.Tokens.Jwt": {
+              "target": "Package",
+              "version": "[6.27.0, )"
             }
           },
           "imports": [
@@ -130,7 +134,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.100\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.400\\RuntimeIdentifierGraph.json"
         }
       }
     }

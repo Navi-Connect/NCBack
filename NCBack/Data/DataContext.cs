@@ -12,6 +12,7 @@ public class DataContext : DbContext
         /*AppContext.SetSwitch("Npgsql.DisableDateTimeInfinityConversions", true);*/
     }
     public virtual DbSet<User> Users { get; set; }
+    public virtual DbSet<RefreshToken> RefreshToken { get; set; }
     public virtual DbSet<IntermediateUser> IntermediateUser { get; set; }
     public virtual DbSet<News> News { get; set; }
     public virtual DbSet<Event> Events { get; set; }

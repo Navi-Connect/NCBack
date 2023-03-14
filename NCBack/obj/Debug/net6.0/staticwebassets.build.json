@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "0hpsB7UYsP7vamunEvBhnK/HZ3YfeSJ29A09UZUTgnk=",
+  "Hash": "1arzEUg8n2KB0Y1EEGk7E8Y6fEUSq2M2MlujN50ugWA=",
   "Source": "NCBack",
   "BasePath": "_content/NCBack",
   "Mode": "Default",
@@ -10,17 +10,17 @@
     {
       "Name": "NCBack\\wwwroot",
       "Source": "NCBack",
-      "ContentRoot": "C:\\C#\\NAVI\\NCBack\\NCBack\\wwwroot\\",
+      "ContentRoot": "C:\\NaviConnect\\NCBack\\NCBack\\wwwroot\\",
       "BasePath": "_content/NCBack",
       "Pattern": "**"
     }
   ],
   "Assets": [
     {
-      "Identity": "C:\\C#\\NAVI\\NCBack\\NCBack\\wwwroot\\images\\images.jpg",
+      "Identity": "C:\\NaviConnect\\NCBack\\NCBack\\wwwroot\\images\\images.jpg",
       "SourceId": "NCBack",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\C#\\NAVI\\NCBack\\NCBack\\wwwroot\\",
+      "ContentRoot": "C:\\NaviConnect\\NCBack\\NCBack\\wwwroot\\",
       "BasePath": "_content/NCBack",
       "RelativePath": "images/images.jpg",
       "AssetKind": "All",
@@ -34,10 +34,10 @@
       "OriginalItemSpec": "wwwroot\\images\\images.jpg"
     },
     {
-      "Identity": "C:\\C#\\NAVI\\NCBack\\NCBack\\wwwroot\\images\\IMG_7279.HEIC",
+      "Identity": "C:\\NaviConnect\\NCBack\\NCBack\\wwwroot\\images\\IMG_7279.HEIC",
       "SourceId": "NCBack",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\C#\\NAVI\\NCBack\\NCBack\\wwwroot\\",
+      "ContentRoot": "C:\\NaviConnect\\NCBack\\NCBack\\wwwroot\\",
       "BasePath": "_content/NCBack",
       "RelativePath": "images/IMG_7279.HEIC",
       "AssetKind": "All",
@@ -51,10 +51,10 @@
       "OriginalItemSpec": "wwwroot\\images\\IMG_7279.HEIC"
     },
     {
-      "Identity": "C:\\C#\\NAVI\\NCBack\\NCBack\\wwwroot\\images\\photo-1553615738-d8e0829f1d61.jfif",
+      "Identity": "C:\\NaviConnect\\NCBack\\NCBack\\wwwroot\\images\\photo-1553615738-d8e0829f1d61.jfif",
       "SourceId": "NCBack",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\C#\\NAVI\\NCBack\\NCBack\\wwwroot\\",
+      "ContentRoot": "C:\\NaviConnect\\NCBack\\NCBack\\wwwroot\\",
       "BasePath": "_content/NCBack",
       "RelativePath": "images/photo-1553615738-d8e0829f1d61.jfif",
       "AssetKind": "All",
@@ -68,10 +68,10 @@
       "OriginalItemSpec": "wwwroot\\images\\photo-1553615738-d8e0829f1d61.jfif"
     },
     {
-      "Identity": "C:\\C#\\NAVI\\NCBack\\NCBack\\wwwroot\\images\\scaled_7796c64b-b16d-4bed-8592-6bb9b544f8a0511347719798547536.jpg",
+      "Identity": "C:\\NaviConnect\\NCBack\\NCBack\\wwwroot\\images\\scaled_7796c64b-b16d-4bed-8592-6bb9b544f8a0511347719798547536.jpg",
       "SourceId": "NCBack",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\C#\\NAVI\\NCBack\\NCBack\\wwwroot\\",
+      "ContentRoot": "C:\\NaviConnect\\NCBack\\NCBack\\wwwroot\\",
       "BasePath": "_content/NCBack",
       "RelativePath": "images/scaled_7796c64b-b16d-4bed-8592-6bb9b544f8a0511347719798547536.jpg",
       "AssetKind": "All",
@@ -85,10 +85,10 @@
       "OriginalItemSpec": "wwwroot\\images\\scaled_7796c64b-b16d-4bed-8592-6bb9b544f8a0511347719798547536.jpg"
     },
     {
-      "Identity": "C:\\C#\\NAVI\\NCBack\\NCBack\\wwwroot\\images\\YvdN3Vu7-40.jpg",
+      "Identity": "C:\\NaviConnect\\NCBack\\NCBack\\wwwroot\\images\\YvdN3Vu7-40.jpg",
       "SourceId": "NCBack",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\C#\\NAVI\\NCBack\\NCBack\\wwwroot\\",
+      "ContentRoot": "C:\\NaviConnect\\NCBack\\NCBack\\wwwroot\\",
       "BasePath": "_content/NCBack",
       "RelativePath": "images/YvdN3Vu7-40.jpg",
       "AssetKind": "All",

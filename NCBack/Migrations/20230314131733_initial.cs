@@ -117,6 +117,21 @@ namespace NCBack.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "RefreshToken",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    Token = table.Column<string>(type: "text", nullable: false),
+                    ExpirationDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RefreshToken", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "IntermediateUser",
                 columns: table => new
                 {
@@ -183,7 +198,6 @@ namespace NCBack.Migrations
                     Profession = table.Column<string>(type: "text", nullable: true),
                     PasswordHash = table.Column<byte[]>(type: "bytea", nullable: false),
                     PasswordSalt = table.Column<byte[]>(type: "bytea", nullable: false),
-                    Token = table.Column<string>(type: "text", nullable: true),
                     DeviceId = table.Column<string>(type: "text", nullable: true),
                     Success = table.Column<bool>(type: "boolean", nullable: false),
                     Message = table.Column<string>(type: "text", nullable: false)
@@ -320,7 +334,9 @@ namespace NCBack.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     UserId = table.Column<int>(type: "integer", nullable: false),
-                    EventId = table.Column<int>(type: "integer", nullable: false)
+                    EventId = table.Column<int>(type: "integer", nullable: false),
+                    CreateAt = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    TimeResult = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -587,6 +603,9 @@ namespace NCBack.Migrations
 
             migrationBuilder.DropTable(
                 name: "PhoneEditing");
+
+            migrationBuilder.DropTable(
+                name: "RefreshToken");
 
             migrationBuilder.DropTable(
                 name: "UserEvent");

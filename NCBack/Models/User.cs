@@ -45,7 +45,6 @@ public class User
     public string? Profession { get; set; } = null;
     public byte[] PasswordHash { get; set; } 
     public byte[] PasswordSalt { get; set; }
-    public string? Token { get; set; }
     public string? DeviceId { get; set; }
     public bool Success { get; set; } = true;
     public string Message { get; set; } = string.Empty;

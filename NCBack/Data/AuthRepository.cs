@@ -2,7 +2,10 @@
 
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using NCBack.Dtos.User;
 using NCBack.Models;
@@ -19,6 +22,7 @@ public class AuthRepository : IAuthRepository
     private readonly UploadFileService _uploadFileService; // Добавляем сервис для получения файлов из формы
     private readonly PushSms _pushSms;
     private readonly INotificationService _notificationService;
+    private readonly TokenSetting _tokenSetting;
     private ISession _session => _httpContextAccessor.HttpContext.Session;
 
     public AuthRepository(
@@ -28,7 +32,8 @@ public class AuthRepository : IAuthRepository
         IHostEnvironment environment,
         UploadFileService uploadFileService,
         PushSms pushSms,
-        INotificationService notificationService)
+        INotificationService notificationService,
+        IOptions<TokenSetting> tokenSetting)
     {
         _context = context;
         _httpContextAccessor = httpContextAccessor;
@@ -37,12 +42,13 @@ public class AuthRepository : IAuthRepository
         _uploadFileService = uploadFileService;
         _pushSms = pushSms;
         _notificationService = notificationService;
+        _tokenSetting = tokenSetting.Value;
     }
 
     private int GetUserId() => int.Parse(_httpContextAccessor.HttpContext.User
         .FindFirstValue(ClaimTypes.NameIdentifier));
 
-    public async Task<User> Login(string username, string password, string? deviceId)
+    public async Task<TokenDto> Login(string username, string password, string? deviceId)
     {
         var user = await _context.Users
             .FirstOrDefaultAsync(u => u.Username.ToLower().Equals(username.ToLower()));
@@ -68,10 +74,19 @@ public class AuthRepository : IAuthRepository
             await _context.CityList.FirstAsync(c => c.Id == user.CityId);
             if (user.GenderId != null)
                 await _context.GenderList.FirstAsync(c => c.Id == user.GenderId);
-            user.Token = CreateToken(user);
-            user.Success = true;
+
+            var accessToken = CreateToken(user);
+            var resfreshToken = CreateRefreshToken();
+
+            await InsertRefrashToke(user.Id, resfreshToken);
+            return new TokenDto
+            {
+                AccessToken = accessToken,
+                RefreshToken = resfreshToken
+            };
+        
         }
-        return user;
+        return null;
     }
 
     public async Task<User> VerificationCode(int? id, int code)
@@ -220,6 +235,33 @@ public class AuthRepository : IAuthRepository
         return null;
     }
 
+    public async Task<TokenDto> RenewTokens(RefreshTokenDto refreshToken)
+    {
+        var userRefreshtoken = await _context
+            .RefreshToken.Where(_ => _.Token == refreshToken.Token &&
+                                     _.ExpirationDate >= DateTime.Now).FirstOrDefaultAsync();
+        
+        if (userRefreshtoken == null)
+        {
+            return null;
+        }
+
+        var user = await _context.Users.Where(_ => _.Id == userRefreshtoken.UserId).FirstOrDefaultAsync();
+
+        var newJwtToken = CreateToken(user);
+        var newRefreshToken = CreateRefreshToken();
+        
+        userRefreshtoken.Token = newRefreshToken;
+        userRefreshtoken.ExpirationDate = DateTime.Now.AddDays(7);
+        await _context.SaveChangesAsync();
+
+        return new TokenDto
+        {
+            AccessToken = newJwtToken,
+            RefreshToken = newRefreshToken
+        };
+    }
+
     public async Task<bool> UserExists(string username)
     {
         if (await _context.Users.AnyAsync(u => u.Username.ToLower() == username.ToLower()))
@@ -318,7 +360,7 @@ public class AuthRepository : IAuthRepository
     }
     
 
-    private string CreateToken(User user)
+    /*private string CreateToken(User user)
     {
         List<Claim> claims = new List<Claim>
         {
@@ -342,5 +384,63 @@ public class AuthRepository : IAuthRepository
         SecurityToken token = tokenHandler.CreateToken(tokenDescriptor);
 
         return tokenHandler.WriteToken(token);
+    }*/
+
+    private string CreateToken(User user)
+    {
+        var symmetricSecurityKey = new SymmetricSecurityKey(
+            Encoding.UTF8.GetBytes(_tokenSetting.SecretKey));
+
+        var credentials = new SigningCredentials(
+            symmetricSecurityKey,
+            SecurityAlgorithms.HmacSha256);
+
+        var userClaims = new Claim[]
+        {
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new Claim(ClaimTypes.Name, user.Username)
+        };
+
+        var jwtToken = new JwtSecurityToken(
+            issuer: _tokenSetting.Issuer,
+            expires: DateTime.Now.AddDays(1),
+            signingCredentials: credentials,
+            claims: userClaims,
+            audience: _tokenSetting.Audience
+        );
+
+        string token = new JwtSecurityTokenHandler().WriteToken(jwtToken);
+
+        return token;
     }
+
+    private  string CreateRefreshToken()
+    {
+        var tokenBytes = RandomNumberGenerator.GetBytes(64);
+        var refreshToken = Convert.ToBase64String(tokenBytes);
+
+        var tokenIsInUse =  
+            _context.RefreshToken.Any(_ => _.Token == refreshToken);
+
+        if (tokenIsInUse)
+        {
+            return CreateRefreshToken();
+        }
+
+        return refreshToken;
+    }
+
+    private async Task InsertRefrashToke(int userId, string refreshToken)
+    {
+        var newRefreshToken = new RefreshToken
+        {
+            UserId = userId,
+            Token = refreshToken,
+            ExpirationDate = DateTime.Now.AddDays(7)
+        };
+
+        _context.RefreshToken.Add(newRefreshToken);
+        await _context.SaveChangesAsync();
+    }
+
 }
