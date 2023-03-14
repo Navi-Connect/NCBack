@@ -48,7 +48,7 @@ public class NewsController : Controller
         try
         {
             var news = await _context.News.ToListAsync();
-            news.Reverse();
+            PaginationHelper.ReversEventList(news);
             var route = Request.Path.Value;
             var validFilter = new ObjectPaginationFilter(filter.PageNumber, filter.PageSize);
             var pagedData = news

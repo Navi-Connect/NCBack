@@ -70,14 +70,14 @@ public class UserController : ControllerBase
     {
         try
         {
-            var notification = await _context.NotificationModel.Where(n => n.UserId == GetUserId()).Distinct().ToArrayAsync();
+            var notification = await _context.NotificationModel.Where(n => n.UserId == GetUserId()).Distinct().ToListAsync();
+            PaginationHelper.ReversEventList(notification);
             var route = Request.Path.Value;
             var validFilter = new ObjectPaginationFilter(filter.PageNumber, filter.PageSize);
             var pagedData = notification
                 .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
                 .Take(validFilter.PageSize)
                 .ToList();
-            pagedData.Reverse();
             var totalRecords = notification.Count();
             var pagedReponse = PaginationHelper.CreatePagedObjectReponse(pagedData, validFilter, totalRecords, _uriServiceNews, route);
             return Ok(pagedReponse);

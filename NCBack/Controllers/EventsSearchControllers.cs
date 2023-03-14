@@ -37,27 +37,20 @@ namespace NCBack.Controllers
         {
             DateTime now = DateTime.Now;
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == GetUserId());
-            /*var events = _context.Events.Find();
-            var user = _context.Users.FirstOrDefault(u => u.Id == events.UserId);*/
             var lists = await
-                /*_context.Events
-                .Where(e => e.Status == Status.Expectations || e.Status == Status.Canceled)
-                .Where(e => e.UserId == user.Id)
-                .Distinct().ToList();*/
                 (from e in _context.Events
                     where e.Status == Status.Expectations || e.Status == Status.Canceled
-                    //where c.Id  == e.Event.CityId && g.Id == e.Event.GenderId
-                   where e.TimeStart >= now
-                    where  e.User.Gender.Id == e.User.GenderId
+                    where e.TimeStart >= now
                     select new
-                    { 
+                    {
                         e.Id, e.AimOfTheMeetingId, e.AimOfTheMeeting, e.MeetingCategoryId, e.MeetingCategory, e.MeatingPlaceId, e.MeatingPlace,
-                        e.IWant,e.TimeStart, e.TimeFinish, e.CreateAdd, e.CityId, e.City, e.GenderId, e.Gender,
+                        e.IWant,e.TimeStart, e.TimeFinish, e.CreateAdd, e.CityId, EVCityName =  (e.City.CityName), e.GenderId, EVGenderName = (e.Gender.GenderName),
                         e.AgeTo, e.AgeFrom, e.CaltulationType, e.CaltulationSum, e.LanguageCommunication,
                         e.Interests, e.Latitude, e.Longitude, e.Status ,
-                        e.UserId, e.User.Gender.GenderName, e.User
+                        e.UserId, USGenderName = (e.User.Gender.GenderName), USCityName = (e.User.City.CityName), e.User
                     }).Distinct().ToListAsync();
-            lists.Reverse();
+            
+           PaginationHelper.ReversEventList(lists);
             
             if (AimOfTheMeetingId != null)
             {
@@ -71,14 +64,13 @@ namespace NCBack.Controllers
                         where e.AimOfTheMeetingId == AimOfTheMeetingId
                         where e.Status == Status.Expectations || e.Status == Status.Canceled
                         where e.TimeStart >= now
-                        where  e.User.Gender.Id == e.User.GenderId
                         select new
                         {
                             e.Id, e.AimOfTheMeetingId, e.AimOfTheMeeting, e.MeetingCategoryId, e.MeetingCategory, e.MeatingPlaceId, e.MeatingPlace,
-                            e.IWant,e.TimeStart, e.TimeFinish, e.CreateAdd, e.CityId, e.City, e.GenderId, e.Gender,
+                            e.IWant,e.TimeStart, e.TimeFinish, e.CreateAdd, e.CityId, EVCityName =  (e.City.CityName), e.GenderId, EVGenderName = (e.Gender.GenderName),
                             e.AgeTo, e.AgeFrom, e.CaltulationType, e.CaltulationSum, e.LanguageCommunication,
                             e.Interests, e.Latitude, e.Longitude, e.Status ,
-                            e.UserId, e.User.Gender.GenderName, e.User
+                            e.UserId, USGenderName = (e.User.Gender.GenderName), USCityName = (e.User.City.CityName), e.User
                         }).Distinct().ToListAsync();
             }
 
@@ -89,13 +81,13 @@ namespace NCBack.Controllers
                         where e.AimOfTheMeetingId == AimOfTheMeetingId && e.MeetingCategoryId == MeetingCategoryId
                         where e.Status == Status.Expectations || e.Status == Status.Canceled
                         where e.TimeStart >= now
-                        where  e.User.Gender.Id == e.User.GenderId
                         select new
                         {
                             e.Id, e.AimOfTheMeetingId, e.AimOfTheMeeting, e.MeetingCategoryId, e.MeetingCategory, e.MeatingPlaceId, e.MeatingPlace,
-                            e.IWant,e.TimeStart, e.TimeFinish, e.CreateAdd, e.CityId, e.City, e.GenderId, e.Gender,
+                            e.IWant,e.TimeStart, e.TimeFinish, e.CreateAdd, e.CityId, EVCityName =  (e.City.CityName), e.GenderId, EVGenderName = (e.Gender.GenderName),
                             e.AgeTo, e.AgeFrom, e.CaltulationType, e.CaltulationSum, e.LanguageCommunication,
-                            e.Interests, e.Latitude, e.Longitude, e.Status , e.UserId, e.User.Gender.GenderName, e.User
+                            e.Interests, e.Latitude, e.Longitude, e.Status ,
+                            e.UserId, USGenderName = (e.User.Gender.GenderName), USCityName = (e.User.City.CityName), e.User
                         }).Distinct().ToListAsync();
 
                 /*_context.Events

@@ -85,15 +85,34 @@ namespace NCBack.Controllers
             try
             {
                 var response = await _authRepo.Login(request.Username, request.Password, request.DeviceId);
-                if (!response.Success)
+                if (response == null)
                 {
-                    return BadRequest(response);
+                    return BadRequest("Не правильный логин или пароль !!!");
                 }
                 return Ok(response);
             }
             catch (Exception e)
             {
                 return BadRequest("Не правильный логин или пароль !!!");
+            }
+        }
+
+        [HttpPost]
+        [Route("renew-token")]
+        public async Task<ActionResult> RenewTokens(RefreshTokenDto refreshToken)
+        {
+            try
+            {
+                var tokens = await _authRepo.RenewTokens(refreshToken);
+                if (tokens == null)
+                {
+                    return BadRequest("Invalide Refresh Token");
+                }
+                return Ok(tokens);
+            }
+            catch (Exception e)
+            {
+                return BadRequest("Invalide Refresh Token !!!! ");
             }
         }
 

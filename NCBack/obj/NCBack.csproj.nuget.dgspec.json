@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\NCBack\\NCBack\\NCBack\\NCBack.csproj": {}
+    "C:\\NaviConnect\\NCBack\\NCBack\\NCBack.csproj": {}
   },
   "projects": {
-    "C:\\NCBack\\NCBack\\NCBack\\NCBack.csproj": {
+    "C:\\NaviConnect\\NCBack\\NCBack\\NCBack.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\NCBack\\NCBack\\NCBack\\NCBack.csproj",
+        "projectUniqueName": "C:\\NaviConnect\\NCBack\\NCBack\\NCBack.csproj",
         "projectName": "NCBack",
-        "projectPath": "C:\\NCBack\\NCBack\\NCBack\\NCBack.csproj",
+        "projectPath": "C:\\NaviConnect\\NCBack\\NCBack\\NCBack.csproj",
         "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
-        "outputPath": "C:\\NCBack\\NCBack\\NCBack\\obj\\",
+        "outputPath": "C:\\NaviConnect\\NCBack\\NCBack\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\User\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -78,6 +78,30 @@
               "target": "Package",
               "version": "[1.0.1, )"
             },
+            "Serilog.AspNetCore": {
+              "target": "Package",
+              "version": "[6.1.1-dev-00295, )"
+            },
+            "Serilog.Enrichers.Environment": {
+              "target": "Package",
+              "version": "[2.3.0-dev-00792, )"
+            },
+            "Serilog.Exceptions": {
+              "target": "Package",
+              "version": "[8.4.0, )"
+            },
+            "Serilog.Sinks.Debug": {
+              "target": "Package",
+              "version": "[2.0.0, )"
+            },
+            "Serilog.Sinks.Elasticsearch": {
+              "target": "Package",
+              "version": "[9.0.0, )"
+            },
+            "Serilog.Sinks.PostgreSQL": {
+              "target": "Package",
+              "version": "[2.3.0, )"
+            },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
               "version": "[6.2.3, )"
@@ -85,6 +109,10 @@
             "Swashbuckle.AspNetCore.Filters": {
               "target": "Package",
               "version": "[7.0.3, )"
+            },
+            "System.IdentityModel.Tokens.Jwt": {
+              "target": "Package",
+              "version": "[6.27.0, )"
             }
           },
           "imports": [
