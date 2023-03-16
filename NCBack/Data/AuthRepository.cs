@@ -81,8 +81,22 @@ public class AuthRepository : IAuthRepository
             await InsertRefrashToke(user.Id, resfreshToken);
             return new TokenDto
             {
+                UserId = user.Id,
+                CityId = user.CityId,
+                City = user.City,
+                Email = user.Email,
+                Username = user.Username,
+                FullName = user.FullName,
+                DateOfBirth = user.DateOfBirth,
+                AvatarPath = user.AvatarPath,
+                GenderId = user.GenderId,
+                Gender = user.Gender,
                 AccessToken = accessToken,
-                RefreshToken = resfreshToken
+                RefreshToken = resfreshToken,
+                DeviceId = user.DeviceId,
+                Success = user.Success,
+                Message = user.Message
+                
             };
         
         }
@@ -257,8 +271,21 @@ public class AuthRepository : IAuthRepository
 
         return new TokenDto
         {
+            UserId = user.Id,
+            CityId = user.CityId,
+            City = user.City,
+            Email = user.Email,
+            Username = user.Username,
+            FullName = user.FullName,
+            DateOfBirth = user.DateOfBirth,
+            AvatarPath = user.AvatarPath,
+            GenderId = user.GenderId,
+            Gender = user.Gender,
             AccessToken = newJwtToken,
-            RefreshToken = newRefreshToken
+            RefreshToken = newRefreshToken,
+            DeviceId = user.DeviceId,
+            Success = user.Success,
+            Message = user.Message
         };
     }
 
