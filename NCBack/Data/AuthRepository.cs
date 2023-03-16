@@ -82,7 +82,7 @@ public class AuthRepository : IAuthRepository
             return new TokenDto
             {
                 UserId = user.Id,
-                CityId = user.CityId,
+                /*CityId = user.CityId,
                 City = user.City,
                 Email = user.Email,
                 Username = user.Username,
@@ -90,12 +90,12 @@ public class AuthRepository : IAuthRepository
                 DateOfBirth = user.DateOfBirth,
                 AvatarPath = user.AvatarPath,
                 GenderId = user.GenderId,
-                Gender = user.Gender,
+                Gender = user.Gender,*/
                 AccessToken = accessToken,
                 RefreshToken = resfreshToken,
-                DeviceId = user.DeviceId,
+                /*DeviceId = user.DeviceId,
                 Success = user.Success,
-                Message = user.Message
+                Message = user.Message*/
                 
             };
         
@@ -272,7 +272,7 @@ public class AuthRepository : IAuthRepository
         return new TokenDto
         {
             UserId = user.Id,
-            CityId = user.CityId,
+            /*CityId = user.CityId,
             City = user.City,
             Email = user.Email,
             Username = user.Username,
@@ -280,12 +280,12 @@ public class AuthRepository : IAuthRepository
             DateOfBirth = user.DateOfBirth,
             AvatarPath = user.AvatarPath,
             GenderId = user.GenderId,
-            Gender = user.Gender,
+            Gender = user.Gender,*/
             AccessToken = newJwtToken,
             RefreshToken = newRefreshToken,
-            DeviceId = user.DeviceId,
+            /*DeviceId = user.DeviceId,
             Success = user.Success,
-            Message = user.Message
+            Message = user.Message*/
         };
     }
 
