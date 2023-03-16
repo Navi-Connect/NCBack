@@ -46,6 +46,8 @@ public class User
     public byte[] PasswordHash { get; set; } 
     public byte[] PasswordSalt { get; set; }
     public string? DeviceId { get; set; }
+    public string? AccessToken { get; set; }
+    public string? RefreshToken { get; set; }
     public bool Success { get; set; } = true;
     public string Message { get; set; } = string.Empty;
 }

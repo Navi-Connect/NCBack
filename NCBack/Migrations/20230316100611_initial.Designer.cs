@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace NCBack.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230316085359_initial")]
+    [Migration("20230316100611_initial")]
     partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -1051,6 +1051,9 @@ namespace NCBack.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("AccessToken")
+                        .HasColumnType("text");
+
                     b.Property<string>("AvatarPath")
                         .IsRequired()
                         .HasColumnType("text");
@@ -1123,6 +1126,9 @@ namespace NCBack.Migrations
                         .HasColumnType("text[]");
 
                     b.Property<string>("Profession")
+                        .HasColumnType("text");
+
+                    b.Property<string>("RefreshToken")
                         .HasColumnType("text");
 
                     b.Property<bool>("Success")

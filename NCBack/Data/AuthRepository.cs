@@ -48,7 +48,7 @@ public class AuthRepository : IAuthRepository
     private int GetUserId() => int.Parse(_httpContextAccessor.HttpContext.User
         .FindFirstValue(ClaimTypes.NameIdentifier));
 
-    public async Task<TokenDto> Login(string username, string password, string? deviceId)
+    public async Task<User> Login(string username, string password, string? deviceId)
     {
         var user = await _context.Users
             .FirstOrDefaultAsync(u => u.Username.ToLower().Equals(username.ToLower()));
@@ -79,9 +79,15 @@ public class AuthRepository : IAuthRepository
             var resfreshToken = CreateRefreshToken();
 
             await InsertRefrashToke(user.Id, resfreshToken);
-            return new TokenDto
+
+            user.AccessToken = accessToken;
+            user.RefreshToken = resfreshToken;
+
+            return user;
+
+            /*new TokenDto
             {
-                /*UserId = user.Id,*/
+                /*UserId = user.Id,#1#
                 /*CityId = user.CityId,
                 City = user.City,
                 Email = user.Email,
@@ -90,15 +96,15 @@ public class AuthRepository : IAuthRepository
                 DateOfBirth = user.DateOfBirth,
                 AvatarPath = user.AvatarPath,
                 GenderId = user.GenderId,
-                Gender = user.Gender,*/
+                Gender = user.Gender,#1#
                 AccessToken = accessToken,
                 RefreshToken = resfreshToken,
                 /*DeviceId = user.DeviceId,
                 Success = user.Success,
-                Message = user.Message*/
+                Message = user.Message#1#
                 
-            };
-        
+            };*/
+
         }
         return null;
     }
@@ -249,7 +255,7 @@ public class AuthRepository : IAuthRepository
         return null;
     }
 
-    public async Task<TokenDto> RenewTokens(RefreshTokenDto refreshToken)
+    public async Task<User> RenewTokens(RefreshTokenDto refreshToken)
     {
         var userRefreshtoken = await _context
             .RefreshToken.Where(_ => _.Token == refreshToken.Token &&
@@ -269,9 +275,13 @@ public class AuthRepository : IAuthRepository
         userRefreshtoken.ExpirationDate = DateTime.Now.AddDays(7);
         await _context.SaveChangesAsync();
 
-        return new TokenDto
+        user.AccessToken = newJwtToken;
+        user.RefreshToken = newRefreshToken;
+
+        return user;
+        /*new TokenDto
         {
-            /*UserId = user.Id,*/
+            /*UserId = user.Id,#1#
             /*CityId = user.CityId,
             City = user.City,
             Email = user.Email,
@@ -280,13 +290,13 @@ public class AuthRepository : IAuthRepository
             DateOfBirth = user.DateOfBirth,
             AvatarPath = user.AvatarPath,
             GenderId = user.GenderId,
-            Gender = user.Gender,*/
+            Gender = user.Gender,#1#
             AccessToken = newJwtToken,
             RefreshToken = newRefreshToken,
             /*DeviceId = user.DeviceId,
             Success = user.Success,
-            Message = user.Message*/
-        };
+            Message = user.Message#1#
+        };*/
     }
 
     public async Task<bool> UserExists(string username)
