@@ -4,7 +4,7 @@ namespace NCBack.Dtos.User;
 
 public class TokenDto
 {
-    public int UserId { get; set; }
+    /*public int UserId { get; set; }*/
     /*public int? CityId { get; set; }
     public CityList? City { get; set; }
     public string Email { get; set; }

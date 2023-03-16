@@ -81,7 +81,7 @@ public class AuthRepository : IAuthRepository
             await InsertRefrashToke(user.Id, resfreshToken);
             return new TokenDto
             {
-                UserId = user.Id,
+                /*UserId = user.Id,*/
                 /*CityId = user.CityId,
                 City = user.City,
                 Email = user.Email,
@@ -271,7 +271,7 @@ public class AuthRepository : IAuthRepository
 
         return new TokenDto
         {
-            UserId = user.Id,
+            /*UserId = user.Id,*/
             /*CityId = user.CityId,
             City = user.City,
             Email = user.Email,
