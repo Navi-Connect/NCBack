@@ -4,7 +4,6 @@ using NCBack.Data;
 
 namespace NCBack.Controllers;
 
-
 [ApiController]
 [Route("api/[controller]")]
 public class CityGenderListController : Controller
@@ -36,12 +35,12 @@ public class CityGenderListController : Controller
         var genderLists = _context.GenderList.ToList().Distinct();
         return Ok(genderLists);
     }
-    
+
     [HttpGet("getGenderListWM")]
     public async Task<ActionResult> GetGenderListWM()
     {
-        var genderLists = 
-            _context.GenderList.Where(c=> c.GenderName == "М" || c.GenderName == "Ж").ToList().Distinct();
+        var genderLists =
+            _context.GenderList.Where(c => c.GenderName == "М" || c.GenderName == "Ж").ToList().Distinct();
         return Ok(genderLists);
     }
 
@@ -50,6 +49,5 @@ public class CityGenderListController : Controller
     {
         var gender = _context.GenderList.FirstOrDefault(g => g.Id == Id);
         return Ok(gender);
-    }  
-    
+    }
 }

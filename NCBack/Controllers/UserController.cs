@@ -12,7 +12,6 @@ using NCBack.Services;
 
 namespace NCBack.Controllers;
 
-
 [Authorize]
 [ApiController]
 [Route("api/[controller]")]
@@ -28,7 +27,8 @@ public class UserController : ControllerBase
     private ISession _session => _httpContextAccessor.HttpContext.Session;
 
     public UserController(DataContext context, IHttpContextAccessor httpContextAccessor, IHostEnvironment environment,
-        UploadFileService uploadFileService, PushSms pushSms, INotificationService notificationService, IUriService uriServiceNews)
+        UploadFileService uploadFileService, PushSms pushSms, INotificationService notificationService,
+        IUriService uriServiceNews)
     {
         _context = context;
         _httpContextAccessor = httpContextAccessor;
@@ -57,6 +57,7 @@ public class UserController : ControllerBase
                 await _context.SaveChangesAsync();
                 return Ok(notification);
             }
+
             return BadRequest("Erorr not fount notification !!!");
         }
         catch (ApplicationException e)
@@ -64,13 +65,14 @@ public class UserController : ControllerBase
             return BadRequest("Erorr not fount notification !!!");
         }
     }
-    
+
     [HttpGet("getNotificationsList")]
     public async Task<ActionResult> GetNotificationsList([FromQuery] ObjectPaginationFilter? filter)
     {
         try
         {
-            var notification = await _context.NotificationModel.Where(n => n.UserId == GetUserId()).Distinct().ToListAsync();
+            var notification = await _context.NotificationModel.Where(n => n.UserId == GetUserId()).Distinct()
+                .ToListAsync();
             PaginationHelper.ReversEventList(notification);
             var route = Request.Path.Value;
             var validFilter = new ObjectPaginationFilter(filter.PageNumber, filter.PageSize);
@@ -79,7 +81,8 @@ public class UserController : ControllerBase
                 .Take(validFilter.PageSize)
                 .ToList();
             var totalRecords = notification.Count();
-            var pagedReponse = PaginationHelper.CreatePagedObjectReponse(pagedData, validFilter, totalRecords, _uriServiceNews, route);
+            var pagedReponse =
+                PaginationHelper.CreatePagedObjectReponse(pagedData, validFilter, totalRecords, _uriServiceNews, route);
             return Ok(pagedReponse);
         }
         catch (ApplicationException e)
@@ -87,7 +90,7 @@ public class UserController : ControllerBase
             return BadRequest("Error 400!!!");
         }
     }
-    
+
     [HttpDelete("deleteNotification/{id}")]
     public async Task<ActionResult<List<News>>> DeleteNotification(int id)
     {
@@ -108,7 +111,7 @@ public class UserController : ControllerBase
 
         return BadRequest("System errors !!!");
     }
-    
+
     [HttpGet("getUser")]
     public async Task<ActionResult> GetUser()
     {
@@ -282,7 +285,7 @@ public class UserController : ControllerBase
         try
         {
             var user = _context.Users.FirstOrDefault(u => u.Id == GetUserId());
-            
+
             if (user != null)
             {
                 if (await _context.Users.AnyAsync(u => u.Email.ToLower() == model.Email.ToLower()))
@@ -291,11 +294,11 @@ public class UserController : ControllerBase
                     user.Message = "Email already exists.";
                     return Ok(user);
                 }
-                
+
                 user.Email = model.Email;
                 user.City = _context.CityList.FirstOrDefault(c => c.Id == user.CityId);
                 user.Gender = _context.GenderList.FirstOrDefault(g => g.Id == user.GenderId);
-               
+
                 NotificationModel notificationModel = new NotificationModel()
                 {
                     UserId = GetUserId(),
@@ -305,13 +308,16 @@ public class UserController : ControllerBase
                     Body = "Уважаемый пользователь! \n" +
                            "Вы сменили ваш адрес электронной почты \n" +
                            "на новый.",
-                    DateTime =  DateTime.Now,
+                    DateTime = DateTime.Now,
                     Status = false
                 };
                 await _notificationService.SendNotification(notificationModel);
-                _context.NotificationModel.Add(new NotificationModel(notificationModel.Id, notificationModel.UserId,notificationModel.IsAndroiodDevice ,notificationModel.Title, notificationModel.Body, notificationModel.DateTime, notificationModel.Status));
+                _context.NotificationModel.Add(new NotificationModel(notificationModel.Id, notificationModel.UserId,
+                    notificationModel.IsAndroiodDevice, notificationModel.Title, notificationModel.Body,
+                    notificationModel.DateTime, notificationModel.Status));
                 await _context.SaveChangesAsync();
             }
+
             _context.Users.Update(user);
             await _context.SaveChangesAsync();
             return Ok(user);
@@ -322,15 +328,15 @@ public class UserController : ControllerBase
         }
 
         BadRequest("Error");
-    }   
-    
+    }
+
     [HttpPost("editingContactPhone/{Id}")]
     public async Task<IActionResult> EditingContactPhone(int? Id, UserEditContactPhoneDto model)
     {
         try
         {
             await _pushSms.Sms(model.Phone);
-            
+
             if (model.Phone != null)
             {
                 PhoneEditing phoneEditing = new PhoneEditing()
@@ -342,6 +348,7 @@ public class UserController : ControllerBase
                 await _context.SaveChangesAsync();
                 return Ok(phoneEditing);
             }
+
             return BadRequest("Error");
         }
         catch (ApplicationException e)
@@ -365,15 +372,14 @@ public class UserController : ControllerBase
             }
             else
             {
-                
                 user.Code = phoneEditing.Code;
                 user.PhoneNumber = phoneEditing.PhoneNumber;
                 user.Message = "Very good Done !!!";
                 user.Success = true;
                 user.City = _context.CityList.FirstOrDefault(c => c.Id == user.CityId);
                 user.Gender = _context.GenderList.FirstOrDefault(g => g.Id == user.GenderId);
-                
-                 _context.Users.Update(user);
+
+                _context.Users.Update(user);
                 await _context.SaveChangesAsync();
                 NotificationModel notificationModel = new NotificationModel()
                 {
@@ -384,16 +390,19 @@ public class UserController : ControllerBase
                     Body = "Поздравляем со сменой номера телефона. \n" +
                            "Этот номер будет отображаться другим \n" +
                            "пользователям в объявлениях при Connect.",
-                    DateTime =  DateTime.Now,
+                    DateTime = DateTime.Now,
                     Status = false
                 };
                 await _notificationService.SendNotification(notificationModel);
-                _context.NotificationModel.Add(new NotificationModel(notificationModel.Id, notificationModel.UserId,notificationModel.IsAndroiodDevice ,notificationModel.Title, notificationModel.Body, notificationModel.DateTime, notificationModel.Status));
+                _context.NotificationModel.Add(new NotificationModel(notificationModel.Id, notificationModel.UserId,
+                    notificationModel.IsAndroiodDevice, notificationModel.Title, notificationModel.Body,
+                    notificationModel.DateTime, notificationModel.Status));
                 await _context.SaveChangesAsync();
                 phoneEditing.Success = true;
                 phoneEditing.Message = "Done.";
                 return Ok(user);
             }
+
             return BadRequest("Error");
         }
         catch (ApplicationException e)
@@ -401,15 +410,15 @@ public class UserController : ControllerBase
             return BadRequest("Error 400!!!");
         }
     }
-    
-    
+
+
     [HttpPost("editingContactPhoneSendAgain/{Id}")]
     public async Task<IActionResult> EditingContactPhoneSendAgain(int? Id, UserEditContactPhoneDto model)
     {
         try
         {
             await _pushSms.Sms(model.Phone);
-            
+
             if (model.Phone != null)
             {
                 PhoneEditing phoneEditing = new PhoneEditing()
@@ -422,6 +431,7 @@ public class UserController : ControllerBase
                 await _context.SaveChangesAsync();
                 return Ok(phoneEditing);
             }
+
             return BadRequest("Error");
         }
         catch (ApplicationException e)
@@ -429,7 +439,7 @@ public class UserController : ControllerBase
             return BadRequest("Error 400!!!");
         }
     }
-    
+
     [HttpGet("users")]
     public async Task<IActionResult> Users()
     {
@@ -457,12 +467,14 @@ public class UserController : ControllerBase
             {
                 return NotFound();
             }
-            if(events != null)
+
+            if (events != null)
             {
                 _context.Entry(events).State = EntityState.Deleted;
                 _context.Events.Remove(events);
                 await _context.SaveChangesAsync();
             }
+
             if (user != null)
             {
                 _context.Entry(user).State = EntityState.Deleted;
@@ -470,7 +482,7 @@ public class UserController : ControllerBase
                 await _context.SaveChangesAsync();
                 return Ok("Success delete user and your events !!!");
             }
-            
+
             return BadRequest("Error");
         }
         catch (ApplicationException e)
@@ -478,7 +490,7 @@ public class UserController : ControllerBase
             return BadRequest("Error 400!!!");
         }
     }
-    
+
     /*public async  Task<bool> EmailExists(string email)
     {
         if (await _context.Users.AnyAsync(u => u.Email.ToLower() == email.ToLower()))

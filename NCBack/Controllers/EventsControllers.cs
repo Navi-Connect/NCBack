@@ -19,6 +19,7 @@ public class EventsControllers : Controller
     private readonly DataContext _context;
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IUriService _uriService;
+
     public EventsControllers(DataContext context, IHttpContextAccessor httpContextAccessor, IUriService uriService)
     {
         _context = context;
@@ -30,7 +31,7 @@ public class EventsControllers : Controller
     private int GetUserId() => int.Parse(_httpContextAccessor.HttpContext.User
         .FindFirstValue(ClaimTypes.NameIdentifier));
 
-    
+
     [HttpGet("events")]
     public async Task<IActionResult> Events([FromQuery] ObjectPaginationFilter? filter)
     {
@@ -52,7 +53,7 @@ public class EventsControllers : Controller
                 e.AgeTo, e.AgeFrom, e.CaltulationType, e.CaltulationSum, e.LanguageCommunication,
                 e.Interests, e.UserId, e.User, e.Status
             }).Distinct();
-        
+
         var route = Request.Path.Value;
         var validFilter = new ObjectPaginationFilter(filter.PageNumber, filter.PageSize);
         var pagedData = await list
@@ -61,18 +62,18 @@ public class EventsControllers : Controller
             .ToListAsync();
         pagedData.Reverse();
         var totalRecords = await list.CountAsync();
-        var pagedReponse = PaginationHelper.CreatePagedObjectReponse(pagedData, validFilter, totalRecords, _uriService, route);
+        var pagedReponse =
+            PaginationHelper.CreatePagedObjectReponse(pagedData, validFilter, totalRecords, _uriService, route);
         return Ok(pagedReponse);
-        
     }
-    
+
     [Authorize]
     [HttpGet("event/{id}")]
     public async Task<IActionResult> Event(int id)
     {
         var events = await _context.Events.FindAsync(id);
         if (events != null)
-        { 
+        {
             await _context.AimOfTheMeeting.FirstOrDefaultAsync(a => a.Id == events.AimOfTheMeetingId);
             await _context.MeetingCategory.FirstOrDefaultAsync(m => m.Id == events.MeetingCategoryId);
             await _context.MeatingPlace.FirstOrDefaultAsync(m => m.Id == events.MeatingPlaceId);
@@ -82,9 +83,10 @@ public class EventsControllers : Controller
             events.User.Gender = await _context.GenderList.FirstOrDefaultAsync(u => u.Id == events.User.GenderId);
             return Ok(events);
         }
+
         return BadRequest("Error !!!");
     }
-    
+
     [Authorize]
     [HttpPost("createEvent")]
     public async Task<ActionResult<Event>> CreateEvent([FromForm] EventCreateDto request)
@@ -121,7 +123,8 @@ public class EventsControllers : Controller
                     Interests = request.Interests,
                     Latitude = request.Latitude,
                     Longitude = request.Longitude,
-                    User = _context.Users.FirstOrDefault(u => u.Id == GetUserId() && u.CityId == u.City.Id && u.GenderId == u.Gender.Id),
+                    User = _context.Users.FirstOrDefault(u =>
+                        u.Id == GetUserId() && u.CityId == u.City.Id && u.GenderId == u.Gender.Id),
                     Status = Status.Expectations,
                 };
 

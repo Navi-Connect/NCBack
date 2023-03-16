@@ -8,13 +8,13 @@ using NCBack.Services;
 using SendGrid;
 using SendGrid.Helpers.Mail;
 
+
 namespace NCBack.Controllers
 {
     [ApiController]
     [Route("[controller]")]
     public class AuthController : ControllerBase
     {
-        
         private readonly IAuthRepository _authRepo;
         private readonly DataContext _context;
         private static ISendGridClient _sendGridClient;
@@ -27,7 +27,6 @@ namespace NCBack.Controllers
             _context = context;
             _sendGridClient = sendGridClient;
             _configuration = configuration;
-          
         }
 
         [HttpPost("register")]
@@ -89,6 +88,7 @@ namespace NCBack.Controllers
                 {
                     return BadRequest("Не правильный логин или пароль !!!");
                 }
+
                 return Ok(response);
             }
             catch (Exception e)
@@ -108,6 +108,7 @@ namespace NCBack.Controllers
                 {
                     return BadRequest("Invalide Refresh Token");
                 }
+
                 return Ok(tokens);
             }
             catch (Exception e)

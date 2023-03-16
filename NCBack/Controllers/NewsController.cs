@@ -18,7 +18,8 @@ public class NewsController : Controller
     private readonly UploadFileService _uploadFileService; // Добавляем сервис для получения файлов из формы
     private readonly IUriService _uriServiceNews;
 
-    public NewsController(DataContext context, IHostEnvironment environment, UploadFileService uploadFileService, IUriService uriServiceNews)
+    public NewsController(DataContext context, IHostEnvironment environment, UploadFileService uploadFileService,
+        IUriService uriServiceNews)
     {
         _context = context;
         _uriServiceNews = uriServiceNews;
@@ -56,7 +57,8 @@ public class NewsController : Controller
                 .Take(validFilter.PageSize)
                 .ToList();
             var totalRecords = news.Count();
-            var pagedReponse = PaginationHelper.CreatePagedObjectReponse(pagedData, validFilter, totalRecords, _uriServiceNews, route);
+            var pagedReponse =
+                PaginationHelper.CreatePagedObjectReponse(pagedData, validFilter, totalRecords, _uriServiceNews, route);
             return Ok(pagedReponse);
         }
         catch (ApplicationException e)
