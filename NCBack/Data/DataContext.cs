@@ -26,6 +26,7 @@ public class DataContext : DbContext
     public virtual DbSet<PhoneEditing> PhoneEditing { get; set; }
 
     public virtual DbSet<NotificationModel> NotificationModel { get; set; }
+    public virtual DbSet<AccedReporting> AccedReporting { get; set; }
     /*public virtual DbSet<MyInterests> MyInterests { get; set; }
     public virtual DbSet<MainСategories> MainСategories { get; set; }*/
     

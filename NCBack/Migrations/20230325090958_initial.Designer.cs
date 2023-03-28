@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace NCBack.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230316100611_initial")]
+    [Migration("20230325090958_initial")]
     partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -33,8 +33,17 @@ namespace NCBack.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("AccedNotifications")
+                        .HasColumnType("integer");
+
                     b.Property<int>("EventId")
                         .HasColumnType("integer");
+
+                    b.Property<DateTime>("TimeFinishEventUser")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime>("TimeStartEventUser")
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
@@ -46,6 +55,31 @@ namespace NCBack.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("AccedEventUser");
+                });
+
+            modelBuilder.Entity("NCBack.Models.AccedReporting", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("EventId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ReportingsNotification")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("TimeCreat")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AccedReporting");
                 });
 
             modelBuilder.Entity("NCBack.Models.AimOfTheMeeting", b =>

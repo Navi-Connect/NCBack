@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NCBack.Data;
+using NCBack.Dtos.Event;
 using NCBack.Filter;
 using NCBack.Helpers;
 using NCBack.Models;
@@ -87,11 +88,62 @@ public class UserEventController : ControllerBase
         var userEvent =
             await _context.UserEvent.FirstOrDefaultAsync(ue => ue.EventId == eventId && ue.UserId == GetUserId());
 
+       // var acceptUser = _context.AccedEventUser.Where(a => a.UserId == GetUserId()).ToList();
+
         if (userEvent != null)
         {
             return BadRequest("Вы уже откликнулись на это событя !!!");
         }
 
+        
+        var acceptUser = _context.AccedEventUser.Where(aeu => aeu.UserId == GetUserId()).ToList();
+        
+        var eventsTime = _context.Events.FirstOrDefault(e => e.Id == eventId);
+        
+        /*
+        foreach (var time in ceckTime)
+        {
+            if (eventsTime != null &&
+                ceckTime != null && 
+                (time.DataTimeStartEvent >= eventsTime.TimeStart  
+            time.DataTimeFinishEvent == eventsTime.TimeFinish))
+            { 
+                return BadRequest( "Вы уже Откликнулисть на Это время");
+            }
+            */
+
+            foreach (var timeAeu in acceptUser)
+            {
+                if (eventsTime != null && (timeAeu.TimeStartEventUser >= eventsTime.TimeStart &&
+                timeAeu.TimeFinishEventUser <= eventsTime.TimeFinish))
+                {
+                    return BadRequest( "У вас уже запланировано это время !!!");
+                }
+            }
+            
+        /*}*/
+        
+        /*foreach (var acceptEventUser in acceptUser)
+        {
+            //var start  = Convert.ToDateTime(acceptEventUser.TimeStartEventUser.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss"));
+            //var finish  = Convert.ToDateTime(acceptEventUser.TimeFinishEventUser.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss"));
+
+            // var now1 = Convert.ToDateTime(now.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss"));
+
+
+            if (now >= Convert.ToDateTime(
+                    acceptEventUser.TimeStartEventUser.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss")) && now <=
+                Convert.ToDateTime(acceptEventUser.TimeFinishEventUser.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss")))
+            {
+                return BadRequest("Это время уже занято !!!");
+            }
+            else
+            {
+            }
+        }*/
+        
+        
+        
         try
         {
             var events = _context.Events.FirstOrDefault(e => e.Id == eventId);
@@ -99,43 +151,65 @@ public class UserEventController : ControllerBase
 
             if (events.UserId != GetUserId())
             {
-                _context.UserEvent.Add(new UserEvent(GetUserId(), events.Id));
-                await _context.SaveChangesAsync();
+                
+                // получаем текущее время
+                DateTime now = DateTime.Now;
 
-                var mPlace = _context.MeatingPlace.FirstOrDefault(p => p.Id == events.MeatingPlaceId);
-
-
-                NotificationModel notificationModel = new NotificationModel()
+                var userEventList = await _context.UserEvent.Where(u=> u.UserId == GetUserId()).ToListAsync();
+                    
+                foreach (var ue in userEventList)
                 {
-                    UserId = events.UserId,
-                    DeviceId = PasswordGeneratorService.OffHesh(events.User.DeviceId),
-                    IsAndroiodDevice = true,
-                    Title = "К вам поступила заявка",
-                    Body = $"на ваше объявление: \n" +
-                           $"{mPlace.NameMeatingPlace} от {events.TimeStart.Value.Date.ToString("dd/MM")} с {events.TimeStart.Value.ToString("HH:mm")} по {events.TimeStart.Value.Date.ToString("dd/MM")} до {events.TimeFinish.Value.ToString("HH:mm")}. \n" +
-                           $"Чтобы посмотреть аватар Connectёра, \n" +
-                           $"зайдите в свой “Профиль”: \n" +
-                           $"Организатор > Объявления (Откройте это \n" +
-                           $" объявление) > Заявки на встречу",
-                    DateTime = DateTime.Now,
-                    Status = false
-                };
+                    // проверяем, превышает ли разница заданное время для удаления
+                    if (ue.TimeResult > now)
+                    {
+                        return BadRequest($"Вы не можете отправить заявку до {ue.TimeResult.ToString("HH:mm")} или пока вас не примут или отклонят !!!");
+                    }
+                }
 
-                await _notificationService.SendNotification(notificationModel);
-                _context.NotificationModel.Add(new NotificationModel(notificationModel.Id, notificationModel.UserId,
-                    notificationModel.IsAndroiodDevice, notificationModel.Title, notificationModel.Body,
-                    notificationModel.DateTime, notificationModel.Status));
+               
+                    _context.UserEvent.Add(new UserEvent(GetUserId(), events.Id));
+                    await _context.SaveChangesAsync();
+
+                    var mPlace = _context.MeatingPlace.FirstOrDefault(p => p.Id == events.MeatingPlaceId);
 
 
-                await _context.SaveChangesAsync();
+                    NotificationModel notificationModel = new NotificationModel()
+                    {
+                        UserId = events.UserId,
+                        DeviceId = PasswordGeneratorService.OffHesh(events.User.DeviceId),
+                        IsAndroiodDevice = true,
+                        Title = "К вам поступила заявка",
+                        Body = $"на ваше объявление: \n" +
+                               $"{mPlace.NameMeatingPlace} от {events.TimeStart.Value.Date.ToString("dd/MM")} с {events.TimeStart.Value.ToString("HH:mm")} по {events.TimeStart.Value.Date.ToString("dd/MM")} до {events.TimeFinish.Value.ToString("HH:mm")}. \n" +
+                               $"Чтобы посмотреть аватар Connectёра, \n" +
+                               $"зайдите в свой “Профиль”: \n" +
+                               $"Организатор > Объявления (Откройте это \n" +
+                               $" объявление) > Заявки на встречу \n" +
+                               $"Рассмотрите Connectёра, так как \n" +
+                               $"заявка автоматически удалится \n" +
+                               $" через 2 часа",
+                        DateTime = DateTime.Now,
+                        Status = false
+                    };
 
-                return Ok("Вы успешно отправили заявку !!!");
-            }
+                    await _notificationService.SendNotification(notificationModel);
+                    _context.NotificationModel.Add(new NotificationModel(notificationModel.Id,
+                        notificationModel.UserId,
+                        notificationModel.IsAndroiodDevice, notificationModel.Title, notificationModel.Body,
+                        notificationModel.DateTime, notificationModel.Status));
+
+
+                    await _context.SaveChangesAsync();
+
+                    return Ok("Вы успешно отправили заявку !!!");
+                }
+            
         }
         catch (ApplicationException e)
         {
             throw new ApplicationException(e.ToString());
         }
+
 
         return BadRequest("Вы создатель этого обьявления !!!");
     }
@@ -209,11 +283,29 @@ public class UserEventController : ControllerBase
     {
         try
         {
+            // получаем текущее время
+            DateTime now = DateTime.Now;
+
+            var userEvent = await _context.UserEvent.ToListAsync();
+
+            foreach (var ue in userEvent)
+            {
+                // проверяем, превышает ли разница заданное время для удаления
+                if (ue.TimeResult < now)
+                {
+                    // удаляем пользователя из базы данных
+                    _context.UserEvent.Remove(ue);
+                }
+            }
+            
+            // сохраняем изменения в базе данных
+            await _context.SaveChangesAsync();
+            
             var list = await (from e in _context.UserEvent
                     where e.UserId == GetUserId()
                     select new
                     {
-                        e.Id, e.EventId, e.Event.AimOfTheMeetingId, e.Event.AimOfTheMeeting, e.Event.MeetingCategoryId,
+                        e.Id, TimeResult = (e.TimeResult.ToString("HH:mm")) , e.EventId, e.Event.AimOfTheMeetingId, e.Event.AimOfTheMeeting, e.Event.MeetingCategoryId,
                         e.Event.MeetingCategory, e.Event.MeatingPlaceId, e.Event.MeatingPlace,
                         e.Event.IWant, e.Event.TimeStart, e.Event.TimeFinish, e.Event.CreateAdd, e.Event.CityId,
                         EVCityName = (e.Event.City.CityName), e.Event.GenderId,
@@ -238,8 +330,6 @@ public class UserEventController : ControllerBase
             var pagedReponse =
                 PaginationHelper.CreatePagedObjectReponse(pagedData, validFilter, totalRecords, _uriServiceNews, route);
             return Ok(pagedReponse);
-
-            return Ok(list);
         }
         catch (ApplicationException e)
         {
@@ -351,7 +441,7 @@ public class UserEventController : ControllerBase
 
                         if (uE != null)
                         {
-                            _context.AccedEventUser.Add(new AccedEventUser(uE.UserId, uE.EventId));
+                            _context.AccedEventUser.Add(new AccedEventUser(uE.UserId, uE.EventId, events.TimeStart.GetValueOrDefault(), events.TimeFinish.GetValueOrDefault()));
                             await _context.SaveChangesAsync();
                             _context.UserEvent.Remove(uE);
                             await _context.SaveChangesAsync();
@@ -433,10 +523,10 @@ public class UserEventController : ControllerBase
                             IsAndroiodDevice = true,
                             Title = "Поздравляем",
                             Body = $"C предстоящей встречей/событием \n " +
-                                   $"{mPlace.NameMeatingPlace} от {events.TimeStart.Value.Date.ToString("dd/MM")} с {events.TimeStart.Value.ToString("HH:mm")} по {events.TimeStart.Value.Date.ToString("dd/MM")} до {events.TimeFinish.Value.ToString("HH:mm")}. \n" +
-                                   $"Желаем вам приятной встречи. \n" +
-                                   $"Контакты  Организатора открыты внутри Профиля \n" +
-                                   $"в: “Участник > Одобренные”..  \n " +
+                                   $"{mPlace.NameMeatingPlace} от {events.TimeStart.Value.Date.ToString("dd/MM")} с {events.TimeStart.Value.ToString("HH:mm")} по {events.TimeStart.Value.Date.ToString("dd/MM")} до {events.TimeFinish.Value.ToString("HH:mm")}. \n " +
+                                   $"Желаем вам приятной встречи. \n " +
+                                   $"Контакты  Организатора открыты внутри Профиля \n " +
+                                   $"в: “Участник > Одобренные”.. \n " +
                                    $"+{usersPhone.PhoneNumber}",
                             DateTime = DateTime.Now,
                             Status = false
@@ -504,15 +594,15 @@ public class UserEventController : ControllerBase
                             IsAndroiodDevice = true,
                             Title = "Ваша заявка отклонена",
                             Body = $"К сожалению {userName.Username} не отреагировал на \n " +
-                                   $"вашу заявку по объявлению \n" +
-                                   $"{mPlace.NameMeatingPlace} от {events.TimeStart.Value.Date.ToString("dd/MM")} с {events.TimeStart.Value.ToString("HH:mm")} по {events.TimeStart.Value.Date.ToString("dd/MM")} до {events.TimeFinish.Value.ToString("HH:mm")}. \n" +
-                                   $"У вас есть возможность Создать своё \n" +
-                                   $"объявление или Подать заявку другому Connectёру. \n" +
-                                   $"К сведению \n" +
-                                   $"Возможно у вас не заполен профиль \n" +
-                                   $"Максимально заполненный профиль даёт \n" +
-                                   $"больше премуществ! Сделайте 'ревизию' себя \n" +
-                                   $"Удачи, уважемый Connecter! ",
+                                   $"вашу заявку по объявлению \n " +
+                                   $"{mPlace.NameMeatingPlace} от {events.TimeStart.Value.Date.ToString("dd/MM")} с {events.TimeStart.Value.ToString("HH:mm")} по {events.TimeStart.Value.Date.ToString("dd/MM")} до {events.TimeFinish.Value.ToString("HH:mm")}. \n " +
+                                   $"У вас есть возможность Создать своё \n " +
+                                   $"объявление или Подать заявку другому Connectёру. \n " +
+                                   $"К сведению \n " +
+                                   $"Возможно у вас не заполен профиль \n " +
+                                   $"Максимально заполненный профиль даёт \n " +
+                                   $"больше премуществ! Сделайте 'ревизию' себя \n " +
+                                   $"Удачи, уважемый Connecteр! ",
                             DateTime = DateTime.Now,
                             Status = false
                         };
@@ -673,24 +763,98 @@ public class UserEventController : ControllerBase
         return BadRequest("ERROR");
     }
 
+    [Authorize]
     [HttpDelete("сancelEvent/{id}")]
-    public async Task<ActionResult<UserEvent>> DeleteNews(int id)
+    public async Task<ActionResult<UserEvent>> DeleteUserEvent(int id)
     {
         try
         {
-            var userEvent = await _context.UserEvent.FindAsync(id);
+            var userEvent = await _context.UserEvent.Where(ue=> ue.EventId == id && ue.UserId == GetUserId())
+                .FirstAsync(ue=> ue.EventId == id && ue.UserId == GetUserId());
             if (userEvent != null)
             {
                 _context.UserEvent.Remove(userEvent);
                 await _context.SaveChangesAsync();
                 return Ok(userEvent);
             }
+
+            return BadRequest("System errors !!!");
         }
         catch (ApplicationException e)
         {
             throw new ApplicationException(e.ToString());
         }
 
-        return BadRequest("System errors !!!");
+        return BadRequest();
+    }
+    
+    
+    [Authorize]
+    [HttpPost("accedNotification/{id}")]
+    public async Task<ActionResult<AccedEventUser>> AccedNotification(int id, string? reportingNotification)
+    {
+        try
+        {
+           // var report = _context.AccedReporting.FirstOrDefault(u => u.UserId == GetUserId());
+            var acced = await _context.AccedEventUser.FirstOrDefaultAsync(a => a.Id == id);
+           
+            if (acced != null)
+            {
+                var  report = new AccedReporting()
+                {
+                    EventId = acced.EventId,
+                    UserId = GetUserId(),
+                    TimeCreat = DateTime.Now,
+                    ReportingsNotification = reportingNotification
+                };
+                acced.AccedNotifications = Models.AccedNotification.Verified;
+                _context.AccedReporting.Add(report);
+                await _context.SaveChangesAsync();
+                return Ok(report);
+            }
+               
+           
+
+            /*if (reportingNotification?.No != null)
+            {
+             
+                AccedReporting reporting = new AccedReporting
+                {
+                    EventId = acced.EventId,
+                    Event = acced.Event,
+                    UserId = acced.UserId,
+                    User = acced.User,
+                    TimeCreat = DateTime.Now,
+                    Reportings = Reporting.No,
+                    ReportingsNotification = reportingNotification.No
+                };
+                acced.AccedNotifications = Models.AccedNotification.Verified;
+                _context.AccedReporting.Add(reporting);
+                await _context.SaveChangesAsync();
+                return Ok(reporting);
+            }
+
+            if (reportingNotification?.Baldy != null)
+            {
+                AccedReporting reporting = new AccedReporting
+                {
+                    EventId = acced.EventId,
+                    Event = acced.Event,
+                    UserId = acced.UserId,
+                    User = acced.User,
+                    TimeCreat = DateTime.Now,
+                    ReportingsNotification = reportingNotification.Baldy
+                };
+                acced.AccedNotifications = Models.AccedNotification.Verified;
+                _context.AccedReporting.Add(reporting);
+                await _context.SaveChangesAsync();
+                return Ok(reporting);
+            }*/
+        }
+        catch (ApplicationException e)
+        {
+            return BadRequest("Systems Errors !!!");
+        }
+        return BadRequest("Systems Errors !!!");
     }
 }

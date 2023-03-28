@@ -12,6 +12,22 @@ namespace NCBack.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "AccedReporting",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    EventId = table.Column<int>(type: "integer", nullable: false),
+                    TimeCreat = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    ReportingsNotification = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AccedReporting", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AimOfTheMeeting",
                 columns: table => new
                 {
@@ -310,7 +326,10 @@ namespace NCBack.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     UserId = table.Column<int>(type: "integer", nullable: false),
-                    EventId = table.Column<int>(type: "integer", nullable: false)
+                    EventId = table.Column<int>(type: "integer", nullable: false),
+                    TimeStartEventUser = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    TimeFinishEventUser = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    AccedNotifications = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -593,6 +612,9 @@ namespace NCBack.Migrations
         {
             migrationBuilder.DropTable(
                 name: "AccedEventUser");
+
+            migrationBuilder.DropTable(
+                name: "AccedReporting");
 
             migrationBuilder.DropTable(
                 name: "IntermediateUser");
