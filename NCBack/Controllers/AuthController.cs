@@ -8,7 +8,6 @@ using NCBack.Services;
 using SendGrid;
 using SendGrid.Helpers.Mail;
 
-
 namespace NCBack.Controllers
 {
     [ApiController]
