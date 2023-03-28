@@ -98,6 +98,16 @@ public class EventsControllers : Controller
         {
             if (request.TimeFinish >= request.TimeStart)
             {
+                var eventsList = await _context.Events.Where(u => u.UserId == GetUserId()).ToListAsync();
+                foreach (var list in eventsList)
+                {
+                    if ((list.TimeStart <= request.TimeFinish && list.TimeFinish >= request.TimeStart) || 
+                        (request.TimeStart  <= list.TimeFinish && request.TimeFinish >= list.TimeStart))
+                    {
+                        return BadRequest( "При создании новых событий в заданный временной промежуток необходимо убедиться, что каждое новое событие не пересекается со временем уже существующих событий, а также что время начала каждого события меньше времени окончания, и время начала всего промежутка меньше времени окончания !!!");
+                    }
+                }
+                
                 events = new Event()
                 {
                     UserId = GetUserId(),

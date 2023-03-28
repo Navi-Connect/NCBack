@@ -114,12 +114,23 @@ public class UserEventController : ControllerBase
 
             foreach (var timeAeu in acceptUser)
             {
-                if (eventsTime != null && (timeAeu.TimeStartEventUser >= eventsTime.TimeStart &&
-                timeAeu.TimeFinishEventUser <= eventsTime.TimeFinish))
+                /*( time1Start <= time2Finish && time1Finish >= time2Start) || (time2Start <= time1Finish && time2Finish >= time1Start)
+                
+                var time1Start = timeAeu.TimeStartEventUser;
+                var time1Finish = timeAeu.TimeFinishEventUser;
+
+                var time2Start = eventsTime.TimeStart;
+                var time2Finish = eventsTime.TimeFinish;*/
+                
+                if (eventsTime != null && 
+                    (timeAeu.TimeStartEventUser <= eventsTime.TimeFinish && timeAeu.TimeFinishEventUser >= eventsTime.TimeStart) || 
+                    (eventsTime.TimeStart  <= timeAeu.TimeFinishEventUser && eventsTime.TimeFinish >= timeAeu.TimeStartEventUser))
                 {
                     return BadRequest( "У вас уже запланировано это время !!!");
                 }
             }
+            
+            
             
         /*}*/
         
@@ -443,6 +454,9 @@ public class UserEventController : ControllerBase
                         {
                             _context.AccedEventUser.Add(new AccedEventUser(uE.UserId, uE.EventId, events.TimeStart.GetValueOrDefault(), events.TimeFinish.GetValueOrDefault()));
                             await _context.SaveChangesAsync();
+                            var accept =
+                                _context.AccedEventUser.FirstOrDefault(u => u.UserId == userId && u.EventId == eventId);
+                            accept!.AccedNotifications = Models.AccedNotification.NotVerified;
                             _context.UserEvent.Remove(uE);
                             await _context.SaveChangesAsync();
                         }
@@ -694,7 +708,7 @@ public class UserEventController : ControllerBase
                     aeu.Event.LanguageCommunication,
                     aeu.Event.Interests, aeu.Event.Latitude, aeu.Event.Longitude,
                     USGenderName = (aeu.Event.User.Gender.GenderName), USCityName = (aeu.Event.User.City.CityName),
-                    aeu.Event.User, aeu.Event.Status
+                    aeu.Event.User, aeu.Event.Status ,  aeu.AccedNotifications
                 }).Distinct().ToListAsync();
 
             PaginationHelper.ReversEventList(acceptUserEvent);
@@ -739,7 +753,7 @@ public class UserEventController : ControllerBase
                     aeu.Event.LanguageCommunication,
                     aeu.Event.Interests, aeu.Event.Latitude, aeu.Event.Longitude, aeu.Event.UserId,
                     USGenderName = (aeu.Event.User.Gender.GenderName), USCityName = (aeu.Event.User.City.CityName),
-                    aeu.Event.User, aeu.Event.Status
+                    aeu.Event.User, aeu.Event.Status , aeu.AccedNotifications
                 }).Distinct().ToListAsync();
 
             PaginationHelper.ReversEventList(acceptUserEvent);
@@ -771,14 +785,14 @@ public class UserEventController : ControllerBase
         {
             var userEvent = await _context.UserEvent.Where(ue=> ue.EventId == id && ue.UserId == GetUserId())
                 .FirstAsync(ue=> ue.EventId == id && ue.UserId == GetUserId());
-            if (userEvent != null)
+            if (userEvent.EventId != id)
             {
-                _context.UserEvent.Remove(userEvent);
-                await _context.SaveChangesAsync();
-                return Ok(userEvent);
+                return BadRequest("System errors !!!");
             }
+            _context.UserEvent.Remove(userEvent);
+            await _context.SaveChangesAsync();
+            return Ok(userEvent);
 
-            return BadRequest("System errors !!!");
         }
         catch (ApplicationException e)
         {
@@ -795,7 +809,7 @@ public class UserEventController : ControllerBase
     {
         try
         {
-           // var report = _context.AccedReporting.FirstOrDefault(u => u.UserId == GetUserId());
+            //var report = _context.AccedReporting.FirstOrDefault(u => u.UserId == GetUserId());
             var acced = await _context.AccedEventUser.FirstOrDefaultAsync(a => a.Id == id);
            
             if (acced != null)
@@ -807,49 +821,19 @@ public class UserEventController : ControllerBase
                     TimeCreat = DateTime.Now,
                     ReportingsNotification = reportingNotification
                 };
+                var accedlist = await _context.AccedReporting.ToListAsync();
+                foreach (var list in accedlist)
+                {
+                    if (list.UserId == GetUserId() && acced.EventId == list.EventId)
+                    {
+                        return BadRequest("Вы уже поделились отзывом на встречу !!!");
+                    }
+                }
                 acced.AccedNotifications = Models.AccedNotification.Verified;
                 _context.AccedReporting.Add(report);
                 await _context.SaveChangesAsync();
                 return Ok(report);
             }
-               
-           
-
-            /*if (reportingNotification?.No != null)
-            {
-             
-                AccedReporting reporting = new AccedReporting
-                {
-                    EventId = acced.EventId,
-                    Event = acced.Event,
-                    UserId = acced.UserId,
-                    User = acced.User,
-                    TimeCreat = DateTime.Now,
-                    Reportings = Reporting.No,
-                    ReportingsNotification = reportingNotification.No
-                };
-                acced.AccedNotifications = Models.AccedNotification.Verified;
-                _context.AccedReporting.Add(reporting);
-                await _context.SaveChangesAsync();
-                return Ok(reporting);
-            }
-
-            if (reportingNotification?.Baldy != null)
-            {
-                AccedReporting reporting = new AccedReporting
-                {
-                    EventId = acced.EventId,
-                    Event = acced.Event,
-                    UserId = acced.UserId,
-                    User = acced.User,
-                    TimeCreat = DateTime.Now,
-                    ReportingsNotification = reportingNotification.Baldy
-                };
-                acced.AccedNotifications = Models.AccedNotification.Verified;
-                _context.AccedReporting.Add(reporting);
-                await _context.SaveChangesAsync();
-                return Ok(reporting);
-            }*/
         }
         catch (ApplicationException e)
         {
