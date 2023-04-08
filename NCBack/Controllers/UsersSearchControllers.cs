@@ -30,6 +30,7 @@ public class UsersSearchControllers : Controller
 
     
     [Authorize]
+    
     [HttpGet("GetSearchUsers")]
     public async Task<ActionResult<List<User>>> GetGetSearchUsers([FromQuery] PaginationFilter? filterUsers = null, string? userName = null)
     {
