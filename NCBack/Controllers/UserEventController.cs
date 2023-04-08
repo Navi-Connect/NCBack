@@ -57,9 +57,9 @@ public class UserEventController : ControllerBase
                     e.AgeTo, e.AgeFrom, e.CaltulationType, e.CaltulationSum, e.LanguageCommunication,
                     e.Interests, e.Latitude, e.Longitude, e.UserId, USGenderName = (e.User.Gender.GenderName),
                     USCityName = (e.User.City.CityName), e.User, e.Status
-                }).Distinct().ToListAsync();
+                }).Distinct().OrderByDescending(e => e.Id).ToListAsync();
 
-            PaginationHelper.ReversEventList(list);
+            //PaginationHelper.ReversEventList(list);
 
             var route = Request.Path.Value;
             var validFilter = new ObjectPaginationFilter(filter.PageNumber, filter.PageSize);
@@ -327,9 +327,9 @@ public class UserEventController : ControllerBase
                         USGenderName = (e.Event.User.Gender.GenderName), USCityName = (e.Event.User.City.CityName),
                         e.Event.User, e.Event.Status
                     }
-                ).Distinct().ToListAsync();
+                ).Distinct().OrderByDescending(e => e.Id).ToListAsync();
 
-            PaginationHelper.ReversEventList(list);
+            //PaginationHelper.ReversEventList(list);
 
             var route = Request.Path.Value;
             var validFilter = new ObjectPaginationFilter(filter.PageNumber, filter.PageSize);
@@ -398,9 +398,9 @@ public class UserEventController : ControllerBase
                             USGenderName = (e.User.Gender.GenderName), USCityName = (e.User.City.CityName), e.User,
                             e.Event.Status
                         }
-                    ).Distinct().ToListAsync();
+                    ).Distinct().OrderByDescending(e => e.Id).ToListAsync();
 
-                PaginationHelper.ReversEventList(list);
+               // PaginationHelper.ReversEventList(list);
 
                 var route = Request.Path.Value;
                 var validFilter = new ObjectPaginationFilter(filter.PageNumber, filter.PageSize);
@@ -641,52 +641,7 @@ public class UserEventController : ControllerBase
 
         return BadRequest("ERROR");
     }
-
-    /*[Authorize]
-    [HttpGet("acceptedEvents")]
-    public async Task<IActionResult> AcceptedEvents()
-    {
-        try
-        {
-            var userEvent = (from ev in _context.UserEvent 
-                from e in _context.Events
-                where ev.UserId == GetUserId()
-                where ev.EventId == e.Id
-                where e.Status == Status.Accepted
-                select new { ev.Id, ev.User, ev.Event }).Distinct();
-            return Ok(userEvent);
-        }
-        catch (ApplicationException e)
-        {
-            throw new ApplicationException(e.ToString());
-        }
-
-        return BadRequest("ERROR");
-    }*/
-
-    /*[Authorize]
-    [HttpGet("canceledEvents")]
-    public async Task<IActionResult> CanceledEvents()
-    {
-        try
-        {
-            var userEvent = (from ev in _context.UserEvent
-                from e in _context.Events
-                where ev.UserId == GetUserId()
-                where ev.EventId == e.Id
-                where e.Status == Status.Canceled
-                select new { ev.Id, ev.User, ev.Event }).Distinct();
-            return Ok(userEvent);
-        }
-        catch (ApplicationException e)
-        {
-            throw new ApplicationException(e.ToString());
-        }
-
-        return BadRequest("ERROR");
-    }*/
-
-
+    
     [Authorize]
     [HttpGet("acceptOrganizerEventUsers")]
     public async Task<IActionResult> AcceptOrganizerEventUsers([FromQuery] ObjectPaginationFilter? filter)
@@ -709,9 +664,9 @@ public class UserEventController : ControllerBase
                     aeu.Event.Interests, aeu.Event.Latitude, aeu.Event.Longitude,
                     USGenderName = (aeu.Event.User.Gender.GenderName), USCityName = (aeu.Event.User.City.CityName),
                     aeu.Event.User, aeu.Event.Status ,  aeu.AccedNotifications
-                }).Distinct().ToListAsync();
+                }).Distinct().OrderByDescending(e => e.Id).ToListAsync();
 
-            PaginationHelper.ReversEventList(acceptUserEvent);
+            //PaginationHelper.ReversEventList(acceptUserEvent);
 
             var route = Request.Path.Value;
             var validFilter = new ObjectPaginationFilter(filter.PageNumber, filter.PageSize);
@@ -754,9 +709,9 @@ public class UserEventController : ControllerBase
                     aeu.Event.Interests, aeu.Event.Latitude, aeu.Event.Longitude, aeu.Event.UserId,
                     USGenderName = (aeu.Event.User.Gender.GenderName), USCityName = (aeu.Event.User.City.CityName),
                     aeu.Event.User, aeu.Event.Status , aeu.AccedNotifications
-                }).Distinct().ToListAsync();
+                }).Distinct().OrderByDescending(e => e.Id).ToListAsync();
 
-            PaginationHelper.ReversEventList(acceptUserEvent);
+           // PaginationHelper.ReversEventList(acceptUserEvent);
 
             var route = Request.Path.Value;
             var validFilter = new ObjectPaginationFilter(filter.PageNumber, filter.PageSize);
@@ -840,5 +795,61 @@ public class UserEventController : ControllerBase
             return BadRequest("Systems Errors !!!");
         }
         return BadRequest("Systems Errors !!!");
+    }
+    
+    
+    [Authorize]
+    [HttpPost("inviteUser/{eventId}")]
+    public async Task<IActionResult>  InviteUser(int eventId, int userId)
+    {
+        try
+        {
+            var events = _context.Events.FirstOrDefault(e => e.Id == eventId);
+            var users = _context.Users.FirstOrDefault(u => u.Id == userId);
+
+            if (events.UserId == GetUserId())
+            {
+                if (events != null)
+                {
+                    var userName = _context.Users.FirstOrDefault(u => u.Id == events.UserId);
+                        var mPlace = _context.MeatingPlace.FirstOrDefault(p => p.Id == events.MeatingPlaceId);
+
+                        NotificationModel notificationModel = new NotificationModel()
+                        {
+                            UserId = userId,
+                            DeviceId = PasswordGeneratorService.OffHesh(users.DeviceId),
+                            IsAndroiodDevice = true,
+                            Title = "Вас пригласили на встречу",
+                            Body = $"Уважаемый Connectёр! \n" +
+                                   $"+{userName.Username} приглашает вас на встречу \n " +
+                                   $"по обьявлению \n " +
+                                   $"{mPlace.NameMeatingPlace} от {events.TimeStart.Value.Date.ToString("dd/MM")} с {events.TimeStart.Value.ToString("HH:mm")} по {events.TimeStart.Value.Date.ToString("dd/MM")} до {events.TimeFinish.Value.ToString("HH:mm")}. \n " +
+                                   $"Ознакомиться с условиями обьявления можно  \n " +
+                                   $"в его профиле \n " +
+                                   $"Скопируйте его никнейм и введите в 'Поиск' в \n " +
+                                   $"строку поиска по никнейму: \n " +
+                                   $"+{userName.Username}",
+                                   DateTime = DateTime.Now,
+                            Status = false
+                        };
+
+                        await _notificationService.SendNotification(notificationModel);
+                        _context.NotificationModel.Add(new NotificationModel(notificationModel.Id,
+                            notificationModel.UserId, notificationModel.IsAndroiodDevice, notificationModel.Title,
+                            notificationModel.Body, notificationModel.DateTime, notificationModel.Status));
+                        await _context.SaveChangesAsync();
+
+                        return Ok("Connectёру будет отправлено Пуш уведомление с предложением Отправить заявку на ваше выбранное объявление. \n" +
+                                  "Следите за поступающими заявками и не забудьте принять приглашённого Connectёра.!!!");
+                    }
+                }
+
+            return BadRequest("ERROR");
+        }
+        catch (ApplicationException e)
+        {
+            throw new ApplicationException(e.ToString());
+        }
+        
     }
 }

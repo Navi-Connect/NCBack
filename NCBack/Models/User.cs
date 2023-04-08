@@ -19,6 +19,7 @@ public class User
     public string Username { get; set; }
     public string? FullName { get; set; }
     public DateTime DateOfBirth { get; set; }
+    public int Age { get; set; } 
     public string AvatarPath { get; set; }
     public string? CredoAboutMyself { get; set; } = null;
     public List<string>? LanguageOfCommunication { get; set; } = null;

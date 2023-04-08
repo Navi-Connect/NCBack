@@ -142,8 +142,14 @@ public class AuthRepository : IAuthRepository
                 Success = true,
             };
             
-            if (await UserExists(user.Username))
+            user.Age = DateTime.Today.Year - user.DateOfBirth.Year;
+            if (DateTime.Today < user.DateOfBirth.AddYears(user.Age))
             {
+                user.Age--;
+            }
+
+            if (await UserExists(user.Username))
+            { 
                 user.Success = false;
                 user.Message = "User already exists.";
                 return user;
@@ -212,7 +218,8 @@ public class AuthRepository : IAuthRepository
             PasswordHash = passwordHash,
             PasswordSalt = passwordSalt
         };
-
+        
+        
         _context.IntermediateUser.Add(intermediateUser);
         await _context.SaveChangesAsync();
         user.Id = user.Id;

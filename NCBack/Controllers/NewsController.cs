@@ -48,8 +48,8 @@ public class NewsController : Controller
     {
         try
         {
-            var news = await _context.News.ToListAsync();
-            PaginationHelper.ReversEventList(news);
+            var news = await _context.News.Distinct().OrderByDescending(n => n.Id).ToListAsync();
+           // PaginationHelper.ReversEventList(news);
             var route = Request.Path.Value;
             var validFilter = new ObjectPaginationFilter(filter.PageNumber, filter.PageSize);
             var pagedData = news

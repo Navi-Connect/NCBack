@@ -1086,6 +1086,9 @@ namespace NCBack.Migrations
                     b.Property<string>("AccessToken")
                         .HasColumnType("text");
 
+                    b.Property<int>("Age")
+                        .HasColumnType("integer");
+
                     b.Property<string>("AvatarPath")
                         .IsRequired()
                         .HasColumnType("text");

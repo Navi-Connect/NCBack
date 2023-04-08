@@ -197,6 +197,7 @@ namespace NCBack.Migrations
                     Username = table.Column<string>(type: "text", nullable: false),
                     FullName = table.Column<string>(type: "text", nullable: true),
                     DateOfBirth = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    Age = table.Column<int>(type: "integer", nullable: false),
                     AvatarPath = table.Column<string>(type: "text", nullable: false),
                     CredoAboutMyself = table.Column<string>(type: "text", nullable: true),
                     LanguageOfCommunication = table.Column<List<string>>(type: "text[]", nullable: true),

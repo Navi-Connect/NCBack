@@ -11,7 +11,9 @@ namespace NCBack.Filter
         public int? Year { get; set; } 
         public int? Month { get; set; } 
 
-        public int? Date { get; set; } 
+        public int? Date { get; set; }
+        public int? AgeTo { get; set; }
+        public int? AgeFrom { get; set; }
 
         /*public DateTime? Time { get; set; }*/
       
@@ -21,15 +23,17 @@ namespace NCBack.Filter
             this.PageNumber = 1;
             this.PageSize = 10;
         }
-
+        
         public PaginationFilter(int pageNumber, int pageSize, int? cityId, int? genderId,
-            int? year, int? month, int? date)
+            int? year, int? month, int? date, int? ageTo ,int? ageFrom)
         {
             this.Year = year;
             this.Date = date;
             this.Month = month;
             this.GenderId = cityId;
             this.CityId = genderId;
+            this.AgeTo = ageTo;
+            this.AgeFrom = ageFrom;
             this.PageNumber = pageNumber < 1 ? 1 : pageNumber;
             this.PageSize = pageSize > 10 ? 10 : pageSize;
         }

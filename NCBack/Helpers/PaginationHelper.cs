@@ -48,20 +48,20 @@ namespace NCBack.Helpers
                     ? uriService.GetPageUri(new PaginationFilter(
                         validFilter.PageNumber + 1,
                         validFilter.PageSize, validFilter.CityId, validFilter.GenderId, validFilter.Year,
-                        validFilter.Month, validFilter.Date), route)
+                        validFilter.Month, validFilter.Date, validFilter.AgeTo, validFilter.AgeFrom), route)
                     : null!;
             respose.PreviousPage =
                 validFilter.PageNumber - 1 >= 1 && validFilter.PageNumber <= roundedTotalPages
                     ? uriService.GetPageUri(new PaginationFilter(
                         validFilter.PageNumber - 1, validFilter.PageSize, validFilter.CityId, validFilter.GenderId,
-                        validFilter.Year, validFilter.Month, validFilter.Date), route)
+                        validFilter.Year, validFilter.Month, validFilter.Date, validFilter.AgeTo, validFilter.AgeFrom), route)
                     : null!;
             respose.FirstPage = uriService.GetPageUri(new PaginationFilter(
                 1, validFilter.PageSize, validFilter.CityId, validFilter.GenderId, validFilter.Year, validFilter.Month,
-                validFilter.Date), route);
+                validFilter.Date, validFilter.AgeTo, validFilter.AgeFrom), route);
             respose.LastPage = uriService.GetPageUri(new PaginationFilter(
                 roundedTotalPages, validFilter.PageSize, validFilter.CityId, validFilter.GenderId, validFilter.Year,
-                validFilter.Month, validFilter.Date), route);
+                validFilter.Month, validFilter.Date, validFilter.AgeTo, validFilter.AgeFrom), route);
             respose.TotalPages = roundedTotalPages;
             respose.TotalRecords = totalRecords;
             return respose;

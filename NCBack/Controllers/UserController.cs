@@ -71,9 +71,9 @@ public class UserController : ControllerBase
     {
         try
         {
-            var notification = await _context.NotificationModel.Where(n => n.UserId == GetUserId()).Distinct()
-                .ToListAsync();
-            PaginationHelper.ReversEventList(notification);
+            var notification = await _context.NotificationModel.Where(n => n.UserId == GetUserId())
+                .Distinct().OrderByDescending(n => n.Id).ToListAsync();
+          //  PaginationHelper.ReversEventList(notification);
             var route = Request.Path.Value;
             var validFilter = new ObjectPaginationFilter(filter.PageNumber, filter.PageSize);
             var pagedData = notification
@@ -120,6 +120,16 @@ public class UserController : ControllerBase
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == GetUserId());
             user.City = _context.CityList.FirstOrDefault(c => c.Id == user.CityId);
             user.Gender = _context.GenderList.FirstOrDefault(g => g.Id == user.GenderId);
+            
+            user.Age = DateTime.Today.Year - user.DateOfBirth.Year;
+            if (DateTime.Today < user.DateOfBirth.AddYears(user.Age))
+            {
+                user.Age--;
+            }
+            
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+            
             return Ok(user);
         }
         catch (ApplicationException e)
@@ -136,6 +146,16 @@ public class UserController : ControllerBase
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
             user.City = _context.CityList.FirstOrDefault(c => c.Id == user.CityId);
             user.Gender = _context.GenderList.FirstOrDefault(g => g.Id == user.GenderId);
+            
+            user.Age = DateTime.Today.Year - user.DateOfBirth.Year;
+            if (DateTime.Today < user.DateOfBirth.AddYears(user.Age))
+            {
+                user.Age--;
+            }
+            
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+
             return Ok(user);
         }
         catch (ApplicationException e)
@@ -491,12 +511,53 @@ public class UserController : ControllerBase
         }
     }
 
-    /*public async  Task<bool> EmailExists(string email)
+    [Authorize]
+    [HttpGet("userGetByIdEvents/{id}")]
+    public async Task<IActionResult> UserGetByIdEvents(int id, [FromQuery] ObjectPaginationFilter? filter)
     {
-        if (await _context.Users.AnyAsync(u => u.Email.ToLower() == email.ToLower()))
+        try
         {
-            return true;
+            DateTime now = DateTime.Now;
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
+            user.City = _context.CityList.FirstOrDefault(c => c.Id == user.CityId);
+            user.Gender = _context.GenderList.FirstOrDefault(g => g.Id == user.GenderId);
+            
+            var lists = await
+                (from e in _context.Events
+                    where e.Status == Status.Expectations || e.Status == Status.Canceled
+                    where e.TimeStart >= now
+                    where e.UserId == user.Id
+                    select new 
+                    {
+                        e.Id, e.AimOfTheMeetingId, e.AimOfTheMeeting, e.MeetingCategoryId, e.MeetingCategory,
+                        e.MeatingPlaceId, e.MeatingPlace,
+                        e.IWant, e.TimeStart, e.TimeFinish, e.CreateAdd, e.CityId, EVCityName = (e.City.CityName),
+                        e.GenderId, EVGenderName = (e.Gender.GenderName),
+                        e.AgeTo, e.AgeFrom, e.CaltulationType, e.CaltulationSum, e.LanguageCommunication,
+                        e.Interests, e.Latitude, e.Longitude, e.Status,
+                        e.UserId, USGenderName = (e.User.Gender.GenderName), USCityName = (e.User.City.CityName), e.User
+                    }).Distinct().OrderByDescending(e => e.Id).ToListAsync();
+            
+            if (lists != null)
+            {
+                var route = Request.Path.Value;
+                var validFilter = new ObjectPaginationFilter(filter.PageNumber, filter.PageSize);
+                var pagedData = lists
+                    .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
+                    .Take(validFilter.PageSize)
+                    .ToList();
+                var totalRecords = lists.Count();
+                var pagedReponse =
+                    PaginationHelper.CreatePagedObjectReponse(pagedData, validFilter, totalRecords, _uriServiceNews, route);
+                return Ok(pagedReponse);
+            }
+            return BadRequest("У коннектера нет обьявлений !!!");
+            
         }
-        return false;
-    }*/
+        catch (ApplicationException e)
+        {
+            throw new ApplicationException(e.ToString());
+        }
+    }
+    
 }
