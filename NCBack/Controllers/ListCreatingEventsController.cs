@@ -11,6 +11,7 @@ namespace NCBack.Controllers;
 public class ListCreatingEventsController : Controller
 {
     private readonly DataContext _context;
+    
 
     public ListCreatingEventsController(DataContext context)
     {
