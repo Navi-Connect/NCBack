@@ -28,6 +28,7 @@ public class UsersSearchControllers : Controller
     private int GetUserId() => int.Parse(_httpContextAccessor.HttpContext.User
         .FindFirstValue(ClaimTypes.NameIdentifier));
 
+    
     [Authorize]
     [HttpGet("GetSearchUsers")]
     public async Task<ActionResult<List<User>>> GetGetSearchUsers([FromQuery] PaginationFilter? filterUsers = null, string? userName = null)
