@@ -167,6 +167,7 @@ public class UserController : ControllerBase
     }
 
 
+    
     [HttpPost("editPhotoProfile")]
     public async Task<IActionResult> EditingProfile([FromForm] UserEditPhotoDto model)
     {
