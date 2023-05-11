@@ -758,6 +758,7 @@ public class UserEventController : ControllerBase
     }
     
     
+    
     [Authorize]
     [HttpPost("accedNotification/{id}")]
     public async Task<ActionResult<AccedEventUser>> AccedNotification(int id, string? reportingNotification)
