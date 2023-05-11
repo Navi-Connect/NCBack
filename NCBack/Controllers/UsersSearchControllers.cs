@@ -35,9 +35,14 @@ public class UsersSearchControllers : Controller
     public async Task<ActionResult<List<User>>> GetGetSearchUsers([FromQuery] PaginationFilter? filterUsers = null, string? userName = null)
     {
         var usersList = await _context.Users.Distinct().OrderByDescending(e => e.Id).ToListAsync();
+        foreach (var user in usersList)
+        {
+            user.City = _context.CityList.FirstOrDefault(c => c.Id == user.CityId);
+            user.Gender = _context.GenderList.FirstOrDefault(g => g.Id == user.GenderId);
+        }
         List<User> usersResult;
         
-        
+
         // если пусто
         if (userName == null && filterUsers.GenderId == null && filterUsers.CityId == null
             && filterUsers.AgeTo == null && filterUsers.AgeFrom == null)

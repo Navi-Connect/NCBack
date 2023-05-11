@@ -266,3 +266,6 @@ C:\NaviConnect\NCBack\NCBack\bin\Debug\net6.0\Serilog.Sinks.File.dll
 C:\NaviConnect\NCBack\NCBack\bin\Debug\net6.0\Serilog.Sinks.PeriodicBatching.dll
 C:\NaviConnect\NCBack\NCBack\bin\Debug\net6.0\Serilog.Sinks.PostgreSQL.dll
 C:\NaviConnect\NCBack\NCBack\bin\Debug\net6.0\Microsoft.IdentityModel.Abstractions.dll
+C:\NaviConnect\NCBack\NCBack\bin\Debug\net6.0\AWSSDK.Core.dll
+C:\NaviConnect\NCBack\NCBack\bin\Debug\net6.0\AWSSDK.S3.dll
+C:\NaviConnect\NCBack\NCBack\bin\Debug\net6.0\spaces.dll

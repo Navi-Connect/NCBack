@@ -197,9 +197,11 @@ public class AuthRepository : IAuthRepository
 
         //await _pushSms.Sms(phone);
 
-        string path = Path.Combine(_environment.ContentRootPath, "wwwroot/images/");
-        string photoPath = $"images/{file.FileName}";
-        _uploadFileService.Upload(path, file.FileName, file);
+        //string path = Path.Combine(_environment.ContentRootPath, "wwwroot/images/");
+        string photoPath = $"sampleimage/{file.FileName}";
+       // _uploadFileService.Upload(path, file.FileName, file);
+
+        await _uploadFileService.Upload(file);
 
         CreatePasswordHash(password, out byte[] passwordHash, out byte[] passwordSalt);
 

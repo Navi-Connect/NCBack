@@ -10,11 +10,15 @@ using NCBack.Data;
 using NCBack.Models;
 using NCBack.NotificationModels;
 using NCBack.Services;
+using NCBack.Spaces;
 using SendGrid.Extensions.DependencyInjection;
 using Serilog;
 using Serilog.Exceptions;
 using Serilog.Sinks.Elasticsearch;
 using Swashbuckle.AspNetCore.Filters;
+using Swashbuckle.AspNetCore.SwaggerUI;
+
+
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseSerilog((context, config) =>
@@ -69,7 +73,7 @@ var appSettingsSection = builder.Configuration.GetSection("FcmNotification");
 builder.Services.Configure<FcmNotificationSetting>(appSettingsSection);
 
 builder.Services.Configure<MobizonNotificationSMS>(builder.Configuration.GetSection("MobizonNotification"));
-
+builder.Services.Configure<SpacesSettings>(builder.Configuration.GetSection("SpacesKeys"));
 
 builder.Services.AddSwaggerGen(c => {
     c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme {
@@ -80,7 +84,10 @@ builder.Services.AddSwaggerGen(c => {
         Scheme = "bearer",
         BearerFormat = "JWT" // Optional
     });
+
     c.OperationFilter<SecurityRequirementsOperationFilter>();
+
+
 });
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
@@ -141,6 +148,7 @@ builder.Services.AddSendGrid(option =>
 });
 
 builder.Services.AddHttpContextAccessor();
+
 
 /*builder.Services.AddScoped<IWeaponService, WeaponService>();
 builder.Services.AddScoped<IFightService, FightService>();*/

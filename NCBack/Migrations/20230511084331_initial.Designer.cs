@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace NCBack.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230408044840_initial")]
+    [Migration("20230511084331_initial")]
     partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -107,152 +107,132 @@ namespace NCBack.Migrations
                         new
                         {
                             Id = 2,
-                            NameAimOfTheMeeting = "Поиск друга/Собеседника"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            NameAimOfTheMeeting = "Свидания и поиск второй половинки"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            NameAimOfTheMeeting = "Для родителей (Прогулка с детьми)"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            NameAimOfTheMeeting = "Встреча мусульман"
-                        },
-                        new
-                        {
-                            Id = 6,
-                            NameAimOfTheMeeting = "Обсуждение фильма/сериала/книги"
-                        },
-                        new
-                        {
-                            Id = 7,
-                            NameAimOfTheMeeting = "Совместный активные отдых"
-                        },
-                        new
-                        {
-                            Id = 8,
-                            NameAimOfTheMeeting = "Совместные тренировки"
-                        },
-                        new
-                        {
-                            Id = 9,
-                            NameAimOfTheMeeting = "Обсуждение разных проблем"
-                        },
-                        new
-                        {
-                            Id = 10,
-                            NameAimOfTheMeeting = "Саморазвитие, обучение"
-                        },
-                        new
-                        {
-                            Id = 11,
                             NameAimOfTheMeeting = "Совместный отдых"
                         },
                         new
                         {
-                            Id = 12,
-                            NameAimOfTheMeeting = "Рыбалка и охота "
+                            Id = 3,
+                            NameAimOfTheMeeting = "Встреча взрослых людей"
                         },
                         new
                         {
-                            Id = 13,
-                            NameAimOfTheMeeting = "Совместные онлайн игры"
+                            Id = 4,
+                            NameAimOfTheMeeting = "Знакомства и встречи молодежи"
                         },
                         new
                         {
-                            Id = 14,
-                            NameAimOfTheMeeting = "Совместные спортивные игры"
+                            Id = 5,
+                            NameAimOfTheMeeting = "Встреча верующих людей"
                         },
                         new
                         {
-                            Id = 15,
-                            NameAimOfTheMeeting = "Душевный разговор"
+                            Id = 6,
+                            NameAimOfTheMeeting = "Для родителей (Прогулка с детьми)"
                         },
                         new
                         {
-                            Id = 16,
-                            NameAimOfTheMeeting = "Знакомства и встречи молодых людей"
+                            Id = 7,
+                            NameAimOfTheMeeting = "Спорт, тренировки, игры"
                         },
                         new
                         {
-                            Id = 17,
-                            NameAimOfTheMeeting = "Практика языков"
+                            Id = 8,
+                            NameAimOfTheMeeting = "Обсуждение фильма/сериала/книги"
                         },
                         new
                         {
-                            Id = 18,
-                            NameAimOfTheMeeting = "Обсуждение рабочих моментов"
+                            Id = 9,
+                            NameAimOfTheMeeting = "Обсуждение идеи/бизнеса (брейншторм)"
                         },
                         new
                         {
-                            Id = 19,
-                            NameAimOfTheMeeting = "Встреча людей с ограниченными возможностями"
+                            Id = 10,
+                            NameAimOfTheMeeting = "Совместный заработок"
                         },
                         new
                         {
-                            Id = 20,
+                            Id = 11,
                             NameAimOfTheMeeting = "Прогулка с животными"
                         },
                         new
                         {
-                            Id = 21,
-                            NameAimOfTheMeeting = "Совместное путешествие, туризм"
+                            Id = 12,
+                            NameAimOfTheMeeting = "Встреча людей с ограниченными возможностями"
                         },
                         new
                         {
-                            Id = 22,
-                            NameAimOfTheMeeting = "Съёмки контента"
-                        },
-                        new
-                        {
-                            Id = 23,
-                            NameAimOfTheMeeting = "Танцы"
-                        },
-                        new
-                        {
-                            Id = 24,
-                            NameAimOfTheMeeting = "Послушать/Записать музыку"
-                        },
-                        new
-                        {
-                            Id = 25,
-                            NameAimOfTheMeeting = "Творчество и изобразительное искусство"
-                        },
-                        new
-                        {
-                            Id = 26,
-                            NameAimOfTheMeeting = "Встреча пожилых людей "
-                        },
-                        new
-                        {
-                            Id = 27,
-                            NameAimOfTheMeeting = "Только девушки"
-                        },
-                        new
-                        {
-                            Id = 28,
-                            NameAimOfTheMeeting = "Встреча туристов/Иностранцев"
-                        },
-                        new
-                        {
-                            Id = 29,
-                            NameAimOfTheMeeting = "Встреча болельщиков/Фанатов"
-                        },
-                        new
-                        {
-                            Id = 30,
+                            Id = 13,
                             NameAimOfTheMeeting = "Совместная выпивка"
                         },
                         new
                         {
-                            Id = 31,
-                            NameAimOfTheMeeting = "Обсуждение идеи/бизнеса (брейншторм)"
+                            Id = 14,
+                            NameAimOfTheMeeting = "Встреча болельщиков, фанатов"
+                        },
+                        new
+                        {
+                            Id = 15,
+                            NameAimOfTheMeeting = "Съемки контента"
+                        },
+                        new
+                        {
+                            Id = 16,
+                            NameAimOfTheMeeting = "Танцы"
+                        },
+                        new
+                        {
+                            Id = 17,
+                            NameAimOfTheMeeting = "Разговор по душам"
+                        },
+                        new
+                        {
+                            Id = 18,
+                            NameAimOfTheMeeting = "Только девушки"
+                        },
+                        new
+                        {
+                            Id = 19,
+                            NameAimOfTheMeeting = "Практика языков"
+                        },
+                        new
+                        {
+                            Id = 20,
+                            NameAimOfTheMeeting = "Консультации специалистов"
+                        },
+                        new
+                        {
+                            Id = 21,
+                            NameAimOfTheMeeting = "Саморазвитие, обучение"
+                        },
+                        new
+                        {
+                            Id = 22,
+                            NameAimOfTheMeeting = "Творчество и изобразительное искусство"
+                        },
+                        new
+                        {
+                            Id = 23,
+                            NameAimOfTheMeeting = "Совместное путешествие, туризм"
+                        },
+                        new
+                        {
+                            Id = 24,
+                            NameAimOfTheMeeting = "Рыбалка и охота"
+                        },
+                        new
+                        {
+                            Id = 25,
+                            NameAimOfTheMeeting = "Послушать/записать музыку"
+                        },
+                        new
+                        {
+                            Id = 26,
+                            NameAimOfTheMeeting = "Встреча туристов/иностранцев"
+                        },
+                        new
+                        {
+                            Id = 27,
+                            NameAimOfTheMeeting = "Другое"
                         });
                 });
 

@@ -77,9 +77,9 @@ public class NewsController : Controller
             News news = new News();
             if (request.File != null)
             {
-                string path = Path.Combine(_environment.ContentRootPath, "wwwroot/images/");
-                string photoPath = $"images/{request.File.FileName}";
-                _uploadFileService.Upload(path, request.File.FileName, request.File);
+               // string path = Path.Combine(_environment.ContentRootPath, "wwwroot/images/");
+                string photoPath = $"sampleimage/{request.File.FileName}";
+                await _uploadFileService.Upload(request.File);
 
                 news.Name = request.Name;
                 news.Description = request.Description;
@@ -121,9 +121,9 @@ public class NewsController : Controller
 
             if (request.File != null)
             {
-                string path = Path.Combine(_environment.ContentRootPath, "wwwroot/images/");
-                string? photoPath = $"images/{request.File.FileName}";
-                _uploadFileService.Upload(path, request.File.FileName, request.File);
+                //string path = Path.Combine(_environment.ContentRootPath, "wwwroot/images/");
+                string photoPath = $"sampleimage/{request.File.FileName}";
+                await _uploadFileService.Upload(request.File);
 
                 news.Name = request.Name;
                 news.Description = request.Description;

@@ -177,9 +177,9 @@ public class UserController : ControllerBase
             {
                 if (user.AvatarPath != null)
                 {
-                    string path = Path.Combine(_environment.ContentRootPath, "wwwroot/images/");
-                    string photoPath = $"images/{model.File.FileName}";
-                    _uploadFileService.Upload(path, model.File.FileName, model.File);
+                    //string path = Path.Combine(_environment.ContentRootPath, "wwwroot/images/");
+                    string photoPath = $"sampleimage/{model.File.FileName}";
+                    await _uploadFileService.Upload(model.File);
                     user.AvatarPath = photoPath;
                     user.City = _context.CityList.FirstOrDefault(c => c.Id == user.CityId);
                     user.Gender = _context.GenderList.FirstOrDefault(g => g.Id == user.GenderId);
